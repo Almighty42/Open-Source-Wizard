@@ -1,9 +1,12 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app import db, login_manager
 from flask_login import UserMixin
 import sqlalchemy as sql
 import sqlalchemy.orm as orm
 from werkzeug.security import generate_password_hash, check_password_hash
+
+def utc_now() -> datetime:
+    return datetime.now(timezone.utc)
 
 class User(UserMixin, db.Model):
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
@@ -32,6 +35,27 @@ class User(UserMixin, db.Model):
 
     def __repr__(self) :
         return f"<User {self.username}>"
+
+class Categories(db.Model):
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+    name: orm.Mapped[str] = orm.mapped_column(sql.String(64), unique=True, nullable=False)
+    slug: orm.Mapped[str] = orm.mapped_column(sql.String(64), unique=True, nullable=False)
+    description: orm.Mapped[str] = orm.mapped_column(sql.String(128), nullable=True)
+    seo_title: orm.Mapped[str] = orm.mapped_column(sql.String(64), nullable=True)
+    seo_description: orm.Mapped[str] = orm.mapped_column(sql.String(128), nullable=True)
+    created_at: orm.Mapped[datetime] = orm.mapped_column(sql.DateTime(timezone=True), default=utc_now, nullable=False)
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(sql.DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False)
+    sort_order: orm.Mapped[int] = orm.mapped_column(sql.Integer, default=0, nullable=False, index=True)
+
+class Tags(db.Model):
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+    name: orm.Mapped[str] = orm.mapped_column(sql.String(64), unique=True, nullable=False)
+    slug: orm.Mapped[str] = orm.mapped_column(sql.String(64), unique=True, nullable=False)
+    description: orm.Mapped[str] = orm.mapped_column(sql.String(128), nullable=True)
+    seo_title: orm.Mapped[str] = orm.mapped_column(sql.String(64), nullable=True)
+    seo_description: orm.Mapped[str] = orm.mapped_column(sql.String(128), nullable=True)
+    created_at: orm.Mapped[datetime] = orm.mapped_column(sql.DateTime(timezone=True), default=utc_now, nullable=False)
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(sql.DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False)
 
 @login_manager.user_loader
 def load_user(id):

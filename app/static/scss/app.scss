@@ -1,6 +1,7 @@
 @import "header";
 @import "footer";
 @import "article";
+@import "articles";
 @import "project";
 @import "login";
 
@@ -153,7 +154,8 @@ header,
 footer,
 section,
 form,
-ul {
+ul,
+nav {
   display: flex;
   box-sizing: border-box;
 }

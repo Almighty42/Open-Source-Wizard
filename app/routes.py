@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user, logout_user, login_user
 from app.forms import LoginForm
 from app.models import User
@@ -96,7 +96,27 @@ def index():
 @main.route("/articles")
 @limiter.limit("1/second", override_defaults=False)
 def articles():
-    return render_template("articles.html")
+    category = request.args.get("category")
+    tag = request.args.get("tag")
+
+    query = Article.query
+
+    if category:
+        query = query.join(Category).filter(Category.slug == category)
+
+    if tag:
+        query = query.join(Tag).filter(tag.slug == tag)
+
+    articles = query.order_by(Article.created_at.desc()).all()
+
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return render_template("partials/_articles_list.html", articles=articles)
+
+    return render_template("articles.html",
+        articles=articles,
+        categories=Category.query.all(),
+        tags=Tag.query.all(),
+    )
 
 @main.route("/projects")
 @limiter.limit("1/second", override_defaults=False)

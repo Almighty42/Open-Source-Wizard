@@ -2,4 +2,48 @@
 
 {% block content %}
 
+{% include 'components/_header.html' %}
+
+<div id="main-page">
+	<nav>
+		<h1>Articles</h1>
+		<div class="nav-subdiv" >
+			<div id="nav-search" class="input-box" >
+			1
+			</div>
+			<form id="category-filter" action="{{ url_for('main.articles') }}" method="get" >
+				<div id="nav-categories">
+					<label for="category">Category</label>
+					<select name="category" id="category">
+						{% for category in categories %}
+						<option value="{{ category.slug }}">
+						{% if request.args.get('category') == category.slug %}
+						selected
+						{% endif %}
+						{{ category.name }}
+						</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div id="nav-tags">
+					<label for="category">Tags</label>
+					<select name="tag" id="tag">
+						{% for tag in tags %}
+						<option value="{{ tag.slug }}">
+						{% if request.args.get('tag') == tag.slug %}
+						selected
+						{% endif %}
+						{{ tag.name }}
+						</option>
+						{% endfor %}
+					</select>
+				</div>
+			</form>
+		</div>
+	</nav>
+
+</div>
+
+{% include 'components/_footer.html' %}
+
 {% endblock %}
