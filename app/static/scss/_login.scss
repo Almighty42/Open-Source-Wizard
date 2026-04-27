@@ -14,7 +14,14 @@
     flex-direction: column;
     gap: 1.5rem;
 
-    >button {}
+    >input[type="submit"] {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: var(--text-base);
+      padding: 0.3rem;
+      background-color: var(--color-bg);
+      border: 2px solid var(--color-border);
+      cursor: pointer;
+    }
 
     >div#button-box {
       width: 100%;
@@ -26,12 +33,23 @@
 .input-box {
   flex-direction: column;
 
+  p {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: var(--text-base);
+  }
+
   >input {
+    font-family: "IBM Plex Mono", monospace;
     padding: 0.25rem 0.25rem;
     border-top: 0px;
     border-left: 0px;
     border-right: 0px;
     border-bottom: var(--color-border) 1px solid;
     background-color: var(--color-bg);
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
   }
 }
