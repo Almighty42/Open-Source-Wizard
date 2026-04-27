@@ -5,9 +5,9 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	{% if title %}
-	<title>Open Source Pirate - {{ title }}</title>
+	<title>Open Source Wizard - {{ title }}</title>
 	{% else %}
-	<title>Open Source Pirate</title>
+	<title>Open Source Wizard</title>
 	{% endif %}
 	<link rel="stylesheet" href="{{ url_for('static', filename="css/app.css") }}" />
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,12 +16,10 @@
 </head>
 
 <body>
-	{% include 'components/_header.html' %}
 
 	{% block content %}
 	{% endblock %}
 
-	{% include 'components/_footer.html' %}
 	<script src="../static/js/app.js"></script>
 </body>
 

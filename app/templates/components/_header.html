@@ -4,8 +4,9 @@
 		data-theme-image
 		data-light-src="/static/assets/logo.svg"
 		data-dark-src="/static/assets/logo_dark.svg"
-		id="site-logo" src="{{ url_for('static', filename='assets/logo.svg') }}" alt="Open Source Pirate Logo" />
-		<p class="foreground-1">[Open Source Pirate]</p>
+		id="site-logo" src="{{ url_for('static', filename='assets/logo.svg') }}" alt="Open Source Wizard Logo"
+		/>
+		<p class="foreground-1">[ Open Source Wizard ]</p>
 	</div>
 	<ul>
 		<li>
@@ -40,6 +41,12 @@
 				{% endif %}
 				[ /About ]</a>
 		</li>
+		
+		{% if current_user.is_authenticated %}
+		<li>
+			<a class="foreground-2" href="{{ url_for('main.about') }}">[ /Logout ]</a>
+		</li>
+		{% endif %}
 		<li>
 			<a class="foreground-2" id="mode_switch">[ ☼ ]</a>
 		</li>

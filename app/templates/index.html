@@ -4,6 +4,8 @@
 
 {% block content %}
 
+{% include 'components/_header.html' %}
+
 <div id="main-page">
 	<h1>Welcome Wanderer</h1>
 	<img
@@ -49,5 +51,7 @@
 	data-dark-src="/static/assets/footer-hero_dark.svg"
 	id="site-footer_hero" class="footer-hero" src="{{ url_for('static', filename='assets/footer-hero.svg') }}" alt="Hero Section Image Svg" />
 </div>
+
+{% include 'components/_footer.html' %}
 
 {% endblock %}

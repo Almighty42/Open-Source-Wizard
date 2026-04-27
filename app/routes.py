@@ -1,8 +1,14 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
+from flask_login import current_user, logout_user, login_user
+from app.forms import LoginForm
+from app.models import User
+from app import db
+import sqlalchemy as sql
 
 main = Blueprint("main", __name__)
 
 @main.route("/")
+@main.route("/index")
 def index():
 
     articles = [
@@ -80,3 +86,24 @@ def projects():
 @main.route("/about")
 def about():
     return render_template("about.html")
+
+@main.route("/login", methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    if form.validate_on_submit():
+        try:
+            user = db.session.scalar(sql.select(User).where(User.username == form.username.data))
+        except:
+            return redirect(url_for("main.login"))
+        if user is None or not user.check_password(form.password.data):
+            return redirect(url_for('main.login'))
+        login_user(user)
+        return redirect(url_for("main.index"))
+    return render_template("login.html", form=form)
+
+@main.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('main.index'))

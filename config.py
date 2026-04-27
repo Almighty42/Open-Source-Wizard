@@ -1,15 +1,18 @@
 import os
 from dotenv import load_dotenv
 
+basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv()
 
 class BaseConfig:
-    APP_NAME = "Open Source Pirate"
+    APP_NAME = "Open Source Wizard"
     DEBUG = True
     TESTING = False
-    # SECRET_KEY
 
     HOST = os.getenv("HOST", "127.0.0.1")
     PORT = int(os.getenv("PORT", 3001))
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+            'sqlite:///' + os.path.join(basedir, 'app.db')
 
 config = BaseConfig()
