@@ -44,7 +44,7 @@
 		
 		{% if current_user.is_authenticated %}
 		<li>
-			<a class="foreground-2" href="{{ url_for('main.about') }}">[ /Logout ]</a>
+			<a class="foreground-2" href="{{ url_for('main.logout') }}">[ /Logout ]</a>
 		</li>
 		{% endif %}
 		<li>

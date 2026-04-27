@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv()
 
-class BaseConfig:
+class Config:
     APP_NAME = "Open Source Wizard"
     DEBUG = True
     TESTING = False
@@ -15,4 +15,4 @@ class BaseConfig:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
             'sqlite:///' + os.path.join(basedir, 'app.db')
 
-config = BaseConfig()
+config = Config()

@@ -6,3 +6,4 @@ app/static/css/app.css
 app/static/css/app.css.map
 app/static/fonts/
 app.db
+migrations/

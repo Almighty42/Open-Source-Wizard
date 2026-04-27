@@ -1,11 +1,20 @@
-from flask import Blueprint, render_template, redirect, url_for
-from flask_login import current_user, logout_user, login_user
+from flask import Blueprint, render_template, redirect, url_for, current_app
+from flask_login import current_user, logout_user, login_user, login_required
 from app.forms import LoginForm
 from app.models import User
-from app import db
+from app import db, login_manager
 import sqlalchemy as sql
+from functools import wraps
 
 main = Blueprint("main", __name__)
+
+def admin_required(f):
+    @wraps(f)
+    def check_if_admin(*args, **kwargs):
+        if not current_user.is_admin:
+            return redirect(url_for('main.login'))
+        return f(*args, **kwargs)
+    return check_if_admin
 
 @main.route("/")
 @main.route("/index")
@@ -107,3 +116,7 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for("main.index"))
