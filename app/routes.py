@@ -1,10 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for, current_app
-from flask_login import current_user, logout_user, login_user, login_required
+from flask import Blueprint, render_template, redirect, url_for
+from flask_login import current_user, logout_user, login_user
 from app.forms import LoginForm
 from app.models import User
 from app import db, login_manager
 import sqlalchemy as sql
 from functools import wraps
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 main = Blueprint("main", __name__)
 
@@ -16,8 +18,15 @@ def admin_required(f):
         return f(*args, **kwargs)
     return check_if_admin
 
+limiter = Limiter(
+        get_remote_address,
+        default_limits=["200 per day", "50 per hour"],
+        storage_uri="memory://",
+)
+
 @main.route("/")
 @main.route("/index")
+@limiter.limit("1/second", override_defaults=False)
 def index():
 
     articles = [
@@ -85,18 +94,23 @@ def index():
     return render_template("index.html", articles=articles, projects=projects)
 
 @main.route("/articles")
+@limiter.limit("1/second", override_defaults=False)
 def articles():
     return render_template("articles.html")
 
 @main.route("/projects")
+@limiter.limit("1/second", override_defaults=False)
 def projects():
     return render_template("projects.html")
 
 @main.route("/about")
+@limiter.limit("1/second", override_defaults=False)
 def about():
     return render_template("about.html")
 
 @main.route("/login", methods=['GET', 'POST'])
+@limiter.limit("1/second", override_defaults=False)
+@limiter.limit("10/minute", override_defaults=False)
 def login():
     form = LoginForm()
     if current_user.is_authenticated:
@@ -106,13 +120,27 @@ def login():
             user = db.session.scalar(sql.select(User).where(User.username == form.username.data))
         except:
             return redirect(url_for("main.login"))
-        if user is None or not user.check_password(form.password.data):
+
+        if user is not None and not user.is_locked_out():
+            if user.check_password(form.password.data):
+                login_user(user)
+                user.login_attempts = 0
+                user.locked_out_until = None
+                db.session.commit()
+                return redirect(url_for("main.index"))
+            else:
+                user.login_attempts += 1
+                if user.login_attempts >= 5:
+                    user.lock_user()
+                    user.login_attempts = 0
+                db.session.commit()
+                return redirect(url_for('main.login'))
+        else:
             return redirect(url_for('main.login'))
-        login_user(user)
-        return redirect(url_for("main.index"))
     return render_template("login.html", form=form)
 
 @main.route('/logout')
+@limiter.limit("1/second", override_defaults=False)
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
