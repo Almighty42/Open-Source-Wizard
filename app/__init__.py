@@ -6,6 +6,7 @@ from config import Config
 import sqlalchemy as sa
 
 login_manager = LoginManager()
+login_manager.session_protection = "strong"
 db = SQLAlchemy()
 migrate = Migrate()
 

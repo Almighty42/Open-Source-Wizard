@@ -123,7 +123,7 @@ def login():
 
         if user is not None and not user.is_locked_out():
             if user.check_password(form.password.data):
-                login_user(user)
+                login_user(user, remember=True)
                 user.login_attempts = 0
                 user.locked_out_until = None
                 db.session.commit()
