@@ -2,6 +2,7 @@ from flask import Flask
 from config import Config
 import sqlalchemy as sa
 from app.extensions import db, login_manager, migrate
+from scripts.seed import seed_bp
 
 def create_app(config=Config):
     app = Flask(__name__)
@@ -13,6 +14,7 @@ def create_app(config=Config):
 
     from app.routes import main
     app.register_blueprint(main)
+    app.register_blueprint(seed_bp)
 
     @app.shell_context_processor
     def make_shell_context():
