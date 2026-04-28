@@ -1,14 +1,7 @@
 from flask import Flask
-from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from config import Config
 import sqlalchemy as sa
-
-login_manager = LoginManager()
-login_manager.session_protection = "strong"
-db = SQLAlchemy()
-migrate = Migrate()
+from app.extensions import db, login_manager, migrate
 
 def create_app(config=Config):
     app = Flask(__name__)
@@ -24,10 +17,12 @@ def create_app(config=Config):
     @app.shell_context_processor
     def make_shell_context():
         from app.models import User
+        admin_username = app.config.get("ADMIN_USERNAME")
         return {
             "db": db,
-            "User": User,
             "sa": sa,
+            "User": User,
+            "admin": db.session.scalar(sa.select(User).where(User.username == admin_username))
         }
 
     return app

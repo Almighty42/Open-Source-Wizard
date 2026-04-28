@@ -9,6 +9,7 @@ class Config:
     APP_NAME = "Open Source Wizard"
     DEBUG = True
     TESTING = False
+    ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME")
 
     HOST = os.getenv("HOST", "127.0.0.1")
     PORT = int(os.getenv("PORT", 3001))

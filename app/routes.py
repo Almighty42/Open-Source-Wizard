@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user, logout_user, login_user
 from app.forms import LoginForm
 from app.models import User
-from app import db, login_manager
+from app.extensions import db, login_manager
 import sqlalchemy as sql
 from functools import wraps
 from flask_limiter import Limiter
