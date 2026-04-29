@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="error-page">
+	<img data-theme-image data-light-src="/static/assets/logo.svg" data-dark-src="/static/assets/logo_dark.svg"
+		id="site-logo" src="{{ url_for('static', filename='assets/logo.svg') }}"
+		alt="Open Source Wizard Logo" />
+	<h1>
+		ERROR - 429
+	</h1>
+	<p>
+		You tried to access that page too many times, slow down
+	</p>
+	<a href="{{ url_for('main.index') }}">
+		Home Page
+	</a>
+</div>
+
+{% endblock %}

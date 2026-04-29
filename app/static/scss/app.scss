@@ -4,40 +4,9 @@
 @import "articles";
 @import "project";
 @import "login";
+@import "errors";
 
 @import "index";
-
-// @font-face {
-//   font-family: "osp";
-//   src: url("../fonts/osp.ttf") format("truetype");
-//   font-weight: normal;
-//   font-style: normal;
-//   font-display: swap;
-// }
-//
-// @font-face {
-//   font-family: "osp";
-//   src: url("../fonts/osp_bold.ttf") format("truetype");
-//   font-weight: bold;
-//   font-style: normal;
-//   font-display: swap;
-// }
-//
-// @font-face {
-//   font-family: "osp";
-//   src: url("../fonts/osp_italic.ttf") format("truetype");
-//   font-weight: normal;
-//   font-style: italic;
-//   font-display: swap;
-// }
-//
-// @font-face {
-//   font-family: "osp";
-//   src: url("../fonts/osp_bold_italic.ttf") format("truetype");
-//   font-weight: bold;
-//   font-style: italic;
-//   font-display: swap;
-// }
 
 :root {
   color-scheme: light dark;
@@ -175,3 +144,21 @@ nav {
 .italic {
   font-style: italic;
 }
+
+a {
+  color: var(--color-fg-1)
+}
+
+button {
+  background-color: var(--color-bg);
+
+  p {
+    font-family: "IBM Plex Sans", sans-serif;
+  }
+}
+
+.button-small {}
+
+.button-medium {}
+
+.button-large {}
