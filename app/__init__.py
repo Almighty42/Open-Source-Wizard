@@ -4,6 +4,7 @@ from app.extensions import db, login_manager, migrate
 from scripts.seed import seed_bp
 from app.blueprints import main_bp, auth_bp, article_bp, project_bp, errors_bp
 from app.extensions import limiter
+from app.filters import format_date, render_markdown
 
 import sqlalchemy as sa
 
@@ -22,6 +23,9 @@ def create_app(config=Config):
     app.register_blueprint(project_bp)
     app.register_blueprint(errors_bp)
     app.register_blueprint(seed_bp)
+
+    app.jinja_env.filters["date"] = format_date
+    app.jinja_env.filters["markdown"] = render_markdown
 
     @app.shell_context_processor
     def make_shell_context():

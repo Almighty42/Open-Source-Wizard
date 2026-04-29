@@ -86,6 +86,8 @@ def _seed_article_joins(article, data):
 
 class ArticleSeeder(BaseSeeder):
     def run(self):
+        seen_slug = set()
+
         author = db.session.query(User).first()
         if not author:
             print("[ArticleSeeder] No users found. Run UserSeeder first")
@@ -93,6 +95,10 @@ class ArticleSeeder(BaseSeeder):
         created = 0
         skipped = 0
         for data in ARTICLES:
+            if data["slug"] in seen_slug:
+                print(f"[ArticleSeeder] Duplicate slug in the data: 'data['slug']' - skipping")
+                continue
+            seen_slug.add(data["slug"])
             exists = db.session.query(Article).filter_by(slug=data["slug"]).first()
             if exists:
                 skipped += 1

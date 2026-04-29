@@ -214,13 +214,13 @@ The symptom was straightforward: after power-cycling the ESP32, the previous fra
 was still visible as a faint ghost behind the new content. A partial refresh artifact
 that shouldn't exist after a full refresh cycle.
 
-## What I Tried First
+# What I Tried First
 
 - Forced a full refresh (`EPD_4IN2_Clear()`) on boot — ghost persisted
 - Increased the power-on delay before sending the init sequence — no change
 - Swapped the display with a spare unit — same behavior
 
-## The Actual Cause
+# The Actual Cause
 
 After reading the Waveshare wiki more carefully, I found this note buried at the bottom:
 
@@ -241,11 +241,127 @@ The display's internal controller needs to execute a deep sleep sequence
 that clears its internal framebuffer before power is removed.
 Without it, the last image leaks into the next refresh cycle.
 
-## Lesson
+# Lesson
 
 Always read the full datasheet, not just the example code.
 The Waveshare examples do call `EPD_Sleep()` — I had removed it
 thinking it was unnecessary boilerplate.
+""",
+    },
+    {
+        "title": "Use of AI in Embedded Development",
+        "slug": "ai-in-embedded-development-article",
+        "excerpt": "LLMs won't replace embedded engineers — but they're already cutting debug time in half and generating driver boilerplate in seconds. Here's how I actually use AI tools in my firmware workflow.",
+        "read_time": 8,
+        "is_featured": True,
+        "status": "draft",
+        "seo_title": "",
+        "seo_description": "",
+        "tags": ["AI", "Embedded", "ESP32", "C", "Debugging"],
+        "category": "Embedded Systems",
+        "cover": "assets/cover.png",
+        "inline_assets": [],
+        "diagrams": [],
+        "attachments": [],
+        "body": """\
+There's a growing split in the embedded community. Half the engineers I talk to swear by AI coding tools. The other half won't touch them — convinced that LLMs hallucinate register addresses and don't understand timing constraints.
+
+Both sides have a point. This article isn't about hype. It's about where AI tools *actually* help in a firmware workflow, and where they'll waste your time or silently break your code.
+
+# The Honest Reality
+
+AI models are trained predominantly on web, cloud, and application-layer code. They've seen far less embedded C, and almost no vendor-specific HAL code for a niche MCU like the STM32G0 or RP2040. That gap matters.
+
+But "less useful than for web dev" isn't the same as "useless." There are specific parts of the embedded workflow where AI provides genuine leverage — and a few where it's actively dangerous.
+
+# Where AI actually helps
+
+## 1. Boilerplate and Peripheral Initialization
+
+This is the clearest win. Initializing a UART, configuring a SPI peripheral, or setting up a GPIO interrupt requires the same structural pattern every time. The logic isn't clever — it's just tedious and error-prone to type from scratch.
+
+```c
+// Prompt: "Generate a STM32 HAL UART init for 115200 baud, 8N1, with DMA RX"
+
+// Result was 90% correct — needed one fix for the DMA stream assignment
+```
+
+AI tools like GitHub Copilot or Claude are good at this. Give them the target MCU, the peripheral, and the config parameters. Verify the output against the reference manual, but expect to spend 2 minutes reviewing instead of 20 minutes writing.
+
+
+## 2. Understanding Unfamiliar Code
+
+This is the use case I reach for most. When you open a 3-year-old driver written by someone who left the company, asking an LLM "explain what this function does and what could go wrong" is genuinely useful. It won't catch every issue, but it surfaces the non-obvious parts quickly.
+
+```c
+// Pasted a 60-line I2C transaction handler into Claude. 
+// It immediately flagged a missing timeout guard on the ACK poll loop — 
+// which would have caused the MCU to hang on a disconnected sensor.
+```
+
+The same applies when you're learning a new vendor SDK. Instead of parsing 50 pages of PDF documentation, you can ask targeted questions about specific functions and get synthesized answers in seconds.  [ 1 ]
+
+## 3. Writing Unit Tests
+
+Embedded engineers tend to write few unit tests. The tooling friction is real — setting up a test harness for firmware is harder than for a web service. AI can generate initial test scaffolding quickly.
+
+```c
+// Prompt: "Write Unity test cases for this CRC16 implementation" 
+// Covered nominal case, empty buffer, single byte, and max-length —  
+// I added the known-bad-data case manually.
+```
+
+The tests won't be perfect, but having a skeleton to edit is faster than building from zero.
+
+## 4. Debugging with AI as a Sounding Board
+
+Debugging embedded code is often a time-consuming loop of forming hypotheses and testing them. Describing your bug to an AI — precisely, with relevant code and hardware context — forces you to articulate the problem clearly, which often surfaces the answer yourself. When it doesn't, the AI's suggested hypotheses are sometimes useful starting points.
+
+Productivity studies back this up: developers using AI assistants report completing debugging tasks up to **55% faster** in controlled settings. [ 2 ] The gain is smaller in deeply hardware-specific situations, but it's not zero.
+
+# Where AI Will Waste Your Time
+
+## Register Addresses and Timing Constraints
+
+Do not trust AI-generated register addresses, bit masks, or timing values without checking them against the datasheet. This is where hallucinations are most dangerous in embedded work. An incorrect bitmask in a peripheral config register won't always cause an obvious failure — it might just silently misconfigure your hardware.
+
+> Rule → Any value that comes from a datasheet must be verified against the datasheet. AI output is a starting point, not a source of truth.
+
+## RTOS Task and Interrupt Design
+
+Stack sizes, priority assignments, and interrupt latency calculations require understanding of your specific hardware and workload. AI can describe general RTOS patterns correctly, but it can't know that your ADC ISR fires every 50μs and your FreeRTOS tick is 1ms. Always own the concurrency design yourself.
+
+## Anything Safety-Critical
+
+IEC 61508, ISO 26262, MISRA C — if your code is going into medical devices, automotive systems, or industrial safety applications, AI-generated code doesn't meet the audit trail and traceability requirements. Keep it out of that path.
+
+# A Real Workflow Example
+
+Here's how I used AI when porting a sensor driver from Arduino to bare-metal ESP32:
+
+1. Pasted the Arduino library into Claude, asked it to identify all hardware-dependent calls (Wire, SPI, delay, millis).
+2. Generated an abstraction layer with AI, mapping those calls to ESP-IDF equivalents — reviewed it line by line.
+3. Used Copilot for the boilerplate ESP-IDF I2C master init.
+4.  Debugged a timing issue by describing the symptoms to Claude (incorrect readings on fast back-to-back reads). It suggested a missing stop condition before repeated start — which was correct.
+
+Total time: ~2 hours. My estimate without AI: 4–5 hours for an unfamiliar SDK.
+
+# Edge AI: Running Models On-Device
+
+A separate but related topic is running ML inference *on* embedded hardware — what the industry calls Edge AI or TinyML.
+
+Modern MCUs like the STM32H7 or ESP32-S3 have enough compute to run small neural networks for tasks like keyword detection, gesture recognition, or anomaly detection on sensor data. Frameworks like TensorFlow Lite for Microcontrollers and Edge Impulse make the deployment pipeline accessible.
+
+The Bosch SoundSee system — deployed on the ISS — is a compelling real-world example: deep learning models running directly on the device, classifying machine audio and detecting bearing wear with over 90% accuracy. [ 3 ]
+
+This is a bigger topic that deserves its own article.
+
+# Summary
+
+AI tools are genuinely useful in embedded development — for the right tasks. Use them to accelerate the repetitive and structural work. Be skeptical of anything that touches hardware-specific values. And never skip verification against the datasheet and reference manual.
+
+The embedded engineer's job isn't going away. The skill ceiling is just shifting toward knowing which parts of the workflow to delegate and which to own.
+
 """,
     },
 ]

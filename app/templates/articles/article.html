@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include 'components/_header.html' %}
+
+<div id="main-page">
+	{% if cover %}
+	<img class="article-cover" src="{{ url_for('static', filename=cover) }}" />
+	{% endif %}
+	<section class="article-header">
+		<div class="article-info">
+			<div class="article-date">
+				<p>{{ article.published_at | date }}</p>
+			</div>
+			<div class="article-info-category">
+				<!-- <p>SOFTWARE DEVELOPMENT / EMBEDDED</p> -->
+				<p>{{ article }}</p>
+				<p>8 MIN READ</p>
+			</div>
+		</div>
+		<div class="article-title">
+			{% if article.is_featured %}
+			<img data-theme-image data-light-src="/static/assets/featured.svg"
+				data-dark-src="/static/assets/featured_dark.svg" class="article-featured-icon"
+				src="{{ url_for('static', filename='assets/featured.svg') }}" />
+			{% endif %}
+			<h1> {{ article.title }} </h1>
+		</div>
+		<div class="article-description">
+			<p> {{ article.excerpt }}</p>
+			<div class="article-contents">
+				<ul>
+					{% for heading in article_headings %}
+					<li>
+						<a href="#{{ heading.id }}"> {{ heading.text }} </a>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</section>
+	<section class="article-body" >
+		{{ article.body | markdown | safe }}
+	</section>
+</div>
+
+{% include 'components/_footer.html' %}
+
+{% endblock %}

@@ -7,10 +7,10 @@ fake = Faker()
 
 CORE_TAGS = [
         { "name": "ESP32", "slug": "esp32", "description": "Projects and articles using the ESP32 microcontroller." },
-        { "name": "STM32", "slug": "stm32", "description": "STM32 firmware, HAL, and bare-metal development." },
         { "name": "Raspberry Pi", "slug": "raspberry-pi", "description": "Projects built on or around the Raspberry Pi." },
         {"name": "E-Ink",            "slug": "e-ink",             "description": "E-paper and e-ink display integration."},
         {"name": "C",                "slug": "c",                 "description": "Embedded C programming, patterns, and tips."},
+        {"name": "Embedded",                "slug": "embedded",                 "description": "Embedded C programming, patterns, and tips."},
         {"name": "Python",           "slug": "python",            "description": "Python scripting, automation, and tooling."},
         {"name": "Docker",           "slug": "docker",            "description": "Containerization and Docker-based deployments."},
         {"name": "Nginx",            "slug": "nginx",             "description": "Nginx configuration, reverse proxying, and SSL."},

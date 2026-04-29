@@ -14,13 +14,15 @@
   --color-bg: #FDFDFC;
   --color-fg-1: #1A1A18;
   --color-fg-2: #5B5B57;
+  --color-fg-3: #757570;
   --color-border: #1A1A18;
 
   --text-sm: 0.875rem;
   --text-base: 1rem;
   --text-lg: 1.25rem;
   --text-xl: 1.5rem;
-  --text-2xl: 2.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.3rem;
 }
 
 html[data-theme="dark"] {
@@ -95,7 +97,7 @@ small {
 }
 
 h1 {
-  font-size: var(--text-2xl);
+  font-size: var(--text-3xl);
   line-height: 1.2;
 }
 

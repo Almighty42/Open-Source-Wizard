@@ -1,6 +1,8 @@
 import click
 from flask import Blueprint
 from app.seeders import UserSeeder, TagSeeder, CategorySeeder, ActivitySeeder, AssetSeeder, ProjectSeeder, ArticleSeeder
+from app.models import ArticleAsset, ArticleTag, ArticleCategory, Article, Project, ProjectAsset, ProjectCategory, ProjectTag, Tag, Category, Asset, Activity
+from app import db
 
 seed_bp = Blueprint("seed", __name__)
 
@@ -42,3 +44,23 @@ def seed_all():
     ArticleSeeder().run()
     ProjectSeeder().run()
     ActivitySeeder().run()
+
+@seed_bp.cli.command("wipe")
+def wipe():
+    db.session.query(Activity).delete()  
+    db.session.query(ArticleAsset).delete()
+    db.session.query(ArticleTag).delete()
+    db.session.query(ArticleCategory).delete()
+    db.session.query(Article).delete()
+
+    db.session.query(ProjectAsset).delete()
+    db.session.query(ProjectTag).delete()
+    db.session.query(ProjectCategory).delete()
+    db.session.query(Project).delete()
+
+    db.session.query(Category).delete()
+    db.session.query(Tag).delete()
+    db.session.query(Asset).delete()
+
+    db.session.commit()
+    print("Wiped.")
