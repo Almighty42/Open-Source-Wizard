@@ -12,8 +12,6 @@ from app.seeders.base import BaseSeeder
 from app.models.activity import EventType
 import inspect
 
-print(type(EventType))
-
 fake = Faker()
 Faker.seed(42)
 

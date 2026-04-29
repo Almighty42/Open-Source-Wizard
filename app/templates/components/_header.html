@@ -18,17 +18,17 @@
 				[ / ]</a>
 		</li>
 		<li>
-			<a class="{{ 'foreground-1' if request.endpoint == 'main.articles' else 'foreground-2' }}"
-				href="{{ url_for('main.articles') }}">
-				{% if request.endpoint == 'main.articles' %}
+			<a class="{{ 'foreground-1' if request.endpoint == 'article.articles' else 'foreground-2' }}"
+				href="{{ url_for('article.articles') }}">
+				{% if request.endpoint == 'article.articles' %}
 				&#62;
 				{% endif %}
 				[ /Articles ]</a>
 		</li>
 		<li>
-			<a class="{{ 'foreground-1' if request.endpoint == 'main.projects' else 'foreground-2' }}"
-				href="{{ url_for('main.projects') }}">
-				{% if request.endpoint == 'main.projects' %}
+			<a class="{{ 'foreground-1' if request.endpoint == 'project.projects' else 'foreground-2' }}"
+				href="{{ url_for('project.projects') }}">
+				{% if request.endpoint == 'project.projects' %}
 				&#62;
 				{% endif %}
 				[ /Projects ]</a>
@@ -44,7 +44,7 @@
 		
 		{% if current_user.is_authenticated %}
 		<li>
-			<a class="foreground-2" href="{{ url_for('main.logout') }}">[ /Logout ]</a>
+			<a class="foreground-2" href="{{ url_for('auth.logout') }}">[ /Logout ]</a>
 		</li>
 		{% endif %}
 		<li>
