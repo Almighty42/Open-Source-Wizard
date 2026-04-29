@@ -4,10 +4,15 @@ from datetime import timedelta
 
 from sqlalchemy.engine import create
 from app.models import activity
-from app.models.activity import Activity, EventType, ActorType, SubjectType, ActivityStatus
+from app.models.activity import Activity, ActorType, SubjectType, ActivityStatus
 from app.models import User, Article, Project, Tag, Category, Asset
 from app.extensions import db
 from app.seeders.base import BaseSeeder
+
+from app.models.activity import EventType
+import inspect
+
+print(type(EventType))
 
 fake = Faker()
 Faker.seed(42)
@@ -86,7 +91,7 @@ class ActivitySeeder(BaseSeeder):
         now = fake.date_time_this_year()
         for i in range(self.count):
             user = random.choice(users)
-            event = random.choice(list[EventType])
+            event = random.choice(list(EventType))
             subject_options = EVENT_SUBJECT_MAP[event]
 
             # Auth events have no subject
