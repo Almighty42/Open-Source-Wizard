@@ -306,9 +306,153 @@ The same applies when you're learning a new vendor SDK. Instead of parsing 50 pa
 Embedded engineers tend to write few unit tests. The tooling friction is real — setting up a test harness for firmware is harder than for a web service. AI can generate initial test scaffolding quickly.
 
 ```c
-// Prompt: "Write Unity test cases for this CRC16 implementation" 
-// Covered nominal case, empty buffer, single byte, and max-length —  
-// I added the known-bad-data case manually.
+#include <stdint.h>
+#include <string.h>
+ 
+#define BUFFER_SIZE 128
+
+typedef struct {
+    uint8_t data[BUFFER_SIZE];
+    uint32_t len;
+} Buffer;
+
+static void buffer_clear(Buffer *buf) {
+    memset(buf->data, 0, BUFFER_SIZE);
+    buf->len = 0;
+}
+```
+
+```python
+import os
+from dataclasses import dataclass
+
+@dataclass
+class Config:
+    host: str = "localhost"
+    port: int = 8080
+
+def load_config(path: str) -> Config:
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"No config at {path}")
+    return Config()
+```
+
+```cpp
+#include <vector>
+#include <string>
+
+class Logger {
+public:
+    explicit Logger(std::string name) : name_(std::move(name)) {}
+
+    void log(const std::string& msg) {
+        entries_.push_back(name_ + ": " + msg);
+    }
+
+private:
+    std::string name_;
+    std::vector<std::string> entries_;
+};
+```
+
+```bash
+#!/bin/bash
+set -euo pipefail
+
+TARGET="/var/www/app"
+BACKUP="${TARGET}.bak"
+
+if [ -d "$TARGET" ]; then
+    cp -r "$TARGET" "$BACKUP"
+    echo "Backup created at $BACKUP"
+fi
+
+systemctl restart nginx
+```
+
+```javascript
+const fetchArticle = async (slug) => {
+    const res = await fetch(`/api/articles/${slug}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data;
+};
+
+document.querySelectorAll(".article-link").forEach(el => {
+    el.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const article = await fetchArticle(el.dataset.slug);
+        console.log(article);
+    });
+});
+```
+
+```css
+:root {
+    --color-bg: #fdfdfc;
+    --color-fg: #1a1a18;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: 1px solid var(--color-fg);
+    background: var(--color-bg);
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+    <main id="app">
+        <h1>Hello</h1>
+    </main>
+    <script src="/static/js/app.js" defer></script>
+</body>
+</html>
+```
+
+```yaml
+services:
+  app:
+    image: myapp:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - DEBUG=false
+      - DB_HOST=postgres
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+```
+
+```json
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8080,
+    "debug": false
+  },
+  "database": {
+    "url": "postgresql://user:pass@localhost/db",
+    "pool_size": 5
+  }
+}
 ```
 
 The tests won't be perfect, but having a skeleton to edit is faster than building from zero.

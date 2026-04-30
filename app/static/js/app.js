@@ -28,4 +28,30 @@ if (saved_theme) {
 	root.setAttribute("data-theme", saved_theme);
 }
 
+const CHECK_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
+  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="20 6 9 17 4 12"/>
+</svg>`;
+
+document.querySelectorAll(".code-copy-btn").forEach(btn => {
+	const icon_span = btn.querySelector(".code-copy-icon");
+	const copy_text = btn.querySelector(".code-copy-text");
+	const original_icon = icon_span.innerHTML;
+
+	btn.addEventListener("click", () => {
+		const code = btn.closest(".code-block").querySelector("code");
+		navigator.clipboard.writeText(code.innerText).then(() => {
+			icon_span.innerHTML = CHECK_ICON;
+			if (copy_text) copy_text.textContent = "COPIED";
+			btn.classList.add("copied");
+
+			setTimeout(() => {
+				icon_span.innerHTML = original_icon;
+				if (copy_text) copy_text.textContent = "COPY";
+				btn.classList.remove("copied");
+			}, 1500);
+		});
+	});
+});
+
 update_theme();

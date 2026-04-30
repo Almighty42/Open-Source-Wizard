@@ -43,15 +43,18 @@ def article(slug):
             .first()
     )
 
-    article_headings = extract_headings(article.body)
-
     if article is None:
         abort(404)
 
+    article_headings = extract_headings(article.body)
     cover = next((aa.asset for aa in article.article_assets if aa.is_cover), None)
+    tags = [at.tag for at in article.article_tags]
+    primary_category = next((ac.category for ac in article.article_categories if ac.is_primary), None)
 
     return render_template("articles/article.html", 
                            article=article,
                            cover=cover,
-                           article_headings=article_headings
+                           article_headings=article_headings,
+                           tags=tags,
+                           primary_category=primary_category
     )

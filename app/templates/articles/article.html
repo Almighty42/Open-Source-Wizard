@@ -11,11 +11,15 @@
 	<section class="article-header">
 		<div class="article-info">
 			<div class="article-date">
+				{% if article.published_at %}
 				<p>{{ article.published_at | date }}</p>
+				{% else %}
+				UNPUBLISHED
+				{% endif %}
 			</div>
 			<div class="article-info-category">
 				<!-- <p>SOFTWARE DEVELOPMENT / EMBEDDED</p> -->
-				<p>{{ article }}</p>
+				<p>{{ primary_category.name | upper }}</p>
 				<p>8 MIN READ</p>
 			</div>
 		</div>
