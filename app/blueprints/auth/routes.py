@@ -40,7 +40,6 @@ def login():
     return render_template("auth/login.html", form=form)
 
 @auth_bp.route('/logout')
-@limiter.limit("1/second", override_defaults=False)
 def logout():
     logout_user()
     return redirect(url_for('main.index'))

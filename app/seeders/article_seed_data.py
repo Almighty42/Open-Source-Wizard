@@ -29,7 +29,7 @@ The other half won't touch them — convinced that LLMs hallucinate register add
 Both sides have a point. This article isn't about hype. It's about where AI tools *actually* help in a firmware workflow,
 and where they'll waste your time or silently break your code.
 
-## The Honest Reality
+# The Honest Reality
 
 AI models are trained predominantly on web, cloud, and application-layer code.
 They've seen far less embedded C, and almost no vendor-specific HAL code for a niche MCU like the STM32G0 or RP2040.
@@ -38,9 +38,9 @@ That gap matters.
 But "less useful than for web dev" isn't the same as "useless." There are specific parts of the embedded workflow
 where AI provides genuine leverage — and a few where it's actively dangerous.
 
-## Where AI Actually Helps
+# Where AI Actually Helps
 
-### 1. Boilerplate and Peripheral Initialization
+## 1. Boilerplate and Peripheral Initialization
 
 This is the clearest win. Initializing a UART, configuring a SPI peripheral, or setting up a GPIO interrupt
 requires the same structural pattern every time.
@@ -61,7 +61,7 @@ void MX_USART2_UART_Init(void) {
 }
 ```
 
-### 2. Understanding Unfamiliar Code
+## 2. Understanding Unfamiliar Code
 
 When you open a 3-year-old driver written by someone who left the company,
 asking an LLM to explain what a function does and what could go wrong is genuinely useful.
@@ -73,7 +73,7 @@ asking an LLM to explain what a function does and what could go wrong is genuine
 while (!(I2C1->SR1 & I2C_SR1_ADDR)); // no timeout — hangs forever if NACK
 ```
 
-### 3. Writing Unit Tests
+## 3. Writing Unit Tests
 
 ```c
 // Prompt: "Write Unity test cases for this CRC16 implementation"
@@ -87,7 +87,7 @@ void test_crc16_empty(void) {
 }
 ```
 
-## Where AI Will Waste Your Time
+# Where AI Will Waste Your Time
 
 > **Rule:** Any value that comes from a datasheet must be verified against the datasheet.
 > AI output is a starting point, not a source of truth.
@@ -96,7 +96,7 @@ void test_crc16_empty(void) {
 - RTOS stack sizes and interrupt priorities — you own this
 - Anything safety-critical (IEC 61508, ISO 26262, MISRA C) — keep AI out
 
-## A Real Workflow Example
+# A Real Workflow Example
 
 Here's how I used AI when porting a sensor driver from Arduino to bare-metal ESP32:
 
@@ -107,7 +107,7 @@ Here's how I used AI when porting a sensor driver from Arduino to bare-metal ESP
 
 Total time: ~2 hours. My estimate without AI: 4–5 hours for an unfamiliar SDK.
 
-## Edge AI: Running Models On-Device
+# Edge AI: Running Models On-Device
 
 Modern MCUs like the STM32H7 or ESP32-S3 have enough compute to run small neural networks
 for keyword detection, gesture recognition, or anomaly detection on sensor data.
@@ -135,7 +135,7 @@ This is a bigger topic that deserves its own article.
 I wanted a NAS I could take anywhere — one that fits in a backpack, runs off a battery,
 and doesn't require a wall socket to be useful. This is the full build log.
 
-## Goals
+# Goals
 
 - Dual SSD storage (RAID 1 via `mdadm` or simple JBOD)
 - Battery-backed (5–6 hours runtime)
@@ -143,7 +143,7 @@ and doesn't require a wall socket to be useful. This is the full build log.
 - Runs Docker for services like Samba, Syncthing, and a lightweight dashboard
 - Fits in a 3D-printed enclosure under 200mm × 120mm
 
-## Parts
+# Parts
 
 | Part | Notes |
 |---|---|
@@ -153,7 +153,7 @@ and doesn't require a wall socket to be useful. This is the full build log.
 | 4-port USB 3.0 hub | Powered, plugged into Pi USB 3 port |
 | 3D-printed enclosure | Designed in FreeCAD |
 
-## Power Budget
+# Power Budget
 
 The Pi 4 under load draws roughly 3–4W. Two SSDs at ~2W each gives a worst-case draw
 of about 8W. With a 4-cell 18650 pack at ~15Wh, that gives approximately 1.5–2 hours
@@ -170,7 +170,7 @@ print(f'Voltage: {voltage:.2f}V')
 "
 ```
 
-## Software Stack
+# Software Stack
 
 ```yaml
 # docker-compose.yml
@@ -188,7 +188,7 @@ services:
       - /mnt/data/sync:/var/syncthing
 ```
 
-## What I'd Change
+# What I'd Change
 
 The USB 3.0 hub introduces occasional disconnects under high sequential write load.
 Next version I'd use a proper PCIe-to-SATA HAT instead.

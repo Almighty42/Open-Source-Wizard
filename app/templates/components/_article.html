@@ -1,25 +1,25 @@
 {% macro article_card(article) %}
 <article class="article-card">
-	<p class="date" >{{ article.date }}</p>
-	<div class="article-body">
+	<p class="date" >{{ article.published_at | date }}</p>
+	<div class="article-card-body">
 		<div class="article-info">
 			<p class="title">
-				{{ article.category|upper }}
+				{{ article.primary_category.name | upper }}
 			</p>
 			<p class="read-time" >
-				{{ article.read_time|upper }}
+				{{ article.read_time }} MIN READ
 			</p>
 		</div>
 		<h3>
-			<a href="#">{{ article.title }}</a>
+			<a href="{{ url_for('article.article', slug=article.slug) }}">{{ article.title }}</a>
 		</h3>
 		<div class="article-text" >
-			<p> {{ article.body }} </p>
+			<p> {{ article.excerpt }} </p>
 			<hr>
 			<ul class="article-tags">
 				{% for tag in article.tags %}
 				<li>
-					<a href="#">[ {{ tag|upper }} ]</a>
+					<a href="{{ url_for('article.articles', slug=article.slug) }}">[ {{ tag.name|upper }} ]</a>
 				</li>
 				{% endfor %}
 			</ul>

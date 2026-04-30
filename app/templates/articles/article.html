@@ -4,23 +4,30 @@
 
 {% include 'components/_header.html' %}
 
-<div id="main-page">
-	{% if cover %}
-	<img class="article-cover" src="{{ url_for('static', filename=cover) }}" />
-	{% endif %}
+<div id="main-page" style="align-items: start;">
+{% if cover %}
+<img class="article-cover"
+     src="{{ url_for('static', filename=cover.path) }}"
+     alt="{{ cover.alt_text or '' }}"
+     onload="this.classList.add('loaded')"
+     onerror="this.style.display='none'" />
+{% endif %}
+	<div class="article-header-box">
 	<section class="article-header">
 		<div class="article-info">
 			<div class="article-date">
-				{% if article.published_at %}
+				{% if article.status.value == "published" %}
 				<p>{{ article.published_at | date }}</p>
-				{% else %}
-				UNPUBLISHED
+				{% elif article.status.value == "draft" %}
+				<p>DRAFT</p>
+				{% elif article.status.value == "archived" %}
+				<p>ARCHIVED</p>
 				{% endif %}
 			</div>
 			<div class="article-info-category">
 				<!-- <p>SOFTWARE DEVELOPMENT / EMBEDDED</p> -->
 				<p>{{ primary_category.name | upper }}</p>
-				<p>8 MIN READ</p>
+				<p>{{ article.read_time }} MIN READ</p>
 			</div>
 		</div>
 		<div class="article-title">
@@ -33,17 +40,29 @@
 		</div>
 		<div class="article-description">
 			<p> {{ article.excerpt }}</p>
-			<div class="article-contents">
-				<ul>
-					{% for heading in article_headings %}
-					<li>
-						<a href="#{{ heading.id }}"> {{ heading.text }} </a>
-					</li>
-					{% endfor %}
-				</ul>
-			</div>
+			<!-- <div class="article-contents"> -->
+			<!-- 	<ul class="contents-table"> -->
+			<!-- 		{% for heading in article_headings %} -->
+			<!-- 		<li> -->
+			<!-- 			<a href="#{{ heading.id }}"> {{ heading.text }} </a> -->
+			<!-- 		</li> -->
+			<!-- 		{% endfor %} -->
+			<!-- 	</ul> -->
+			<!-- </div> -->
 		</div>
 	</section>
+	<div class="article-sidebar" >
+		<div class="article-contents">
+			<ul class="contents-table">
+				{% for heading in article_headings %}
+				<li>
+					<a href="#{{ heading.id }}"> {{ heading.text }} </a>
+				</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	</div>
 	<section class="article-body" >
 		{{ article.body | markdown | safe }}
 	</section>

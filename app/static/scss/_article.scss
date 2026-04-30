@@ -13,7 +13,7 @@ article.article-card {
     border-bottom: 2px solid var(--color-border);
   }
 
-  >.article-body {
+  >.article-card-body {
     width: 100%;
     flex-direction: column;
     gap: 16px;
@@ -61,7 +61,10 @@ article.article-card {
 
       >p {
         color: var(--color-fg-2);
-        white-space: pre-line;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
 
       >hr {
@@ -72,9 +75,12 @@ article.article-card {
       }
 
       >ul.article-tags {
+        flex-direction: row;
         gap: 8px;
 
         >li {
+          width: fit-content;
+
           >a {
             color: var(--color-fg-1)
           }
@@ -84,80 +90,103 @@ article.article-card {
   }
 }
 
-section.article-header {
+img.article-cover {
   width: 100%;
-  height: fit-content;
-  flex-direction: column;
+  min-height: 300;
+  max-height: 375px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
   border: 2px solid var(--color-border);
-  gap: 0px !important;
-  margin: 0px 0px 60px 0px !important;
+  margin-bottom: 40px;
 
-  >div.article-info {
-    width: 100%;
+  opacity: 0;
+  transition: opacity 200ms ease;
+
+  &.loaded {
+    opacity: 1;
+  }
+}
+
+div.article-header-box {
+  gap: 24px;
+
+  >section.article-header {
+    width: 80% !important;
     height: fit-content;
-    gap: 20px;
+    flex-direction: column;
+    border: 2px solid var(--color-border);
+    gap: 0px !important;
+    margin: 0px 0px 60px 0px !important;
+    position: relative;
 
-    >div.article-date {
-      width: fit-content;
+    >div.article-info {
+      width: 100%;
       height: fit-content;
-      padding: 12px 12px 12px 12px;
-      border-right: 2px dashed var(--color-border);
+      gap: 20px;
 
-      p {
-        white-space: nowrap;
+      >div.article-date {
         width: fit-content;
-        flex-shrink: 0;
-        /* ← prevents flex from squishing it */
+        height: fit-content;
+        padding: 12px 12px 12px 12px;
+        border-right: 2px dashed var(--color-border);
+
+        p {
+          white-space: nowrap;
+          width: fit-content;
+          flex-shrink: 0;
+          /* ← prevents flex from squishing it */
+        }
+      }
+
+      >div.article-info-category {
+        width: 100%;
+        padding-right: 12px;
+        padding-top: 2px;
+        justify-content: space-between;
+        align-items: center;
       }
     }
 
-    >div.article-info-category {
-      width: 100%;
-      padding-right: 12px;
-      padding-top: 2px;
-      justify-content: space-between;
-      align-items: center;
-    }
-  }
+    >div.article-title {
+      border-top: 2px solid var(--color-border);
+      border-bottom: 2px solid var(--color-border);
+      padding: 20px 12px;
+      // justify-content: center;
+      gap: 16px;
 
-  >div.article-title {
-    border-top: 2px solid var(--color-border);
-    border-bottom: 2px solid var(--color-border);
-    padding: 20px 12px;
-    justify-content: center;
-    gap: 16px;
-
-    >h1 {
-      font-size: var(--text-2xl);
-    }
-  }
-
-  >div.article-description {
-    >p {
-      width: 190%;
-      height: fit-content;
-      padding: 16px 0px 0px 12px;
+      >h1 {
+        font-size: var(--text-2xl);
+      }
     }
 
-    >div.article-contents {
-      width: 100%;
-      padding: 16px 36px 12px 24px;
-      border-left: 2px solid var(--color-border);
+    >div.article-description {
+      >p {
+        width: 190%;
+        height: fit-content;
+        padding: 24px;
+      }
 
-      >ul {
+      >div.article-contents {
         width: 100%;
-        flex-direction: column;
-        gap: 6px;
+        padding: 16px 36px 12px 24px;
+        border-left: 2px solid var(--color-border);
 
-        >li {
+        >ul {
           width: 100%;
+          flex-direction: column;
+          gap: 6px;
 
-          &::before {
-            content: "→";
-            margin-right: 0.5rem;
+          >li {
+            width: 100%;
+
+            &::before {
+              content: "→";
+              margin-right: 0.5rem;
+            }
+
+            >a {}
           }
-
-          >a {}
         }
       }
     }
@@ -184,6 +213,21 @@ section.article-body {
       content: "→";
       margin-right: 0.5rem;
     }
+  }
+}
+
+.article-card-body ul {
+  width: 100%;
+  flex-direction: column;
+  gap: 6px;
+
+  >li {
+    width: 100%;
+
+    // &::before {
+    //   content: "→";
+    //   margin-right: 0.5rem;
+    // }
   }
 }
 
@@ -321,4 +365,38 @@ blockquote {
 .code-copy-btn.copied {
   color: var(--color-fg-2);
   pointer-events: none;
+}
+
+.article-sidebar {
+  border: 2px solid var(--color-border);
+  flex-direction: column;
+  width: fit-content;
+  height: fit-content;
+  max-width: 240px;
+
+  >div.article-contents {
+    width: 100%;
+    // padding: 16px 36px 12px 24px;
+    padding: 12px 12px 12px 12px;
+
+    >ul {
+      width: 100%;
+      flex-direction: column;
+      gap: 6px;
+
+      >li {
+        width: 100%;
+
+        &::before {
+          content: "→";
+          margin-right: 0.5rem;
+          font-size: 14px;
+        }
+
+        >a {
+          font-size: 14px;
+        }
+      }
+    }
+  }
 }

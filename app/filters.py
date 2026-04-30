@@ -9,6 +9,8 @@ from pygments import highlight as pygments_highlight
 from pygments.lexers import get_lexer_by_name, TextLexer
 from pygments.formatters import HtmlFormatter
 
+# TODO: Re-factor filters.py
+
 PYGMENTS_FORMATTER = HtmlFormatter(nowrap=True, stripnl=False)
 
 def load_svg(filename: str):
@@ -252,7 +254,8 @@ def transform_code_block(soup: BeautifulSoup, factory: BeautifulSoup):
 
         raw_code = code.decode_contents() if code else pre.decode_contents()
         if lang_key == "python":
-            print("PYTHON RAW:", repr(raw_code[:300]))
+            pass
+            # print("PYTHON RAW:", repr(raw_code[:300]))
         import html as html_module
         raw_code = html_module.unescape(raw_code)  # ← add this line
         try:
@@ -399,7 +402,8 @@ def format_date(val):
     return val.strftime("%d %b %y").upper()
 
 def extract_headings(body: str) -> list[dict]:
-    html = markdown.markdown(body)
+    body_no_code = re.sub(r'```.*?```', '', body, flags=re.DOTALL)
+    html = markdown.markdown(body_no_code)
     soup = BeautifulSoup(html, "html.parser")
     return [
         {

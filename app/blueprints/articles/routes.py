@@ -1,15 +1,15 @@
 from flask import abort, render_template
+from flask_login import current_user
 from app.models import  Article
-from app.extensions import limiter
 from app import db
-from app.models.article import ArticleAsset, ArticleCategory
+from app.models import ArticleAsset
+from app.models.base import  Status
 from . import article_bp
 from app.filters import extract_headings
 
 from sqlalchemy.orm import joinedload
 
 @article_bp.route("/")
-@limiter.limit("1/second", override_defaults=False)
 def articles():
     # category = request.args.get("category")
     # tag = request.args.get("tag")
@@ -34,8 +34,14 @@ def articles():
     )
 
 @article_bp.route("/<slug>")
-@limiter.limit("1/second", override_defaults=False)
 def article(slug):
+    # TODO: Setup icons for dark mode ( programming languages )
+    # TODO: Back to the top of the page button
+    # TODO: Edit article button
+    # TODO: Images inside of article
+    # TODO: Fix python code indentation
+    # TODO: Add article footer info and tags
+    # TODO: Look into if you need to set anything else up
     article = (
             db.session.query(Article)
             .options(joinedload(Article.article_assets).joinedload(ArticleAsset.asset))
@@ -44,6 +50,10 @@ def article(slug):
     )
 
     if article is None:
+        abort(404)
+
+    if (article.status == Status.draft or article.status == Status.archived) and \
+        not (current_user.is_authenticated and current_user.is_admin):
         abort(404)
 
     article_headings = extract_headings(article.body)

@@ -3,18 +3,18 @@
 	<img src="{{ url_for('static', filename=project.img) }}" />
 	<div class="project-text">
 		<p>
-			{{ project.category|upper }}
+			{{ project.primary_category.name | upper }}
 		</p>
 		<h3>
-			<a href="#">{{ project.title }}</a>
+			<a href="{{ url_for('project.project', slug=project.slug) }}">{{ project.title }}</a>
 		</h3>
 		<div>
-			<p> {{ project.body }} </p>
+			<p> {{ project.excerpt }} </p>
 			<hr>
 			<ul class="article-tags">
 				{% for tag in project.tags %}
 				<li>
-					<a href="#">[ {{ tag|upper }} ]</a>
+					<a href="{{ url_for('project.projects', slug=project.slug) }}">[ {{ tag.name|upper }} ]</a>
 				</li>
 				{% endfor %}
 			</ul>

@@ -14,7 +14,7 @@ login_manager.session_protection = "strong"
 
 limiter = Limiter(
         get_remote_address,
-        default_limits=["200 per day", "50 per hour"],
+        default_limits=["3/second", "200 per day", "75 per hour"],
         storage_uri="memory://",
 )
 

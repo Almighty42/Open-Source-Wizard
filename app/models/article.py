@@ -43,6 +43,13 @@ class Article(db.Model):
             )
     author: orm.Mapped[Optional["User"]] = orm.relationship(back_populates="articles")
 
+    @property
+    def primary_category(self):
+        for ac in self.article_categories:
+            if ac.is_primary:
+                return ac.category
+        return self.categories[0] if self.categories else None
+
 class ArticleCategory(db.Model):
     __tablename__ = "article_categories"
 

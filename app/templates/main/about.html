@@ -7,10 +7,50 @@
 <div id="main-page">
 	<img 
 	data-theme-image
-	data-light-src="/static/assets/hero-about.svg"
-	data-dark-src="/static/assets/hero-about_dark.svg"
-	id="site-hero-about" class="hero" src="{{ url_for('static', filename='assets/hero-about.svg') }}" alt="Hero Section Image Svg" />
-	<h1>Open Source Wizard</h1>
+	data-light-src="/static/assets/star.svg"
+	data-dark-src="/static/assets/star_dark.svg"
+	id="site-star" class="hero" src="{{ url_for('static', filename='assets/star.svg') }}" alt="Hero Section Image Svg" />
+	<div class="about-text" >
+		<h1>Open Source Wizard</h1>
+		<div class="about-text-body">
+			<p>Hello, my name is Luke, and this is Open Source Wizard.</p>
+			<p>OSW is a personal blog where I document what I learn while working through software engineering concepts, systems, and projects. Writing things down helps me understand them more clearly, and this site exists as a record of that process over time.</p>
+			<p>The site is divided into two parts: Articles and Projects.</p>
+			<p><b>Articles</b> focus on explanations of software engineering concepts, current ideas and trends, and structured tutorials.</p>
+			<p><b>Projects</b> document things I have built or contributed to, including the decisions behind them, the issues I ran into, the tradeoffs I had to make, and what I learned along the way.</p>
+			<p>Although my main focus is embedded systems, I also write about networking, web development, and software engineering more broadly.</p>
+			<p>OSW is not a publishing platform for multiple authors. It is my own space for documenting work, sharing ideas, and building a body of writing that reflects my growth as an engineer.</p>
+			<p>The site itself is built with Flask and Python and is part of the project too.</p>
+		</div>
+	</div>
+	<div class="about-links">
+		<ul>
+			<li>
+				<a href="mailto:mail@lukadinic.dev">
+					<img src="{{ url_for('static', filename='assets/about-me-icons/email.svg') }}" />
+					<!-- <p>[ Email ]</p> -->
+				</a>
+			</li>
+			<li>
+				<a href="https://github.com/Almighty42">
+					<img src="{{ url_for('static', filename='assets/about-me-icons/github.svg') }}" />
+					<!-- <p>[ Github ]</p> -->
+				</a>
+			</li>
+			<li>
+				<a href="https:/linkedin.com/in/luka-dinicc">
+					<img src="{{ url_for('static', filename='assets/about-me-icons/linkedin.svg') }}" />
+					<!-- <p>[ LinkedIn ]</p> -->
+				</a>
+			</li>
+			<li>
+				<a href="https://github.com/Almighty42/Open-Source-Wizard">
+					<img src="{{ url_for('static', filename='assets/about-me-icons/source-code.svg') }}" />
+					<!-- <p>[ Source code ]</p> -->
+				</a>
+			</li>
+		</ul>
+	</div>
 </div>
 
 {% include 'components/_footer.html' %}
