@@ -254,7 +254,7 @@ thinking it was unnecessary boilerplate.
         "excerpt": "LLMs won't replace embedded engineers — but they're already cutting debug time in half and generating driver boilerplate in seconds. Here's how I actually use AI tools in my firmware workflow.",
         "read_time": 8,
         "is_featured": True,
-        "status": "draft",
+        "status": "published",
         "seo_title": "",
         "seo_description": "",
         "tags": ["AI", "Embedded", "ESP32", "C", "Debugging"],
@@ -508,4 +508,314 @@ The embedded engineer's job isn't going away. The skill ceiling is just shifting
 
 """,
     },
+    {
+    "title": "Writing a UART Driver from Scratch on STM32",
+    "slug": "uart-driver-stm32",
+    "excerpt": "No HAL, no CubeMX. Just registers, a reference manual, and a working serial driver by the end. A ground-up walkthrough of bare-metal UART on the STM32F4.",
+    "read_time": 13,
+    "is_featured": True,
+    "status": "published",
+    "seo_title": "Bare-Metal UART Driver STM32 — No HAL",
+    "seo_description": "Step-by-step guide to writing a UART driver from scratch on the STM32F4 without HAL or CubeMX. Register-level programming explained.",
+    "tags": ["STM32", "C", "Embedded", "Debugging"],
+    "category": "Embedded Systems",
+    "cover": "uploads/articles/uart-stm32-cover.jpg",
+    "inline_assets": [],
+    "diagrams": [],
+    "attachments": [],
+    "body": """\
+Most STM32 tutorials start with CubeMX. You click through a GUI, generate a project, and a working UART appears as if by magic. That is fine for shipping a product. It is terrible for actually understanding what is happening. This article skips the magic and writes the driver register by register.
+
+Target: STM32F411, USART2, 115200 baud, 8N1, TX only first, then RX with interrupt-driven ring buffer.
+
+# Clock Setup
+
+Before touching USART2, you need to know which bus it lives on. On the STM32F4, USART2 is on APB1. The reference manual (RM0383) section 6.3 gives you the clock tree.
+
+```c
+// Enable USART2 clock
+RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+
+// Enable GPIOA clock (PA2 = TX, PA3 = RX)
+RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+```
+
+The order matters. Configure the GPIO clock before you touch the GPIO registers, or you will fault immediately with no useful error message.
+
+# GPIO Alternate Function Configuration
+
+PA2 and PA3 need to be set to alternate function mode, and then the specific alternate function number (AF7 for USART2 on this package) needs to be written to the AFR registers.
+
+```c
+// Set PA2 and PA3 to alternate function mode (MODER = 0b10)
+GPIOA->MODER &= ~((3 << (2*2)) | (3 << (3*2)));
+GPIOA->MODER |=  ((2 << (2*2)) | (2 << (3*2)));
+
+// Set alternate function 7 (USART2) for PA2 and PA3
+// Both pins are in AFRL (covers pins 0–7)
+GPIOA->AFR &= ~((0xF << (4*2)) | (0xF << (4*3)));
+GPIOA->AFR |=  ((7   << (4*2)) | (7   << (4*3)));
+```
+
+This is where the reference manual earns its keep — but note that the alternate function mapping lives in the device datasheet (DS10314), not the reference manual. They are separate documents. The datasheet has the pin/AF table. The reference manual has the register descriptions. You need both.
+
+## GPIO Speed and Output Type
+
+For UART at 115200 baud, the default speed setting is fine. For higher baud rates (1Mbaud+) you should explicitly set the output speed:
+
+```c
+// Set PA2 to high speed (needed for baud rates above ~1Mbaud)
+GPIOA->OSPEEDR |= (3 << (2*2));
+```
+
+# Baud Rate Calculation
+
+The baud rate register (BRR) splits into a mantissa and a fractional part. The formula is:
+
+```
+USARTDIV = fCK / (16 × BaudRate)
+```
+
+With APB1 running at 42MHz and a target of 115200 baud:
+
+```
+USARTDIV = 42,000,000 / (16 × 115200) = 22.786
+Mantissa = 22     → 0x16
+Fraction = 0.786 × 16 = 12.57 → round to 13 → 0xD
+BRR = (0x16 << 4) | 0xD = 0x016D
+```
+
+```c
+USART2->BRR = 0x016D;
+```
+
+If you get this wrong the UART will transmit garbage — not silence, not nothing, actual garbage bytes. Always calculate by hand first, then verify on a logic analyser or oscilloscope.
+
+# Enabling the Peripheral
+
+```c
+// Enable TX, RX, and the USART peripheral itself
+USART2->CR1 |= USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
+```
+
+Do not enable `USART_CR1_UE` until all configuration is complete. The reference manual explicitly states that certain fields must not be written while UE is set.
+
+# Transmit: Polling
+
+```c
+void uart_putchar(uint8_t c) {
+    while (!(USART2->SR & USART_SR_TXE));
+    USART2->DR = c;
+}
+
+void uart_print(const char *s) {
+    while (*s) uart_putchar((uint8_t)*s++);
+}
+```
+
+`TXE` (Transmit Data Register Empty) goes high when the data register can accept a new byte. This is a blocking, polling transmit — correct for bringing up the peripheral, not ideal for production.
+
+## Waiting for Transmission Complete
+
+If you need to know when the last byte has actually shifted out of the hardware (before disabling the peripheral or entering sleep), wait for `TC` not `TXE`:
+
+```c
+void uart_flush(void) {
+    while (!(USART2->SR & USART_SR_TC));
+}
+```
+
+`TXE` means the shift register has accepted your byte. `TC` means the shift register has finished clocking it out onto the wire. For most logging use cases you want `TXE`. For RS-485 direction switching you need `TC`.
+
+# Receive: Interrupt-Driven Ring Buffer
+
+Polling RX works for a terminal echo test. For anything real, use the RXNE interrupt with a ring buffer so the main loop can process bytes at its own pace.
+
+```c
+#define RX_BUF_SIZE 128
+
+static volatile uint8_t rx_buf[RX_BUF_SIZE];
+static volatile uint8_t rx_head = 0;
+static volatile uint8_t rx_tail = 0;
+
+void USART2_IRQHandler(void) {
+    if (USART2->SR & USART_SR_RXNE) {
+        rx_buf[rx_head] = (uint8_t)USART2->DR;
+        rx_head = (rx_head + 1) % RX_BUF_SIZE;
+    }
+
+    // Clear overrun error if it occurred — otherwise RXNE stops firing
+    if (USART2->SR & USART_SR_ORE) {
+        volatile uint32_t dummy = USART2->DR;
+        (void)dummy;
+    }
+}
+
+uint8_t uart_available(void) {
+    return rx_head != rx_tail;
+}
+
+uint8_t uart_read(void) {
+    while (!uart_available());
+    uint8_t c = rx_buf[rx_tail];
+    rx_tail = (rx_tail + 1) % RX_BUF_SIZE;
+    return c;
+}
+```
+
+Enable the interrupt in the NVIC and in the USART control register:
+
+```c
+USART2->CR1 |= USART_CR1_RXNEIE;
+NVIC_SetPriority(USART2_IRQn, 1);
+NVIC_EnableIRQ(USART2_IRQn);
+```
+
+The overrun error handling in the ISR is not optional. If your main loop is slow and bytes arrive faster than you read them, `ORE` sets and the `RXNE` interrupt stops firing until you clear it. The clear sequence on the STM32F4 is a read of SR followed by a read of DR — which the ISR already performs when it reads the received byte. But if you only check `RXNE` and `ORE` has set without `RXNE`, you need the dummy read to clear it.
+
+# DMA Transmit
+
+For transmitting large buffers (log dumps, binary protocol frames), DMA is the right approach. It frees the CPU entirely.
+
+```c
+void uart_dma_send(const uint8_t *data, uint16_t len) {
+    // Wait for previous DMA transfer to complete
+    while (DMA1_Stream6->CR & DMA_SxCR_EN);
+
+    // Configure DMA1 Stream6 (USART2 TX)
+    DMA1_Stream6->PAR  = (uint32_t)&USART2->DR;
+    DMA1_Stream6->M0AR = (uint32_t)data;
+    DMA1_Stream6->NDTR = len;
+    DMA1_Stream6->CR   = (4 << DMA_SxCR_CHSEL_Pos)  // Channel 4 = USART2_TX
+                       | DMA_SxCR_MINC               // Memory increment
+                       | DMA_SxCR_DIR_0              // Memory to peripheral
+                       | DMA_SxCR_EN;
+
+    USART2->CR3 |= USART_CR3_DMAT;  // Enable USART DMA transmit request
+}
+```
+
+DMA channel assignments are in the reference manual (RM0383 table 28). They are fixed per peripheral — you cannot choose them. Getting the channel wrong means the DMA controller ignores the request silently.
+
+# Testing the Driver
+
+The simplest test: echo every received byte back to the sender.
+
+```c
+int main(void) {
+    SystemClock_Config();
+    uart_init();
+    uart_print("UART ready\r\n");
+
+    while (1) {
+        if (uart_available()) {
+            uint8_t c = uart_read();
+            uart_putchar(c);
+        }
+    }
+}
+```
+
+Connect a USB-UART adapter, open a terminal at 115200 baud, and start typing. Every character should echo back. If it does, your driver is working. If you see garbage, your baud rate calculation is wrong. If you see nothing, your GPIO alternate function configuration is wrong — check the datasheet pin/AF table again.
+
+## The Pattern Generalises
+
+The workflow you used here — enable clocks, configure GPIO alternate functions, set BRR, configure CR1, enable peripheral — is exactly the same for every peripheral on the chip. SPI, I2C, TIM all follow the same sequence. The register names differ, the clock bus differs, but the steps are identical.
+
+Learn this pattern on UART because UART is debuggable with any cheap USB adapter. Then apply it to the next peripheral, and the one after that.
+""",
+    },
+{
+    "title": "Setting Up Syncthing on a Raspberry Pi",
+    "slug": "syncthing-raspberry-pi",
+    "excerpt": "Syncthing as a self-hosted Dropbox replacement. Installation, systemd service, firewall rules, and making it actually survive reboots.",
+    "read_time": 5,
+    "is_featured": False,
+    "status": "published",
+    "seo_title": "Syncthing on Raspberry Pi — Self-Hosted File Sync",
+    "seo_description": "How to install and configure Syncthing on a Raspberry Pi as a self-hosted file sync server. systemd, firewall, and remote web UI setup.",
+    "tags": ["Raspberry Pi", "Linux", "Self-Hosting"],
+    "category": "Self-Hosting",
+    "cover": "uploads/articles/syncthing-cover.jpg",
+    "inline_assets": [],
+    "diagrams": [],
+    "attachments": [],
+    "body":  """Syncthing is a peer-to-peer file synchronisation tool. No cloud, no account, no third party holding your files. You run it on your devices and they sync directly with each other. A Raspberry Pi makes a good always-on node — it is always reachable, consumes almost no power, and can act as the anchor that other devices sync through when they are not on the same network.
+
+# Installation
+
+Syncthing is in the Raspberry Pi OS repositories, but it is usually a version or two behind. Install from the official APT repository instead:
+
+```bash
+curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
+echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
+sudo apt update && sudo apt install syncthing
+```
+
+# Running as a systemd Service
+
+Do not run Syncthing manually. Set it up as a user service so it starts on boot and restarts on failure.
+
+```bash
+# Enable and start as the pi user
+systemctl --user enable syncthing
+systemctl --user start syncthing
+
+# Allow user services to run without an active login session
+sudo loginctl enable-linger pi
+```
+
+`enable-linger` is the step most tutorials skip. Without it, the user service stops the moment you log out of the SSH session.
+
+Check that it is running:
+
+```bash
+systemctl --user status syncthing
+```
+
+# Accessing the Web UI Remotely
+
+By default Syncthing binds its web UI to `127.0.0.1:8384` — only accessible from localhost. To reach it from your laptop, either use an SSH tunnel or change the bind address.
+
+SSH tunnel (safer — no firewall changes needed):
+
+```bash
+ssh -L 8384:localhost:8384 pi@raspberrypi.local
+# Then open http://localhost:8384 in your browser
+```
+
+Or edit the config to bind to all interfaces — only do this if the Pi is on a trusted local network:
+
+```xml
+<!-- ~/.config/syncthing/config.xml -->
+<gui enabled="true" tls="false">
+    <address>0.0.0.0:8384</address>
+    ...
+</gui>
+```
+
+Restart Syncthing after editing the config: `systemctl --user restart syncthing`.
+
+# Firewall Rules
+
+Syncthing uses port 22000 for device-to-device sync traffic. If you have `ufw` enabled:
+
+```bash
+sudo ufw allow 22000/tcp
+sudo ufw allow 22000/udp
+sudo ufw allow 21027/udp  # local discovery
+```
+
+Without port 22000 open, devices on different networks cannot connect directly and fall back to relay servers, which are slower.
+
+# Adding a Shared Folder
+
+Once the web UI is open, adding a folder is straightforward: click Add Folder, set the path on the Pi (e.g. `/home/pi/sync`), and save. Then add your other devices by exchanging device IDs and share the folder with them.
+
+The device ID is shown in Actions → Show ID. It is a long alphanumeric string that uniquely identifies each Syncthing instance. Share yours with the devices you want to sync with, and add theirs in return.
+
+# Keeping the Data Drive Mounted
+
+If your sync folder lives on an external drive, make sure it mounts before Syncthing starts. Add it to `/etc/fstab` with the `nofail` option so a missing drive does not prevent boot:
+    """}
 ]

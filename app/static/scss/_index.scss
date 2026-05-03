@@ -44,14 +44,8 @@
       height: 1px;
     }
 
-    >.articles {
-      gap: 3rem;
-      width: 100%;
-      height: fit-content;
-      flex-direction: column;
-
-    }
   }
+
 
   >div.section-explore {
     width: 100%;
@@ -60,4 +54,13 @@
       color: var(--color-fg-1);
     }
   }
+}
+
+
+.articles {
+  gap: 3rem;
+  width: 100%;
+  height: fit-content;
+  flex-direction: column;
+
 }

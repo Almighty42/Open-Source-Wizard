@@ -36,3 +36,10 @@ def extract_headings(body: str) -> list[dict]:
         }
         for h1 in soup.find_all("h1")
     ]
+
+
+def replace_arg(args, key, value):
+    d = args.to_dict(flat=False)
+    d[key] = [value]
+    from urllib.parse import urlencode
+    return urlencode(d, doseq=True)

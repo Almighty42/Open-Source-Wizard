@@ -1,0 +1,11 @@
+{% import "components/_article.html" as article_comp %}
+{% import "components/_pagination.html" as paginator %}
+
+{% if articles %}
+    {% for article in articles %}
+        {{ article_comp.article_card(article) }}
+    {% endfor %}
+    {{ paginator.pagination_controls(pagination) }}
+{% else %}
+    <p>No articles found.</p>
+{% endif %}
