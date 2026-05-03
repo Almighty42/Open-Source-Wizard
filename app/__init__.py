@@ -5,6 +5,7 @@ from scripts.seed import seed_bp
 from app.blueprints import main_bp, auth_bp, article_bp, project_bp, errors_bp
 from app.extensions import limiter
 from app.filters import register_filters
+from app.models.utils import inline_svg
 
 import sqlalchemy as sa
 
@@ -16,6 +17,8 @@ def create_app(config=Config):
     login_manager.init_app(app)
     migrate.init_app(app, db)
     limiter.init_app(app)
+
+    app.jinja_env.globals["inline_svg"] = inline_svg
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)

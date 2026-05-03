@@ -150,3 +150,13 @@ searchInput?.addEventListener("input", () => {
 	clearTimeout(debounceTimer);
 	debounceTimer = setTimeout(fetchArticles, 300);
 });
+
+const topLink = document.getElementById("top-link");
+
+window.addEventListener("scroll", () => {
+	if (window.scrollY > 50) {
+		topLink.classList.add("visible");
+	} else {
+		topLink.classList.remove("visible");
+	}
+});

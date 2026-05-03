@@ -5,10 +5,13 @@ from bs4 import BeautifulSoup
 
 from .markdown import group_article_content
 from .sanitize import ALLOWED_TAGS, ALLOWED_ATTRIBUTES
+from .assets import resolve_asset_images
 
-def render_markdown(val):
+def render_markdown(val, article_assets=None):
     if not val:
         return ""
+    if article_assets:
+        val = resolve_asset_images(val, article_assets)
     html = markdown.markdown(
         val,
         extensions=["fenced_code", "tables", "toc"],
@@ -25,6 +28,13 @@ def format_date(val):
         return ""
     return val.strftime("%d %b %y").upper()
 
+def _slugify(text: str) -> str:
+    text = text.lower().strip()
+    text = re.sub(r'[^\w\s-]', '', text)   
+    text = re.sub(r'[\s_]+', '-', text)   
+    text = re.sub(r'-+', '-', text)      
+    return text
+
 def extract_headings(body: str) -> list[dict]:
     body_no_code = re.sub(r'```.*?```', '', body, flags=re.DOTALL)
     html = markdown.markdown(body_no_code)
@@ -32,7 +42,7 @@ def extract_headings(body: str) -> list[dict]:
     return [
         {
             "text": h1.get_text(strip=True),
-            "id": h1.get_text(strip=True).lower().strip().replace(" ", "-").replace("/", "-")
+            "id": _slugify(h1.get_text(strip=True))
         }
         for h1 in soup.find_all("h1")
     ]

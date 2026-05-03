@@ -312,7 +312,7 @@ blockquote {
 
 .code-actions svg {
   color: inherit;
-  fill: none;
+  // fill: none;
 }
 
 .code-lang {
@@ -368,16 +368,19 @@ blockquote {
 }
 
 .article-sidebar {
-  border: 2px solid var(--color-border);
   flex-direction: column;
   width: fit-content;
   height: fit-content;
   max-width: 240px;
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 16px;
 
   >div.article-contents {
     width: 100%;
+    border: 2px solid var(--color-border);
     // padding: 16px 36px 12px 24px;
-    padding: 12px 12px 12px 12px;
+    padding: 12px;
 
     >ul {
       width: 100%;
@@ -398,5 +401,43 @@ blockquote {
         }
       }
     }
+  }
+
+  >a.article-edit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid var(--color-border);
+    padding: 6px 12px;
+    width: fit-content;
+    color: var(--color-fg-1);
+  }
+
+  >a.article-edit:hover {
+    background: var(--color-fg-1);
+    color: var(--color-bg);
+  }
+}
+
+section.article-footer {
+  margin-bottom: 4rem !important;
+
+  >div.article-footer-attachments {
+    flex-direction: column;
+    border: 2px solid var(--color-border);
+    padding: 12px;
+    gap: 12px;
+
+    >a.article-attachment {
+      display: flex;
+      gap: 8px;
+    }
+  }
+
+  >div.article-footer-tags {
+    border: 2px solid var(--color-border);
+    padding: 12px;
+    gap: 16px;
+
   }
 }

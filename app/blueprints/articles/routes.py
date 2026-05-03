@@ -3,7 +3,7 @@ from flask_login import current_user
 from app.models import  Article
 from app import db
 from app.models import ArticleAsset, Category, Tag
-from app.models.base import  Status
+from app.models.base import  Status, Role
 from . import article_bp
 from app.filters import extract_headings
 
@@ -11,6 +11,7 @@ from sqlalchemy.orm import joinedload
 
 @article_bp.route("/")
 def articles():
+    # TODO: Implement date filtering later...
     q         = request.args.get("q", "").strip()
     category  = request.args.get("category", "")
     tag_slugs = request.args.getlist("tag")
@@ -51,14 +52,9 @@ def articles():
 
 @article_bp.route("/<slug>")
 def article(slug):
-    # TODO: Setup icons for dark mode ( programming languages )
-    # TODO: Back to the top of the page button
-    # TODO: Edit article button
     # TODO: Images inside of article
     # TODO: Fix python code indentation
-    # TODO: Add article footer info and tags
     # TODO: Look into if you need to set anything else up
-    # TODO: Content links dont always work because of how headings are written
     article = (
             db.session.query(Article)
             .options(joinedload(Article.article_assets).joinedload(ArticleAsset.asset))
@@ -77,11 +73,35 @@ def article(slug):
     cover = next((aa.asset for aa in article.article_assets if aa.is_cover), None)
     tags = [at.tag for at in article.article_tags]
     primary_category = next((ac.category for ac in article.article_categories if ac.is_primary), None)
+    attachments = [
+        aa
+        for aa in article.article_assets
+        if aa.role == Role.attachment
+    ]
 
     return render_template("articles/article.html", 
                            article=article,
                            cover=cover,
                            article_headings=article_headings,
                            tags=tags,
-                           primary_category=primary_category
+                           primary_category=primary_category,
+                           attachments=attachments,
+                           is_auth=current_user.is_authenticated
     )
+
+@article_bp.route("/edit-article/<slug>", methods=['GET', 'POST'])
+def edit_article(slug):
+    article = (
+            db.session.query(Article)
+            .options(joinedload(Article.article_assets).joinedload(ArticleAsset.asset))
+            .where(Article.slug == slug)
+            .first()
+    )
+
+    if article is None:
+        abort(404)
+
+    if not (current_user.is_authenticated and current_user.is_admin):
+        abort(404)
+
+    return render_template("articles/edit-article.html", article=article)

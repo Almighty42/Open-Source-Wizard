@@ -40,15 +40,6 @@
 		</div>
 		<div class="article-description">
 			<p> {{ article.excerpt }}</p>
-			<!-- <div class="article-contents"> -->
-			<!-- 	<ul class="contents-table"> -->
-			<!-- 		{% for heading in article_headings %} -->
-			<!-- 		<li> -->
-			<!-- 			<a href="#{{ heading.id }}"> {{ heading.text }} </a> -->
-			<!-- 		</li> -->
-			<!-- 		{% endfor %} -->
-			<!-- 	</ul> -->
-			<!-- </div> -->
 		</div>
 	</section>
 	<div class="article-sidebar" >
@@ -61,10 +52,46 @@
 				{% endfor %}
 			</ul>
 		</div>
+		{% if is_auth %}
+		<a class="article-edit" href="{{ url_for('article.edit_article', slug=article.slug) }}">
+			{{ inline_svg('assets/edit.svg') }}
+			Edit
+		</a>
+		{% endif %}
 	</div>
 	</div>
 	<section class="article-body" >
 		{{ article.body | markdown | safe }}
+	</section>
+	<a id="top-link" href="#">
+		<img src="{{ url_for('static', filename='assets/to_the_top.svg') }}" />
+	</a>
+	<section class="article-footer" >
+		{% if attachments %}
+		<div class="article-footer-attachments">
+			{% for attachment in attachments %}
+			<a class="article-attachment" 
+				href="{{ url_for('static', filename=attachment.asset.path) }}" 
+				download
+				target="_blank"
+				rel="noopener noreferrer">
+				{% if attachment.role == "attachment" %}
+				{{ inline_svg('assets/attachment.svg') }}
+				{% elif attachment.role == "video" %}
+				{{ inline_svg('assets/video.svg') }}
+				{% elif attachment.role == "gallery" %}
+				{{ inline_svg('assets/gallery.svg') }}
+				{% endif %}
+				{{ attachment.asset.caption }}
+			</a>
+			{% endfor %}
+		</div>
+		{% endif %}
+		<div class="article-footer-tags">
+			{% for tag in tags %}
+			<a href="{{ url_for('article.articles', tag=tag.slug) }}"> [ {{ tag.name | upper }} ] </a>
+			{% endfor %}
+		</div>
 	</section>
 </div>
 
