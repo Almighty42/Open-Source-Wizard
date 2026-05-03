@@ -19,7 +19,7 @@
 			<ul class="article-tags">
 				{% for tag in article.tags %}
 				<li>
-					<a href="{{ url_for('article.articles', slug=article.slug) }}">[ {{ tag.name|upper }} ]</a>
+					<a href="{{ url_for('article.articles', tag=tag.slug) }}">[ {{ tag.name|upper }} ]</a>
 				</li>
 				{% endfor %}
 			</ul>
