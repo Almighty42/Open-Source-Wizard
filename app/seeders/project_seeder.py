@@ -5,7 +5,7 @@ from app.models import Project, ProjectTag, ProjectCategory, ProjectAsset, Tag, 
 from app.seeders.project_seed_data import PROJECTS
 from app.models.base import Status
 from app.extensions import db
-from app.models.utils import utc_now
+from app.utils import utc_now
 
 fake = Faker()
 Faker.seed(42)

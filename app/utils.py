@@ -1,4 +1,3 @@
-# TODO: Transfer this file somewhere else
 import os
 from markupsafe import Markup
 from flask import current_app

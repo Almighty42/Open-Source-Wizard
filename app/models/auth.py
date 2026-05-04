@@ -1,7 +1,7 @@
 from flask_login import UserMixin
 from typing import List
 from datetime import datetime, timedelta
-from app.models.utils import utc_now
+from app.utils import utc_now
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlalchemy as sql
 import sqlalchemy.orm as orm

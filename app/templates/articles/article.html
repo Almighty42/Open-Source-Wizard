@@ -32,9 +32,7 @@
 		</div>
 		<div class="article-title">
 			{% if article.is_featured %}
-			<img data-theme-image data-light-src="/static/assets/featured.svg"
-				data-dark-src="/static/assets/featured_dark.svg" class="article-featured-icon"
-				src="{{ url_for('static', filename='assets/featured.svg') }}" />
+			{{ inline_svg('assets/featured.svg') }}
 			{% endif %}
 			<h1> {{ article.title }} </h1>
 		</div>
@@ -61,7 +59,7 @@
 	</div>
 	</div>
 	<section class="article-body" >
-		{{ article.body | markdown | safe }}
+		{{ rendered_body | safe }}
 	</section>
 	<a id="top-link" href="#">
 		<img src="{{ url_for('static', filename='assets/to_the_top.svg') }}" />
@@ -93,6 +91,12 @@
 			{% endfor %}
 		</div>
 	</section>
+</div>
+
+<div id="lightbox" aria-modal="true" role="dialog">
+    <button id="lightbox-close" aria-label="Close">&times;</button>
+    <img id="lightbox-img" src="" alt="" />
+    <p id="lightbox-caption"></p>
 </div>
 
 {% include 'components/_footer.html' %}

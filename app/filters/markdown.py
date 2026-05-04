@@ -11,7 +11,7 @@ def group_article_content(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
     factory = BeautifulSoup("", "html.parser")
 
-    transform_blockquotes(soup, factory)
+    transform_blockquotes(soup, factory) 
     transform_code_block(soup, factory)
 
     elements = [el for el in soup.contents if isinstance(el, Tag)]
@@ -23,5 +23,6 @@ def render_markdown(val: str) -> str:
         return ""
 
     html = markdown.markdown(val, extensions=["fenced_code", "tables", "toc"])
+    html = bleach.clean(html, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES)
     html = group_article_content(html)
-    return bleach.clean(html, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES)
+    return html

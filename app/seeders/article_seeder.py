@@ -3,7 +3,7 @@ from app.seeders.base import BaseSeeder
 from app.models import Article, ArticleTag, ArticleCategory, ArticleAsset, Tag, Category, Asset, User
 from app.models.base import Status
 from app.extensions import db
-from app.models.utils import utc_now
+from app.utils import utc_now
 from app.seeders.article_seed_data import ARTICLES
 
 fake = Faker()
@@ -83,6 +83,28 @@ def _seed_article_joins(article, data):
                 role="attachment",
                 is_cover=False
             ))
+
+    # Videos
+    for asset_path in data.get("videos", []):
+        asset = _get_or_warn(Asset, "path", asset_path)
+        if asset:
+            db.session.add(ArticleAsset(
+                article_id=article.id,
+                asset_id=asset.id,
+                role="video",
+                is_cover=False
+            ))
+
+    # Gallery
+    # for asset_path in data.get("gallery", []):
+    #     asset = _get_or_warn(Asset, "path", asset_path)
+    #     if asset:
+    #         db.session.add(ArticleAsset(
+    #             article_id=article.id,
+    #             asset_id=asset.id,
+    #             role="gallery",
+    #             is_cover=False
+    #         ))
 
 class ArticleSeeder(BaseSeeder):
     def run(self):

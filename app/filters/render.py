@@ -16,12 +16,14 @@ def render_markdown(val, article_assets=None):
         val,
         extensions=["fenced_code", "tables", "toc"],
     )
+
     def preserve_blank_lines(m):
         return m.group(0).replace("\n\n", "\n \n")
     html = re.sub(r'<pre><code[^>]*>.*?</code></pre>', preserve_blank_lines, html, flags=re.DOTALL)
     
+    html = bleach.clean(html, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES)
     html = group_article_content(html)
-    return bleach.clean(html, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES)
+    return html
 
 def format_date(val):
     if val is None:

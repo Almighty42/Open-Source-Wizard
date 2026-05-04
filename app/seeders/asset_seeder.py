@@ -70,6 +70,11 @@ CORE_ASSETS = [
         "alt_text": "Schematic showing ESP32 power circuit with LDO regulator",
         "caption": "Power supply circuit for the ESP32 sensor node",
     },
+    {
+        "path": "uploads/diagrams/i2c-sensor-block.png",
+        "alt_text": "Block diagram showing MCU to I2C sensor connection",
+        "caption": "I2C bus topology for the sensor node",
+    },
 
     # --- Attachments ---
     {
@@ -88,21 +93,10 @@ CORE_ASSETS = [
         "caption": "AI-assisted embedded development workflow checklist",
     },
 
-    # --- Gallery ---
     {
-        "path": "uploads/gallery/trmnl-ui-screenshot.png",
-        "alt_text": "TRMNL web dashboard showing plugin grid",
-        "caption": "TRMNL plugin grid after initial setup",
-    },
-    {
-        "path": "uploads/gallery/kindle-dashboard-closeup.jpg",
-        "alt_text": "Close-up of Kindle screen showing weather and calendar",
-        "caption": "Weather and calendar widgets on the Kindle dashboard",
-    },
-    {
-        "path": "uploads/gallery/esp32-sensor-enclosure.jpg",
-        "alt_text": "3D-printed enclosure for the ESP32 sensor node",
-        "caption": "Printed enclosure before final assembly",
+        "path": "uploads/videos/esp32-demo.mp4",
+        "alt_text": None,
+        "caption": "ESP32 sensor node demo",
     },
 ]
 

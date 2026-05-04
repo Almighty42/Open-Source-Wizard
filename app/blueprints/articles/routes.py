@@ -1,5 +1,6 @@
 from flask import abort, render_template, request
 from flask_login import current_user
+from app.filters.render import render_markdown
 from app.models import  Article
 from app import db
 from app.models import ArticleAsset, Category, Tag
@@ -7,11 +8,13 @@ from app.models.base import  Status, Role
 from . import article_bp
 from app.filters import extract_headings
 
+from app.decorators import admin_required
+
 from sqlalchemy.orm import joinedload
 
 @article_bp.route("/")
 def articles():
-    # TODO: Implement date filtering later...
+    # TODO: Implement date filtering at a later date...
     q         = request.args.get("q", "").strip()
     category  = request.args.get("category", "")
     tag_slugs = request.args.getlist("tag")
@@ -52,9 +55,7 @@ def articles():
 
 @article_bp.route("/<slug>")
 def article(slug):
-    # TODO: Images inside of article
-    # TODO: Fix python code indentation
-    # TODO: Look into if you need to set anything else up
+    # TODO: Add References UI / Functionality at a later date...
     article = (
             db.session.query(Article)
             .options(joinedload(Article.article_assets).joinedload(ArticleAsset.asset))
@@ -78,9 +79,11 @@ def article(slug):
         for aa in article.article_assets
         if aa.role == Role.attachment
     ]
+    rendered_body = render_markdown(article.body, article.article_assets)
 
     return render_template("articles/article.html", 
                            article=article,
+                           rendered_body=rendered_body,
                            cover=cover,
                            article_headings=article_headings,
                            tags=tags,
@@ -90,6 +93,7 @@ def article(slug):
     )
 
 @article_bp.route("/edit-article/<slug>", methods=['GET', 'POST'])
+@admin_required
 def edit_article(slug):
     article = (
             db.session.query(Article)
@@ -101,7 +105,9 @@ def edit_article(slug):
     if article is None:
         abort(404)
 
-    if not (current_user.is_authenticated and current_user.is_admin):
-        abort(404)
-
     return render_template("articles/edit-article.html", article=article)
+
+@article_bp.route("/add-article", methods=['GET', 'POST'])
+@admin_required
+def add_article():
+    return render_template("articles/add-article.html")

@@ -24,8 +24,18 @@ def extract_language(code: Tag | None) -> str:
     return ""
 
 def extract_raw_code(pre: Tag, code: Tag | None) -> str:
-    raw = code.decode_contents() if code else pre.decode_contents()
-    return html_module.unescape(raw)
+    node = code if code else pre
+
+    parts = []
+    for child in node.children:
+        if isinstance(child, str):
+            parts.append(child)
+        elif getattr(child, "name", None) == "br":
+            parts.append("\n")
+        else:
+            parts.append(child.get_text())
+
+    return html_module.unescape("".join(parts))
 
 def highlight_code(raw_code: str, lang_key: str) -> str:
     try:
@@ -49,7 +59,7 @@ def build_language_icon(factory: BeautifulSoup, lang_key: str) -> Tag:
 
     return lang_icon
 
-def build_copy_button(factory: BeautifulSoup) -> Tag:
+def build_copy_button(factory: BeautifulSoup, raw_code: str) -> Tag:
     copy_text = factory.new_tag("p")
     copy_text["class"] = "code-copy-text"
     copy_text.string = "COPY"
@@ -61,9 +71,11 @@ def build_copy_button(factory: BeautifulSoup) -> Tag:
     if copy_svg:
         copy_icon_span.append(copy.deepcopy(copy_svg))
 
+    cleaned_code = raw_code.replace("\u00A0", " ").replace("\xa0", " ")
+
     copy_btn = factory.new_tag("div")
     copy_btn["class"] = "code-copy-btn"
-    copy_btn["data-copy"] = ""
+    copy_btn["data-copy"] = cleaned_code
     copy_btn["role"] = "button"
     copy_btn["aria-label"] = "Copy code"
     copy_btn.append(copy_icon_span)
@@ -71,14 +83,14 @@ def build_copy_button(factory: BeautifulSoup) -> Tag:
 
     return copy_btn
 
-def build_code_actions(factory: BeautifulSoup, lang_key: str) -> Tag:
+def build_code_actions(factory: BeautifulSoup, lang_key: str, raw_code: str) -> Tag:
     lang_div = factory.new_tag("div")
     lang_div["class"] = "code-lang"
     lang_div.append(build_language_icon(factory, lang_key))
 
     actions = factory.new_tag("div")
     actions["class"] = "code-actions"
-    actions.append(build_copy_button(factory))
+    actions.append(build_copy_button(factory, raw_code))
     actions.append(lang_div)
 
     return actions
@@ -103,10 +115,10 @@ def build_highlight_block(factory: BeautifulSoup, highlighted_html: str, lang_ke
 
     return code_content
 
-def build_code_wrapper(factory: BeautifulSoup, highlighted_html: str, lang_key: str) -> Tag:
+def build_code_wrapper(factory: BeautifulSoup, highlighted_html: str, lang_key: str, raw_code: str) -> Tag:
     wrapper = factory.new_tag("div")
     wrapper["class"] = "code-block"
-    wrapper.append(build_code_actions(factory, lang_key))
+    wrapper.append(build_code_actions(factory, lang_key, raw_code))
     wrapper.append(build_highlight_block(factory, highlighted_html, lang_key))
     return wrapper
 
@@ -116,5 +128,5 @@ def transform_code_block(soup: BeautifulSoup, factory: BeautifulSoup) -> None:
         lang_key = extract_language(code)
         raw_code = extract_raw_code(pre, code)
         highlighted_html = highlight_code(raw_code, lang_key)
-        wrapper = build_code_wrapper(factory, highlighted_html, lang_key)
+        wrapper = build_code_wrapper(factory, highlighted_html, lang_key, raw_code)
         pre.replace_with(wrapper)

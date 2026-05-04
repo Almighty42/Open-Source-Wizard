@@ -1,6 +1,6 @@
 from enum import Enum
 from datetime import datetime
-from app.models.utils import utc_now
+from app.utils import utc_now
 from app.extensions import db
 import sqlalchemy as sql
 import sqlalchemy.orm as orm

@@ -5,7 +5,7 @@ ALLOWED_TAGS = [
     "thead", "tbody", "tr", "th", "td", "div", "span",
     "svg", "circle", "line", "path", "rect", "polygon",
     "button", "defs", "clipPath", "g", "title", "style",
-    "linearGradient", "stop",
+    "linearGradient", "stop", "figure", "figcaption", "video", "source"
 ]
 
 ALLOWED_ATTRIBUTES = {
@@ -36,4 +36,6 @@ ALLOWED_ATTRIBUTES = {
     "title": [],
     "style": [],
     "defs": [],
+"video": ["controls", "preload"],
+"source": ["src", "type"],
 }

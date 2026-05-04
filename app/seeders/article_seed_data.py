@@ -17,10 +17,14 @@ ARTICLES = [
         ],
         "diagrams": [
             "uploads/diagrams/cloud-vs-edge-ai.svg",
+            "uploads/diagrams/i2c-sensor-block.png",
         ],
         "attachments": [
             "uploads/files/sensor_driver_port.c",
             "uploads/files/ai-embedded-workflow-checklist.pdf",
+        ],
+        "videos": [
+            "uploads/videos/esp32-demo.mp4",
         ],
         "body": """\
 There's a growing split in the embedded community. Half the engineers I talk to swear by AI coding tools.
@@ -61,10 +65,21 @@ void MX_USART2_UART_Init(void) {
 }
 ```
 
+### Why it matters
+
+When you open a 3-year-old driver written by someone who left the company,
+asking an LLM to explain what a function does and what could go wrong is genuinely useful.
+
+#### The issue
+
+Here
+
 ## 2. Understanding Unfamiliar Code
 
 When you open a 3-year-old driver written by someone who left the company,
 asking an LLM to explain what a function does and what could go wrong is genuinely useful.
+
+![Copilot suggesting C code in Neovim](asset:uploads/articles/ai-copilot-screenshot.png)
 
 ```c
 // Pasted a 60-line I2C transaction handler into Claude.
@@ -72,6 +87,8 @@ asking an LLM to explain what a function does and what could go wrong is genuine
 // which would have caused the MCU to hang on a disconnected sensor.
 while (!(I2C1->SR1 & I2C_SR1_ADDR)); // no timeout — hangs forever if NACK
 ```
+
+![I2C bus topology](asset:uploads/diagrams/i2c-sensor-block.png)
 
 ## 3. Writing Unit Tests
 
@@ -87,10 +104,38 @@ void test_crc16_empty(void) {
 }
 ```
 
+![ESP32 sensor demo](asset:uploads/videos/esp32-demo.mp4)
+
 # Where AI Will Waste Your Time
+
+## 4. Tool Comparison
+
+Here's how the main AI tools stack up for embedded work:
+
+| Tool | Best For | Embedded Awareness | Free Tier |
+|------|----------|--------------------|-----------|
+| GitHub Copilot | Autocomplete, boilerplate | Medium | No |
+| Claude | Code explanation, refactoring | High | Yes (limited) |
+| ChatGPT | General questions, docs | Medium | Yes |
+| Cursor | Full file edits, multi-file | Medium | Yes (limited) |
+
+Copilot wins for in-editor flow. Claude wins for understanding and explaining existing code.
+
+## 5. Useful Resources
+
+If you want to go deeper, these are worth reading:
+
+- [ESP-IDF Programming Guide](https://docs.espressif.com/projects/esp-idf/en/latest/) — the authoritative reference for bare-metal ESP32 development
+- [Unity Test Framework](https://github.com/ThrowTheSwitch/Unity) — lightweight C unit testing, works great with AI-generated test cases
+- [MISRA C 2012 Guidelines](https://misra.org.uk/misra-c/) — if you're in safety-critical territory, read this before touching AI output
+- [Edge Impulse Docs](https://docs.edgeimpulse.com/) — best starting point for on-device ML
+
+Also worth noting: `HAL_UART_Init()` returns a `HAL_StatusTypeDef` — always check it, AI-generated code often omits this.
 
 > **Rule:** Any value that comes from a datasheet must be verified against the datasheet.
 > AI output is a starting point, not a source of truth.
+
+
 
 - Register addresses and bit masks — always verify
 - RTOS stack sizes and interrupt priorities — you own this
@@ -325,16 +370,16 @@ static void buffer_clear(Buffer *buf) {
 ```python
 import os
 from dataclasses import dataclass
-
+ 
 @dataclass
 class Config:
-    host: str = "localhost"
-    port: int = 8080
-
+    host: str = "localhost"
+    port: int = 8080
+ 
 def load_config(path: str) -> Config:
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"No config at {path}")
-    return Config()
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"No config at {path}")
+    return Config()
 ```
 
 ```cpp

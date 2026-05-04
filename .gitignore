@@ -8,3 +8,4 @@ app/static/fonts/
 app.db
 migrations/
 about_text.txt
+app/static/uploads/

@@ -5,7 +5,7 @@ from scripts.seed import seed_bp
 from app.blueprints import main_bp, auth_bp, article_bp, project_bp, errors_bp
 from app.extensions import limiter
 from app.filters import register_filters
-from app.models.utils import inline_svg
+from app.utils import inline_svg
 
 import sqlalchemy as sa
 
