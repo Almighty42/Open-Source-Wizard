@@ -1,6 +1,7 @@
 @import "header";
 @import "footer";
 @import "article";
+@import "add-article";
 @import "articles";
 @import "project";
 @import "login";
@@ -1088,4 +1089,30 @@ html:not([data-theme]) {
 
 .pagination__info {
   color: var(--color-fg-2);
+}
+
+
+.form-messages {
+  margin-top: 1rem;
+}
+
+.form-message {
+  margin: 0 0 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--color-border);
+}
+
+.form-message.success {
+  background: #dff6e4;
+  color: #1f6b34;
+}
+
+.form-message.error {
+  background: #fde7e7;
+  color: #9b1c1c;
+}
+
+.form-message.message {
+  background: #eef2ff;
+  color: #3730a3;
 }

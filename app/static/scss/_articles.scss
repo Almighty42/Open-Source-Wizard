@@ -130,3 +130,13 @@ html[data-theme="dark"] #top-link>img {
   opacity: 1;
   pointer-events: auto;
 }
+
+.add-article {
+  width: fit-content;
+  padding: 4px 12px;
+  border: 2px solid var(--color-fg-1)
+}
+
+.articles-actions {
+  gap: 20px;
+}

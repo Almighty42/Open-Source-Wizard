@@ -1,6 +1,14 @@
 {% macro article_card(article) %}
 <article class="article-card">
-	<p class="date" >{{ article.published_at | date }}</p>
+	<p class="date" >
+	{% if article.status == "draft" %}
+	[ DRAFT ]
+	{% elif article.status == "archived" %}
+	[ ARCHIVED ]
+	{% else %}
+	{{ article.published_at | date }}
+	{% endif %}
+	</p>
 	<div class="article-card-body">
 		<div class="article-info">
 			<p class="title">

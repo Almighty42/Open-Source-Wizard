@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include 'components/_header.html' %}
+
+<div id="main-page" class="admin-page">
+	<section class="admin-form-shell">
+		<div class="admin-page-heading">
+			<p class="admin-eyebrow">Admin</p>
+			<h1>Add Category</h1>
+		</div>
+
+		<form class="admin-form" method="POST" action="{{ url_for('admin.add_category') }}">
+			{{ form.hidden_tag() }}
+
+			<div class="form-block">
+				{{ form.name.label }}
+				{{ form.name(placeholder="Embedded Systems") }}
+				{% for error in form.name.errors %}
+				<p class="form-error">{{ error }}</p>
+				{% endfor %}
+			</div>
+
+			<div class="form-block">
+				{{ form.slug.label }}
+				{{ form.slug(placeholder="embedded-systems") }}
+				{% for error in form.slug.errors %}
+				<p class="form-error">{{ error }}</p>
+				{% endfor %}
+			</div>
+
+			<div class="form-block">
+				{{ form.description.label }}
+				{{ form.description(rows="4", placeholder="Optional short description for this category.") }}
+				{% for error in form.description.errors %}
+				<p class="form-error">{{ error }}</p>
+				{% endfor %}
+			</div>
+
+			<div class="form-block">
+				{{ form.seo_title.label }}
+				{{ form.seo_title(placeholder="Optional SEO title") }}
+				{% for error in form.seo_title.errors %}
+				<p class="form-error">{{ error }}</p>
+				{% endfor %}
+			</div>
+
+			<div class="form-block">
+				{{ form.seo_description.label }}
+				{{ form.seo_description(rows="4", placeholder="Optional SEO description") }}
+				{% for error in form.seo_description.errors %}
+				<p class="form-error">{{ error }}</p>
+				{% endfor %}
+			</div>
+
+			<div class="form-block">
+				{{ form.sort_order.label }}
+				{{ form.sort_order(placeholder="0") }}
+				{% for error in form.sort_order.errors %}
+				<p class="form-error">{{ error }}</p>
+				{% endfor %}
+			</div>
+
+			<div class="form-actions">
+				{{ form.submit(type="submit") }}
+			</div>
+
+			{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+			<div class="form-messages">
+				{% for category, message in messages %}
+				<p class="form-message {{ category }}">{{ message }}</p>
+				{% endfor %}
+			</div>
+			{% endif %}
+			{% endwith %}
+		</form>
+	</section>
+</div>
+
+{% include 'components/_footer.html' %}
+
+{% endblock %}

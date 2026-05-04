@@ -608,6 +608,38 @@ blockquote {
     background: var(--color-fg-1);
     color: var(--color-bg);
   }
+
+  >button.article-edit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid var(--color-border);
+    padding: 6px 12px;
+    width: fit-content;
+    color: var(--color-fg-1);
+  }
+
+  >button.article-edit:hover {
+    background: var(--color-fg-1);
+    color: var(--color-bg);
+  }
+}
+
+.article-edit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid var(--color-border);
+  padding: 6px 12px;
+  width: fit-content;
+  color: var(--color-fg-1);
+  cursor: pointer;
+}
+
+
+.article-edit:hover {
+  background: var(--color-fg-1);
+  color: var(--color-bg);
 }
 
 section.article-footer {

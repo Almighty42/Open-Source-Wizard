@@ -34,8 +34,8 @@
 						<li class="custom-select__option {% if request.args.get('category') == category.slug %}selected{% endif %}"
 						data-value="{{ category.slug }}">{{ category.name }}</li>
 						{% endfor %}
-			</ul>
-			<input type="hidden" name="category" value="{{ request.args.get('category', '') }}">
+					</ul>
+				<input type="hidden" name="category" value="{{ request.args.get('category', '') }}">
 		</div>
 
 		<div id="nav-tags" class="custom-select custom-multiselect" data-name="tag">
@@ -60,12 +60,21 @@
 			{% endif %}
 			{% endfor %}
 		</div>
-
             </form>
+
         </div>
 	</nav>
+
 <div class="articles" id="articles-list" style="margin-top: 40px;">
+		{% if is_admin %}
+		<div class="articles-actions" >
+		<a href="{{ url_for('admin.add_article') }}" class="add-article" > Add Article </a>
+		<a href="{{ url_for('admin.add_tag') }}" class="add-article" > Add Tag </a>
+		<a href="{{ url_for('admin.add_category') }}" class="add-article" > Add Category </a>
+		</div>
+		{% endif %}
     {% if articles %}
+
         {% for article in articles %}
             {{ article_comp.article_card(article) }}
         {% endfor %}

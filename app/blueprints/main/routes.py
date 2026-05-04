@@ -20,10 +20,6 @@ def index():
     .limit(3) \
     .all()
 
-    # TODO: Add links to article cards, for categories and tags
-    # TODO: Add links to project cards, for categories and tags
-    # TODO: Add a introductory text for new visitors
-
     return render_template("main/index.html", articles=articles, projects=projects)
 
 @main_bp.route("/about")

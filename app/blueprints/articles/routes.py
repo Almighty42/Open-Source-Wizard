@@ -3,10 +3,16 @@ from flask_login import current_user
 from app.filters.render import render_markdown
 from app.models import  Article
 from app import db
-from app.models import ArticleAsset, Category, Tag
+from app.models import (
+        ArticleAsset,
+        Category,
+        Tag,
+        Article,
+        )
 from app.models.base import  Status, Role
 from . import article_bp
 from app.filters import extract_headings
+from app.forms import DeleteForm
 
 from app.decorators import admin_required
 
@@ -21,7 +27,13 @@ def articles():
     page      = request.args.get("page", 1, type=int)
     per_page  = 5
 
-    query = Article.query.filter(Article.published_at.isnot(None))
+    query = Article.query
+
+    if not (current_user.is_authenticated and current_user.is_admin):
+        query = query.filter(
+            Article.published_at.isnot(None),
+            Article.status == Status.published,
+        )
 
     if q:
         query = query.filter(Article.title.ilike(f"%{q}%"))
@@ -38,19 +50,22 @@ def articles():
     )
 
     categories = Category.query.order_by(Category.name).all()
-    tags       = Tag.query.order_by(Tag.name).all()
+    tags = Tag.query.order_by(Tag.name).all()
 
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return render_template("articles/_articles_list.html",
+        return render_template(
+            "articles/_articles_list.html",
             articles=pagination.items,
             pagination=pagination,
         )
 
-    return render_template("articles/articles.html",
+    return render_template(
+        "articles/articles.html",
         articles=pagination.items,
         pagination=pagination,
         categories=categories,
         tags=tags,
+        is_admin=current_user.is_authenticated,
     )
 
 @article_bp.route("/<slug>")
@@ -80,6 +95,7 @@ def article(slug):
         if aa.role == Role.attachment
     ]
     rendered_body = render_markdown(article.body, article.article_assets)
+    delete_form = DeleteForm()
 
     return render_template("articles/article.html", 
                            article=article,
@@ -89,25 +105,7 @@ def article(slug):
                            tags=tags,
                            primary_category=primary_category,
                            attachments=attachments,
-                           is_auth=current_user.is_authenticated
+                           is_auth=current_user.is_authenticated,
+                            delete_form=delete_form
     )
 
-@article_bp.route("/edit-article/<slug>", methods=['GET', 'POST'])
-@admin_required
-def edit_article(slug):
-    article = (
-            db.session.query(Article)
-            .options(joinedload(Article.article_assets).joinedload(ArticleAsset.asset))
-            .where(Article.slug == slug)
-            .first()
-    )
-
-    if article is None:
-        abort(404)
-
-    return render_template("articles/edit-article.html", article=article)
-
-@article_bp.route("/add-article", methods=['GET', 'POST'])
-@admin_required
-def add_article():
-    return render_template("articles/add-article.html")

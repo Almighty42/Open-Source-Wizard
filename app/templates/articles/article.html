@@ -51,10 +51,17 @@
 			</ul>
 		</div>
 		{% if is_auth %}
-		<a class="article-edit" href="{{ url_for('article.edit_article', slug=article.slug) }}">
+		<a class="article-edit" href="{{ url_for('admin.edit_article', slug=article.slug) }}">
 			{{ inline_svg('assets/edit.svg') }}
 			Edit
 		</a>
+		<form method="POST" action="{{ url_for('admin.delete_article', slug=article.slug) }}" class="article-delete-form">
+		{{ delete_form.hidden_tag() }}
+		<button type="submit" class="article-edit article-delete">
+			{{ inline_svg('assets/delete.svg') }}
+			<p style="text-decoration: underline;">Delete</p>
+		</button>
+		</form>
 		{% endif %}
 	</div>
 	</div>

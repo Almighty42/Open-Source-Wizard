@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 	{% if title %}
 	<title>Open Source Wizard - {{ title }}</title>
 	{% else %}
 	<title>Open Source Wizard</title>
 	{% endif %}
-	<link rel="stylesheet" href="{{ url_for('static', filename="css/app.css") }}" />
+
+	<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="any">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet">
@@ -20,7 +23,6 @@
 	{% block content %}
 	{% endblock %}
 
-	<script src="../static/js/app.js"></script>
+	<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
-
 </html>
