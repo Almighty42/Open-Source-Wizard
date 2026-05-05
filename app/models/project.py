@@ -11,7 +11,7 @@ class ProjectState(str, Enum):
     abandoned = "abandoned"
     planned = "planned"
     ongoing = "ongoing"
-    finalized = "finalized"
+    finished = "finished"
 
 class Project(db.Model):
     __tablename__ = "projects"
@@ -61,6 +61,13 @@ class Project(db.Model):
             if ac.is_primary:
                 return ac.category
         return self.categories[0] if self.categories else None
+
+    @property
+    def cover_image(self):
+        for pa in self.project_assets:
+            if pa.is_cover:
+                return pa.asset
+        return None
 
 class ProjectCategory(db.Model):
     __tablename__ = "project_categories"

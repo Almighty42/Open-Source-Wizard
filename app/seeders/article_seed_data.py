@@ -6,6 +6,8 @@ ARTICLES = [
         "read_time": 8,
         "is_featured": True,
         "status": "published",
+        "created_at": "2026-05-01T12:41:00+02:00",
+        "published_at": "2026-05-01T12:41:00+02:00",
         "seo_title": "AI in Embedded Development — Practical Guide",
         "seo_description": "A practical guide to using AI tools like Copilot and Claude in embedded C firmware development. Where it helps, where it doesn't, and a real workflow example.",
         "tags": ["AI", "Embedded", "ESP32", "C", "Debugging"],

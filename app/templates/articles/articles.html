@@ -65,15 +65,16 @@
         </div>
 	</nav>
 
-<div class="articles" id="articles-list" style="margin-top: 40px;">
+	<div class="articles" id="articles-list" style="margin-top: 40px;">
 		{% if is_admin %}
 		<div class="articles-actions" >
 		<a href="{{ url_for('admin.add_article') }}" class="add-article" > Add Article </a>
 		<a href="{{ url_for('admin.add_tag') }}" class="add-article" > Add Tag </a>
 		<a href="{{ url_for('admin.add_category') }}" class="add-article" > Add Category </a>
+		<a href="{{ url_for('admin.add_asset') }}" class="add-article" > Add Asset </a>
 		</div>
 		{% endif %}
-    {% if articles %}
+		{% if articles %}
 
         {% for article in articles %}
             {{ article_comp.article_card(article) }}

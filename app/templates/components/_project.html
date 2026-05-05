@@ -1,24 +1,45 @@
 {% macro project_card(project) %}
-<article class="project-card">
-	<img src="{{ url_for('static', filename=project.img) }}" />
-	<div class="project-text">
-		<p>
-			{{ project.primary_category.name | upper }}
-		</p>
-		<h3>
-			<a href="{{ url_for('project.project', slug=project.slug) }}">{{ project.title }}</a>
-		</h3>
-		<div>
-			<p> {{ project.excerpt }} </p>
-			<hr>
-			<ul class="article-tags">
-				{% for tag in project.tags %}
-				<li>
-					<a href="{{ url_for('project.projects', slug=project.slug) }}">[ {{ tag.name|upper }} ]</a>
-				</li>
-				{% endfor %}
-			</ul>
-		</div>
-	</div>
-</article>
-{% endmacro %}
+    <article class="project-card">
+        {% if project.cover_image %}
+            <img src="{{project.cover_image.path}}" />
+        {% else %}
+            <img src="{{ url_for('static', filename='assets/placeholder.png') }}" />
+        {% endif %}
+        <div class="project-text">
+            <div class="project-info-extra">
+                <p>{{ project.primary_category.name | upper }}</p>
+                <div style="gap: 16px;" >
+                    {% if project.status.value == "draft" %}
+                        <b>[ DRAFT ]</b>
+                    {% elif project.status.value == "archived" %}
+                        <b>[ ARCHIVED ]</b>
+                    {% endif %}
+                    {% if project.project_state.value == "abandoned" %}
+                        <b>[ ABANDONED ]</b>
+                    {% elif project.project_state.value == "planned" %}
+                        <b>[ PLANNED ]</b>
+                    {% elif project.project_state.value == "ongoing" %}
+                        <b>[ ONGOING ]</b>
+                    {% endif %}
+                </div>
+            </div>
+            <h3>
+                <a href="{{ url_for('project.project', slug=project.slug) }}">{{ project.title }}</a>
+            </h3>
+            <div>
+                <p>{{ project.excerpt }}</p>
+                <hr>
+                <ul class="article-tags">
+                    {% for tag in project.tags %}
+                        <li>
+                            <a href="{{ url_for('project.projects', tag=tag.slug) }}">[ {{ tag.name|upper }} ]</a>
+                        </li>
+                    {% endfor %}
+                    <li>
+                        <p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </article>
+    {% endmacro %}

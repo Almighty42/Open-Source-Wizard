@@ -4,6 +4,7 @@ from app.blueprints.articles import article_bp
 from app.blueprints.admin import admin_bp
 from app.blueprints.projects import project_bp
 from app.blueprints.errors import errors_bp
+from app.blueprints.api import api_bp
 
 __all__ = [
         "main_bp",
@@ -12,4 +13,5 @@ __all__ = [
         "admin_bp",
         "project_bp",
         "errors_bp",
+        "api_bp",
 ]

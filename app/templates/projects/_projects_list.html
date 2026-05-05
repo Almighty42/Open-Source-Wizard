@@ -1,0 +1,10 @@
+{% import "components/_project.html" as project_comp %}
+{% import "components/_pagination.html" as paginator %}
+
+{% for project in projects %}
+{{ project_comp.project_card(project) }}
+{% else %}
+<p>No projects found.</p>
+{% endfor %}
+
+{{ paginator.pagination_controls(pagination) }}

@@ -1,3 +1,4 @@
+# TODO: REFACTOR
 from flask import abort, render_template, request
 from flask_login import current_user
 from app.filters.render import render_markdown
@@ -5,6 +6,8 @@ from app.models import  Article
 from app import db
 from app.models import (
         ArticleAsset,
+        ArticleTag,
+        ArticleCategory,
         Category,
         Tag,
         Article,
@@ -14,13 +17,11 @@ from . import article_bp
 from app.filters import extract_headings
 from app.forms import DeleteForm
 
-from app.decorators import admin_required
-
 from sqlalchemy.orm import joinedload
 
 @article_bp.route("/")
 def articles():
-    # TODO: Implement date filtering at a later date...
+    # TODO: LATER - Implement date filtering at a later date...
     q         = request.args.get("q", "").strip()
     category  = request.args.get("category", "")
     tag_slugs = request.args.getlist("tag")
@@ -66,29 +67,41 @@ def articles():
         categories=categories,
         tags=tags,
         is_admin=current_user.is_authenticated,
+        title="Articles",
     )
 
 @article_bp.route("/<slug>")
 def article(slug):
-    # TODO: Add References UI / Functionality at a later date...
     article = (
-            db.session.query(Article)
-            .options(joinedload(Article.article_assets).joinedload(ArticleAsset.asset))
-            .where(Article.slug == slug)
-            .first()
+        db.session.query(Article)
+        .options(
+            joinedload(Article.article_assets).joinedload(ArticleAsset.asset),
+            joinedload(Article.article_tags).joinedload(ArticleTag.tag),
+            joinedload(Article.article_categories).joinedload(ArticleCategory.category),
+        )
+        .where(Article.slug == slug)
+        .first()
     )
 
     if article is None:
         abort(404)
 
-    if (article.status == Status.draft or article.status == Status.archived) and \
-        not (current_user.is_authenticated and current_user.is_admin):
+    if (
+        article.status in (Status.draft, Status.archived)
+        and not (current_user.is_authenticated and current_user.is_admin)
+    ):
         abort(404)
 
     article_headings = extract_headings(article.body)
-    cover = next((aa.asset for aa in article.article_assets if aa.is_cover), None)
+    cover = next(
+        (aa.asset for aa in article.article_assets if aa.role == Role.cover),
+        None,
+    )
     tags = [at.tag for at in article.article_tags]
-    primary_category = next((ac.category for ac in article.article_categories if ac.is_primary), None)
+    primary_category = next(
+        (ac.category for ac in article.article_categories if ac.is_primary),
+        None,
+    )
     attachments = [
         aa
         for aa in article.article_assets
@@ -97,15 +110,16 @@ def article(slug):
     rendered_body = render_markdown(article.body, article.article_assets)
     delete_form = DeleteForm()
 
-    return render_template("articles/article.html", 
-                           article=article,
-                           rendered_body=rendered_body,
-                           cover=cover,
-                           article_headings=article_headings,
-                           tags=tags,
-                           primary_category=primary_category,
-                           attachments=attachments,
-                           is_auth=current_user.is_authenticated,
-                            delete_form=delete_form
+    return render_template(
+        "articles/article.html",
+        article=article,
+        rendered_body=rendered_body,
+        cover=cover,
+        article_headings=article_headings,
+        tags=tags,
+        primary_category=primary_category,
+        attachments=attachments,
+        is_auth=current_user.is_authenticated,
+        delete_form=delete_form,
+        title="Article",
     )
-

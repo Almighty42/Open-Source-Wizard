@@ -10,15 +10,13 @@ def resolve_asset_images(body: str, article_assets) -> str:
         asset_map[str(aa.asset.id)] = aa.asset
         asset_map[aa.asset.path] = aa.asset
 
-    print("Asset map keys:", list(asset_map.keys()))
-
     def replace(match):
         alt = match.group(1)
         key = match.group(2)
         asset = asset_map.get(key)
         if not asset:
             return ""
-        src = url_for('static', filename=asset.path)
+        src = asset.path
         caption = asset.caption or ""
         ext = os.path.splitext(asset.path)[1].lower()
 

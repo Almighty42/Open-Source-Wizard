@@ -7,7 +7,7 @@
 <div id="main-page" style="align-items: start;">
 {% if cover %}
 <img class="article-cover"
-     src="{{ url_for('static', filename=cover.path) }}"
+     src="{{ cover.path }}"
      alt="{{ cover.alt_text or '' }}"
      onload="this.classList.add('loaded')"
      onerror="this.style.display='none'" />
@@ -41,6 +41,8 @@
 		</div>
 	</section>
 	<div class="article-sidebar" >
+
+				{% if article_headings %}
 		<div class="article-contents">
 			<ul class="contents-table">
 				{% for heading in article_headings %}
@@ -50,6 +52,8 @@
 				{% endfor %}
 			</ul>
 		</div>
+
+				{% endif %}
 		{% if is_auth %}
 		<a class="article-edit" href="{{ url_for('admin.edit_article', slug=article.slug) }}">
 			{{ inline_svg('assets/edit.svg') }}
@@ -76,7 +80,7 @@
 		<div class="article-footer-attachments">
 			{% for attachment in attachments %}
 			<a class="article-attachment" 
-				href="{{ url_for('static', filename=attachment.asset.path) }}" 
+				href="{{ attachment.asset.path }}"
 				download
 				target="_blank"
 				rel="noopener noreferrer">

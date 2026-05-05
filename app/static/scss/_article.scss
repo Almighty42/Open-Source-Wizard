@@ -602,6 +602,11 @@ blockquote {
     padding: 6px 12px;
     width: fit-content;
     color: var(--color-fg-1);
+
+    >svg {
+      width: 24px;
+      height: 24px;
+    }
   }
 
   >a.article-edit:hover {

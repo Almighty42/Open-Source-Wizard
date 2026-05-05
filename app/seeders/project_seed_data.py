@@ -13,9 +13,9 @@ PROJECTS = [
         "seo_description": "How I set up a self-hosted TRMNL server on a Raspberry Pi with Nginx, Docker, and a custom plugin system.",
         "tags": ["Raspberry Pi", "Docker", "Nginx", "Python"],
         "category": "Self-Hosting",
-        "cover": "uploads/projects/trmnl-server-cover.jpg",
+        "cover": "/static/uploads/projects/trmnl-server-cover.jpg",
         "gallery": [
-            "uploads/gallery/trmnl-ui-screenshot.png",
+            "/static/uploads/gallery/trmnl-ui-screenshot.png",
         ],
         "attachments": [],
         "body": """\
@@ -23,14 +23,14 @@ TRMNL is an e-ink dashboard device with a plugin-based display system.
 The official cloud backend is fine, but I wanted full control — custom plugins,
 no rate limits, and local network access without a cloud dependency.
 
-## Stack
+# Stack
 
 - **Flask** for the plugin API
 - **Docker Compose** for service isolation
 - **Nginx** as reverse proxy with Let's Encrypt SSL
 - **SQLite** for plugin state (simple enough for this use case)
 
-## Nginx Config
+# Nginx Config
 
 ```nginx
 server {
@@ -48,7 +48,7 @@ server {
 }
 ```
 
-## Plugin System
+# Plugin System
 
 Each plugin is a Python module that returns a dict of template variables.
 The TRMNL device polls `/api/display` every 60 seconds and renders the response.
@@ -60,7 +60,7 @@ def display():
     return jsonify(plugin.render())
 ```
 
-## What's Left
+# What's Left
 
 - [ ] OTA plugin update mechanism
 - [ ] Web UI for managing plugin order and schedule
@@ -73,7 +73,7 @@ def display():
         "excerpt": "Jailbreaking a Kindle 4 and turning it into a low-power ambient dashboard using KUAL and a custom Python script.",
         "is_featured": True,
         "status": "published",
-        "project_state": "finalized",
+        "project_state": "finished",
         "platform": "Kindle",
         "repo_url": "https://github.com/luka/kindle-dashboard",
         "demo_url": None,
@@ -81,22 +81,22 @@ def display():
         "seo_description": "How I jailbroke a Kindle 4 and turned it into a low-power ambient information display using KUAL and a custom Python script.",
         "tags": ["E-Ink", "Python", "Linux", "Debugging"],
         "category": "Reverse Engineering",
-        "cover": "uploads/projects/kindle-dashboard-cover.jpg",
+        "cover": "/static/uploads/projects/kindle-dashboard-cover.jpg",
         "gallery": [
-            "uploads/gallery/kindle-dashboard-closeup.jpg",
+            "/static/uploads/gallery/kindle-dashboard-closeup.jpg",
         ],
         "attachments": [],
         "body": """\
 An old Kindle 4 has a 6-inch e-ink display, a 1GHz ARM processor, 256MB RAM,
 and draws about 170mW while rendering. It's basically a perfect ambient display.
 
-## Jailbreak
+# Jailbreak
 
 The Kindle 4 (2011) can be jailbroken using the `kindle-jailbreak` package.
 Once jailbroken, KUAL (Kindle Unified Application Launcher) allows running
 arbitrary scripts and binaries.
 
-## Display Script
+# Display Script
 
 The dashboard script fetches data, generates a 600×800 PNG using Pillow,
 and pushes it to the e-ink framebuffer via `eips`.
@@ -117,13 +117,13 @@ def render_dashboard(weather, time_str):
 render_dashboard("18°C, Cloudy", "14:32")
 ```
 
-## Power
+# Power
 
 The Kindle stays in a light sleep between refreshes.
 Full display refresh happens every 10 minutes; partial clock update every minute.
 Average power draw: ~90mW — the original battery lasts weeks.
 
-## Lessons
+# Lessons
 
 - `eips` only accepts 8-bit grayscale PNGs at exactly 600×800
 - Font rendering needs explicit subpixel hints off for clean e-ink output
@@ -136,17 +136,17 @@ Average power draw: ~90mW — the original battery lasts weeks.
         "excerpt": "A wireless sensor node using an ESP32, BME280, and a LiPo battery with fuel gauge. Sends telemetry over MQTT with deep sleep between readings.",
         "is_featured": False,
         "status": "published",
-        "project_state": "finalized",
+        "project_state": "finished",
         "platform": "ESP32",
         "repo_url": "https://github.com/luka/esp32-sensor-node",
-        "demo_url": None,
+        "demo_url": "https://github.com/luka/esp32-sensor-node",
         "seo_title": "ESP32 Wireless Sensor Node",
         "seo_description": "Building a low-power ESP32 sensor node with BME280 and LiPo battery. Sends MQTT telemetry with deep sleep between readings.",
         "tags": ["ESP32", "C", "Power Management", "Debugging"],
         "category": "Embedded Systems",
-        "cover": "uploads/projects/esp32-sensor-cover.jpg",
+        "cover": "/static/uploads/projects/esp32-sensor-cover.jpg",
         "gallery": [
-            "uploads/gallery/esp32-sensor-enclosure.jpg",
+            "/static/uploads/gallery/esp32-sensor-enclosure.jpg",
         ],
         "attachments": [],
         "body": """\
@@ -154,7 +154,7 @@ A battery-powered sensor node that reads temperature, humidity, and pressure
 from a BME280, sends the data over MQTT, then goes back to deep sleep.
 Target runtime: 6 months on a single 2000mAh LiPo.
 
-## Hardware
+# Hardware
 
 - ESP32-WROOM-32
 - BME280 (I2C, 3.3V)
@@ -162,7 +162,7 @@ Target runtime: 6 months on a single 2000mAh LiPo.
 - TP4056 charging module
 - 2000mAh LiPo
 
-## Deep Sleep Loop
+# Deep Sleep Loop
 
 ```c
 #define SLEEP_DURATION_US  (60 * 1000000ULL) // 60 seconds
@@ -183,7 +183,7 @@ void app_main(void) {
 }
 ```
 
-## Power Budget
+# Power Budget
 
 | State | Current | Duration |
 |---|---|---|
@@ -195,7 +195,7 @@ At 8mA average, a 2000mAh battery gives approximately **250 hours** — about 10
 Extending the sleep interval to 5 minutes drops average current to ~2mA and pushes
 runtime to over 40 days.
 
-## What's Next
+# What's Next
 
 - RTC-based scheduled wake instead of timer-only
 - OTA firmware update support

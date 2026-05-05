@@ -2,7 +2,7 @@ from flask import Flask
 from config import Config
 from app.extensions import db, login_manager, migrate, limiter
 from scripts.seed import seed_bp
-from app.blueprints import main_bp, auth_bp, article_bp, project_bp, errors_bp, admin_bp
+from app.blueprints import main_bp, auth_bp, article_bp, project_bp, errors_bp, admin_bp, api_bp
 from app.filters import register_filters
 from app.utils import inline_svg
 
@@ -32,6 +32,7 @@ def create_app(config=Config):
     app.register_blueprint(article_bp)
     app.register_blueprint(project_bp)
     app.register_blueprint(errors_bp)
+    app.register_blueprint(api_bp)
     app.register_blueprint(seed_bp)
 
     register_filters(app)

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include 'components/_header.html' %}
+
+<div id="main-page" class="admin-page">
+  <section class="admin-form-shell">
+    <div class="admin-page-heading">
+      <p class="admin-eyebrow">Admin</p>
+      <h1>Add Asset</h1>
+    </div>
+
+    <form
+      class="admin-form"
+      method="POST"
+      action="{{ url_for('admin.add_asset') }}"
+      enctype="multipart/form-data"
+    >
+      {{ form.hidden_tag() }}
+
+      <div class="form-block">
+        {{ form.file.label }}
+        {{ form.file() }}
+        {% for error in form.file.errors %}
+        <p class="form-error">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-block">
+        {{ form.path.label }}
+        {{ form.path(placeholder="/static/uploads/projects/example/cover.webp") }}
+        {% for error in form.path.errors %}
+        <p class="form-error">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-block">
+        {{ form.alt_text.label }}
+        {{ form.alt_text(placeholder="Optional alt text for accessibility") }}
+        {% for error in form.alt_text.errors %}
+        <p class="form-error">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-block">
+        {{ form.caption.label }}
+        {{ form.caption(placeholder="Optional short caption") }}
+        {% for error in form.caption.errors %}
+        <p class="form-error">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-actions">{{ form.submit(type="submit") }}</div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="form-messages">
+        {% for category, message in messages %}
+        <p class="form-message {{ category }}">{{ message }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+    </form>
+  </section>
+</div>
+
+{% include 'components/_footer.html' %}
+
+{% endblock %}
