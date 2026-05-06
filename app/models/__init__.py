@@ -1,4 +1,4 @@
-from .base import Category, Tag, Asset
+from .base import Category, Tag, Asset, Role, Status
 from .auth import User
 from .article import Article, ArticleTag, ArticleCategory, ArticleAsset
 from .project import Project, ProjectTag, ProjectCategory, ProjectAsset
@@ -9,6 +9,8 @@ __all__ = [
         "Tag",
         "Category",
         "Asset",
+        "Role",
+        "Status",
         "Article",
         "ArticleTag",
         "ArticleCategory",
