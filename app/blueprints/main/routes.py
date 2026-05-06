@@ -1,4 +1,4 @@
-# TODO: IMPORTANT - Test out making a article with images
+# TODO: IMPORTANT - Make sure that assets are also deleted when deleting articles / projects
 from flask import  render_template
 from . import main_bp
 from app import db

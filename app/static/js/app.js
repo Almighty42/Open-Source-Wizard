@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	initRemoteSelect("#tags-select", { maxItems: null });
 	initRemoteSelect("#attachments-select", { maxItems: null });
 	initRemoteSelect("#cover-asset-select", { maxItems: 1 });
+	initRemoteSelect("#inline-assets-select", { maxItems: null });
 
 	mode_switch?.addEventListener("click", () => {
 		const currentTheme = root.getAttribute("data-theme") || "light";

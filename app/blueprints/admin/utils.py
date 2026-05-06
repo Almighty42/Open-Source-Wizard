@@ -48,12 +48,18 @@ def build_attachment_asset_choices(assets):
         (asset.id, asset.path) for asset in assets
     ]
 
+def build_inline_asset_choices(assets):
+    return [
+        (asset.id, asset.path) for asset in assets
+    ]
+
 def add_article_db(form_data):
     try:
         article = _build_article(form_data)
         selected_category = _get_selected_category(form_data)
         selected_tags = _get_selected_tags(form_data)
         cover_asset = _get_cover_asset(form_data)
+        inline_assets = _get_inline_assets(form_data)
         attachment_assets = _get_attachment_assets(form_data)
 
         db.session.add(article)
@@ -61,7 +67,7 @@ def add_article_db(form_data):
 
         _add_article_category(article, selected_category)
         _add_article_tags(article, selected_tags)
-        _add_article_assets(article, cover_asset, attachment_assets)
+        _add_article_assets(article, cover_asset, inline_assets, attachment_assets)
 
         db.session.commit()
         return redirect(url_for("article.article", slug=article.slug))
@@ -138,25 +144,44 @@ def _add_article_tags(article, tags):
         )
 
 
-def _add_article_assets(article, cover_asset, attachment_assets):
+def _add_article_assets(article, cover_asset, inline_assets, attachment_assets):
+    used_asset_ids = set()
+
     if cover_asset:
         article.article_assets.append(
             ArticleAsset(
                 asset_id=cover_asset.id,
                 role="cover",
+                is_cover=True,
             )
         )
+        used_asset_ids.add(cover_asset.id)
 
-    for index, asset in enumerate(attachment_assets, start=1):
-        if cover_asset and asset.id == cover_asset.id:
+    for asset in inline_assets:
+        if asset.id in used_asset_ids:
+            continue
+
+        article.article_assets.append(
+            ArticleAsset(
+                asset_id=asset.id,
+                role="inline",
+                is_cover=False,
+            )
+        )
+        used_asset_ids.add(asset.id)
+
+    for asset in attachment_assets:
+        if asset.id in used_asset_ids:
             continue
 
         article.article_assets.append(
             ArticleAsset(
                 asset_id=asset.id,
                 role="attachment",
+                is_cover=False,
             )
         )
+        used_asset_ids.add(asset.id)
 
 def add_tag_db(form_data):
     try:
@@ -204,6 +229,7 @@ def update_article_db(article, form_data):
         selected_category = _get_selected_category(form_data)
         selected_tags = _get_selected_tags(form_data)
         cover_asset = _get_cover_asset(form_data)
+        inline_assets = _get_inline_assets(form_data)
         attachment_assets = _get_attachment_assets(form_data)
 
         article.title = form_data.title.data.strip()
@@ -223,7 +249,7 @@ def update_article_db(article, form_data):
 
         _add_article_category(article, selected_category)
         _add_article_tags(article, selected_tags)
-        _add_article_assets(article, cover_asset, attachment_assets)
+        _add_article_assets(article, cover_asset, inline_assets, attachment_assets)
 
         db.session.commit()
         flash("Article updated successfully.", "success")
@@ -239,6 +265,7 @@ def update_project_db(project, form_data):
         selected_tags = _get_selected_tags(form_data)
         cover_asset = _get_cover_asset(form_data)
         attachment_assets = _get_attachment_assets(form_data)
+        inline_assets = _get_inline_assets(form_data)
 
         project.title = form_data.title.data.strip()
         project.slug = form_data.slug.data.strip()
@@ -265,7 +292,7 @@ def update_project_db(project, form_data):
 
         _add_project_category(project, selected_category)
         _add_project_tags(project, selected_tags)
-        _add_project_assets(project, cover_asset, attachment_assets)
+        _add_project_assets(project, cover_asset,inline_assets, attachment_assets)
 
         db.session.commit()
         flash("Project updated successfully.", "success")
@@ -294,7 +321,9 @@ def _add_project_tags(project, selected_tags):
         )
 
 
-def _add_project_assets(project, cover_asset, attachment_assets):
+def _add_project_assets(project, cover_asset, inline_assets, attachment_assets):
+    used_asset_ids = set()
+
     if cover_asset:
         project.project_assets.append(
             ProjectAsset(
@@ -304,9 +333,24 @@ def _add_project_assets(project, cover_asset, attachment_assets):
                 role="cover",
             )
         )
+        used_asset_ids.add(cover_asset.id)
+
+    for asset in inline_assets:
+        if asset.id in used_asset_ids:
+            continue
+
+        project.project_assets.append(
+            ProjectAsset(
+                project=project,
+                asset=asset,
+                is_cover=False,
+                role="inline",
+            )
+        )
+        used_asset_ids.add(asset.id)
 
     for asset in attachment_assets:
-        if cover_asset and asset.id == cover_asset.id:
+        if asset.id in used_asset_ids:
             continue
 
         project.project_assets.append(
@@ -317,14 +361,20 @@ def _add_project_assets(project, cover_asset, attachment_assets):
                 role="attachment",
             )
         )
+        used_asset_ids.add(asset.id)
 
 def add_asset_db(form_data):
     try:
         uploaded_file = form_data.file.data
-        db_path, _absolute_path = _save_uploaded_asset(uploaded_file, form_data.path.data.strip())
+        db_path, _absolute_path = _save_uploaded_asset(
+            uploaded_file,
+            form_data.path.data.strip()
+        )
+
+        normalized_db_path = db_path.removeprefix("/")
 
         asset = Asset(
-            path=db_path,
+            path=normalized_db_path,
             alt_text=form_data.alt_text.data.strip() if form_data.alt_text.data else None,
             caption=form_data.caption.data.strip() if form_data.caption.data else None,
         )
@@ -459,6 +509,7 @@ def add_project_db(form_data):
         selected_category = _get_selected_category(form_data)
         selected_tags = _get_selected_tags(form_data)
         cover_asset = _get_cover_asset(form_data)
+        inline_assets = _get_inline_assets(form_data)
         attachment_assets = _get_attachment_assets(form_data)
 
         db.session.add(project)
@@ -466,7 +517,7 @@ def add_project_db(form_data):
 
         _add_project_category(project, selected_category)
         _add_project_tags(project, selected_tags)
-        _add_project_assets(project, cover_asset, attachment_assets)
+        _add_project_assets(project, cover_asset, inline_assets, attachment_assets)
 
         db.session.commit()
         return redirect(url_for("project.project", slug=project.slug))
@@ -494,3 +545,11 @@ def _build_project(form_data):
         seo_title=form_data.title.data.strip(),
         seo_description=form_data.excerpt.data.strip(),
     )
+
+def _get_inline_assets(form_data):
+    if not form_data.inline_assets.data:
+        return []
+
+    return Asset.query.filter(
+        Asset.id.in_(form_data.inline_assets.data)
+    ).all()

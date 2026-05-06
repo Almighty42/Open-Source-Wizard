@@ -29,6 +29,7 @@ from .utils import (
                     build_tag_choices,
                     build_cover_asset_choices,
                     build_attachment_asset_choices,
+                    build_inline_asset_choices,
                     )
 
 from app.decorators import admin_required
@@ -50,6 +51,7 @@ def add_article():
     form.category.choices = build_category_choices(categories)
     form.tags.choices = build_tag_choices(tags)
     form.cover_asset.choices = build_cover_asset_choices(assets)
+    form.inline_assets.choices = build_inline_asset_choices(assets)
     form.attachment_assets.choices = build_attachment_asset_choices(assets)
 
     preview_html = None
@@ -89,6 +91,7 @@ def add_project():
     form.category.choices = build_category_choices(categories)
     form.tags.choices = build_tag_choices(tags)
     form.cover_asset.choices = build_cover_asset_choices(assets)
+    form.inline_assets.choices = build_inline_asset_choices(assets)
     form.attachment_assets.choices = build_attachment_asset_choices(assets)
 
     preview_html = None
@@ -149,11 +152,14 @@ def edit_article(slug):
             tags=[tag.slug for tag in article.tags],
             is_featured=article.is_featured,
             cover_asset=next(
-                (aa.asset_id for aa in article.article_assets if aa.role == "cover"),
+                (aa.asset_id for aa in article.article_assets if aa.role == Role.cover),
                 None,
             ),
+            inline_assets=[
+                aa.asset_id for aa in article.article_assets if aa.role == Role.inline
+            ],
             attachment_assets=[
-                aa.asset_id for aa in article.article_assets if aa.role == "attachment"
+                aa.asset_id for aa in article.article_assets if aa.role == Role.attachment
             ],
             published_at=article.published_at.date() if article.published_at else None,
         )
@@ -162,6 +168,7 @@ def edit_article(slug):
     form.tags.choices = build_tag_choices(tags)
     form.cover_asset.choices = build_cover_asset_choices(assets)
     form.attachment_assets.choices = build_attachment_asset_choices(assets)
+    form.inline_assets.choices = build_inline_asset_choices(assets)
 
     preview_html = None
 
@@ -296,6 +303,9 @@ def edit_project(slug):
                 (pa.asset_id for pa in project.project_assets if pa.is_cover or pa.role == Role.cover),
                 None,
             ),
+            inline_assets=[
+                pa.asset_id for pa in project.project_assets if pa.role == Role.inline
+            ],
             attachment_assets=[
                 pa.asset_id for pa in project.project_assets if pa.role == Role.attachment
             ],
@@ -308,6 +318,7 @@ def edit_project(slug):
     form.tags.choices = build_tag_choices(tags)
     form.cover_asset.choices = build_cover_asset_choices(assets)
     form.attachment_assets.choices = build_attachment_asset_choices(assets)
+    form.inline_assets.choices = build_inline_asset_choices(assets)
 
     preview_html = None
 
@@ -332,7 +343,20 @@ def edit_project(slug):
         title="Edit Project",
     )
 
-@admin_bp.route("/delete-project/<slug>", methods=["GET", "POST"])
+@admin_bp.route("/delete-project/<slug>", methods=["POST"])
 @admin_required
 def delete_project(slug):
-    return render_template("admin/article-form.html")
+    project = db.session.query(Project).where(Project.slug == slug).first()
+
+    if project is None:
+        abort(404)
+
+    try:
+        db.session.delete(project)
+        db.session.commit()
+        flash(f'Article "{project.title}" deleted successfully.', "success")
+    except Exception:
+        db.session.rollback()
+        flash("Failed to delete article.", "error")
+
+    return redirect(url_for("article.articles"))

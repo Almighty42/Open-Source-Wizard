@@ -11,7 +11,7 @@ from wtforms import (
     BooleanField,
     FileField,
 )
-from flask_wtf.file import FileField, FileRequired, FileAllowed
+from flask_wtf.file import FileField, FileAllowed
 from wtforms.validators import DataRequired, Optional, Length, ValidationError, URL
 from app.models import Article , Category, Tag, Asset
 from werkzeug.utils import secure_filename
@@ -89,6 +89,12 @@ class ArticleForm(FlaskForm):
     cover_asset = SelectField(
         "Cover Asset",
         coerce=int_or_none,
+        validators=[Optional()],
+    )
+
+    inline_assets = SelectMultipleField(
+        "Inline Assets",
+        coerce=int,
         validators=[Optional()],
     )
 
@@ -350,6 +356,12 @@ class ProjectForm(FlaskForm):
         validators=[Optional()],
     )
 
+    inline_assets = SelectMultipleField(
+        "Inline Assets",
+        coerce=int,
+        validators=[Optional()],
+    )
+
     attachment_assets = SelectMultipleField(
         "Attachment Assets",
         coerce=int,
@@ -424,6 +436,29 @@ class ProjectForm(FlaskForm):
         return is_valid
 
 class AssetForm(FlaskForm):
+    ALLOWED_ASSET_EXTENSIONS = [
+        # Images
+        "jpg", "jpeg", "png", "webp", "gif", "svg", "avif",
+
+        # Documents
+        "pdf", "txt", "md", "rtf",
+
+        # Data / structured files
+        "json", "csv", "tsv", "xml", "yaml", "yml",
+
+        # Code / text-based assets
+        "c", "h", "cpp", "hpp", "py", "js", "ts", "css", "html", "sql",
+
+        # Archives
+        "zip", "tar", "gz", "bz2", "xz", "7z",
+
+        # Audio / video
+        "mp3", "wav", "ogg", "mp4", "webm",
+
+        # Misc
+        "epub",
+    ]
+
     def __init__(self, original_asset=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.original_asset = original_asset
@@ -432,8 +467,8 @@ class AssetForm(FlaskForm):
         "File",
         validators=[
             FileAllowed(
-                ["jpg", "jpeg", "png", "webp", "gif", "svg", "pdf"],
-                "Only images and PDFs are allowed."
+                ALLOWED_ASSET_EXTENSIONS,
+                "Unsupported file type."
             ),
         ],
     )

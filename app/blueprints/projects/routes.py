@@ -97,6 +97,9 @@ def project(slug):
     rendered_body = render_markdown(project.body, project.project_assets)
     delete_form = DeleteForm()
 
+    for attachment in attachments:
+        print(attachment.metadata)
+
     return render_template("projects/project.html", 
                            project=project,
                            rendered_body=rendered_body,

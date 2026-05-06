@@ -135,6 +135,15 @@
                     </p>
                     {% for error in form.attachment_assets.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
                 </div>
+                <div class="form-block">
+                    {{ form.inline_assets.label }}
+                    {{ form.inline_assets(multiple=True,
+                                        id="inline-assets-select",
+                                        data_remote_url=url_for('api.search_assets') 
+                    ) }}
+                    <p class="form-help">Search and attach inline images or media referenced inside Markdown.</p>
+                    {% for error in form.inline_assets.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                </div>
                 <div class="form-actions">
                     {{ form.preview(type="submit") }}
                     {{ form.submit(type="submit", value=submit_label) }}
