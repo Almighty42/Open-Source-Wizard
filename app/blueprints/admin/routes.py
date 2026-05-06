@@ -30,6 +30,8 @@ from .utils import (
                     build_cover_asset_choices,
                     build_attachment_asset_choices,
                     build_inline_asset_choices,
+                    delete_article_db,
+                    delete_project_db,
                     )
 
 from app.decorators import admin_required
@@ -196,20 +198,17 @@ def edit_article(slug):
 @admin_bp.route("/delete-article/<slug>", methods=["POST"])
 @admin_required
 def delete_article(slug):
-    article = db.session.query(Article).where(Article.slug == slug).first()
+    article = (
+        db.session.query(Article)
+        .options(joinedload(Article.article_assets).joinedload(ArticleAsset.asset))
+        .where(Article.slug == slug)
+        .first()
+    )
 
     if article is None:
         abort(404)
 
-    try:
-        db.session.delete(article)
-        db.session.commit()
-        flash(f'Article "{article.title}" deleted successfully.', "success")
-    except Exception:
-        db.session.rollback()
-        flash("Failed to delete article.", "error")
-
-    return redirect(url_for("article.articles"))
+    return delete_article_db(article)
 
 @admin_bp.route("/add-tag", methods=["GET", "POST"])
 @admin_required
@@ -346,17 +345,14 @@ def edit_project(slug):
 @admin_bp.route("/delete-project/<slug>", methods=["POST"])
 @admin_required
 def delete_project(slug):
-    project = db.session.query(Project).where(Project.slug == slug).first()
+    project = (
+        db.session.query(Project)
+        .options(joinedload(Project.project_assets).joinedload(ProjectAsset.asset))
+        .where(Project.slug == slug)
+        .first()
+    )
 
     if project is None:
         abort(404)
 
-    try:
-        db.session.delete(project)
-        db.session.commit()
-        flash(f'Article "{project.title}" deleted successfully.', "success")
-    except Exception:
-        db.session.rollback()
-        flash("Failed to delete article.", "error")
-
-    return redirect(url_for("article.articles"))
+    return delete_project_db(project)

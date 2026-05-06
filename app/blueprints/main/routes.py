@@ -1,4 +1,4 @@
-# TODO: IMPORTANT - Make sure that assets are also deleted when deleting articles / projects
+# TODO: LATER - Make a script to delete empty article / project folders
 from flask import  render_template
 from . import main_bp
 from app import db

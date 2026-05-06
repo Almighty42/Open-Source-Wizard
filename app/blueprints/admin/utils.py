@@ -396,7 +396,7 @@ def update_asset_db(asset, form_data):
 
     try:
         _, _, relative_dir, safe_filename = _split_asset_path(requested_raw_path)
-        requested_db_path = f"/static/{relative_dir}/{safe_filename}"
+        requested_db_path = f"static/{relative_dir}/{safe_filename}"
 
         if requested_db_path != old_db_path and not form_data.file.data:
             flash("Please upload a new file when changing the asset path.", "error")
@@ -553,3 +553,62 @@ def _get_inline_assets(form_data):
     return Asset.query.filter(
         Asset.id.in_(form_data.inline_assets.data)
     ).all()
+
+def _asset_is_still_used(asset_id: int) -> bool:
+    article_use = db.session.query(ArticleAsset).filter_by(asset_id=asset_id).first()
+    if article_use:
+        return True
+
+    project_use = db.session.query(ProjectAsset).filter_by(asset_id=asset_id).first()
+    if project_use:
+        return True
+
+    return False
+
+def _delete_asset_if_unused(asset: Asset):
+    if asset is None:
+        return
+
+    if _asset_is_still_used(asset.id):
+        return
+
+    _delete_asset_file(asset.path)
+    db.session.delete(asset)
+
+def delete_article_db(article):
+    try:
+        linked_assets = [aa.asset for aa in article.article_assets]
+
+        db.session.delete(article)
+        db.session.flush()
+
+        for asset in linked_assets:
+            _delete_asset_if_unused(asset)
+
+        db.session.commit()
+        flash(f'Article "{article.title}" deleted successfully.', "success")
+        return redirect(url_for("article.articles"))
+
+    except Exception:
+        db.session.rollback()
+        flash("Failed to delete article.", "error")
+        raise
+
+def delete_project_db(project):
+    try:
+        linked_assets = [pa.asset for pa in project.project_assets]
+
+        db.session.delete(project)
+        db.session.flush()
+
+        for asset in linked_assets:
+            _delete_asset_if_unused(asset)
+
+        db.session.commit()
+        flash(f'Project "{project.title}" deleted successfully.', "success")
+        return redirect(url_for("project.projects"))
+
+    except Exception:
+        db.session.rollback()
+        flash("Failed to delete project.", "error")
+        raise
