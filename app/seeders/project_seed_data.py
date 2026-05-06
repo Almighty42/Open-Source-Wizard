@@ -13,9 +13,9 @@ PROJECTS = [
         "seo_description": "How I set up a self-hosted TRMNL server on a Raspberry Pi with Nginx, Docker, and a custom plugin system.",
         "tags": ["Raspberry Pi", "Docker", "Nginx", "Python"],
         "category": "Self-Hosting",
-        "cover": "/static/uploads/projects/trmnl-server-cover.jpg",
-        "gallery": [
-            "/static/uploads/gallery/trmnl-ui-screenshot.png",
+        "cover": "static/uploads/projects/self-hosted-trmnl-server/images/trmnl-server-cover.jpg",
+        "inline_assets": [
+            "static/uploads/projects/self-hosted-trmnl-server/images/trmnl-ui-screenshot.webp",
         ],
         "attachments": [],
         "body": """\
@@ -29,6 +29,8 @@ no rate limits, and local network access without a cloud dependency.
 - **Docker Compose** for service isolation
 - **Nginx** as reverse proxy with Let's Encrypt SSL
 - **SQLite** for plugin state (simple enough for this use case)
+
+![TRMNL UI](asset:static/uploads/projects/self-hosted-trmnl-server/images/trmnl-ui-screenshot.webp)
 
 # Nginx Config
 
@@ -81,14 +83,16 @@ def display():
         "seo_description": "How I jailbroke a Kindle 4 and turned it into a low-power ambient information display using KUAL and a custom Python script.",
         "tags": ["E-Ink", "Python", "Linux", "Debugging"],
         "category": "Reverse Engineering",
-        "cover": "/static/uploads/projects/kindle-dashboard-cover.jpg",
-        "gallery": [
-            "/static/uploads/gallery/kindle-dashboard-closeup.jpg",
+        "cover": "static/uploads/projects/kindle-dashboard-mod/images/kindle-dashboard-cover.jpg",
+        "inline_assets": [
+            "static/uploads/projects/kindle-dashboard-mod/images/dashboard.png",
         ],
         "attachments": [],
         "body": """\
 An old Kindle 4 has a 6-inch e-ink display, a 1GHz ARM processor, 256MB RAM,
 and draws about 170mW while rendering. It's basically a perfect ambient display.
+
+![Dashboard](asset:static/uploads/projects/kindle-dashboard-mod/images/dashboard.png)
 
 # Jailbreak
 
@@ -144,10 +148,7 @@ Average power draw: ~90mW — the original battery lasts weeks.
         "seo_description": "Building a low-power ESP32 sensor node with BME280 and LiPo battery. Sends MQTT telemetry with deep sleep between readings.",
         "tags": ["ESP32", "C", "Power Management", "Debugging"],
         "category": "Embedded Systems",
-        "cover": "/static/uploads/projects/esp32-sensor-cover.jpg",
-        "gallery": [
-            "/static/uploads/gallery/esp32-sensor-enclosure.jpg",
-        ],
+        "cover": "",
         "attachments": [],
         "body": """\
 A battery-powered sensor node that reads temperature, humidity, and pressure

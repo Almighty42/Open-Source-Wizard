@@ -12,21 +12,19 @@ ARTICLES = [
         "seo_description": "A practical guide to using AI tools like Copilot and Claude in embedded C firmware development. Where it helps, where it doesn't, and a real workflow example.",
         "tags": ["AI", "Embedded", "ESP32", "C", "Debugging"],
         "category": "Embedded Systems",
-        "cover": "uploads/articles/ai-embedded-cover.jpg",
+        "cover": "static/uploads/articles/ai-in-embedded-development/images/ai-embedded-cover.jpg",
         "inline_assets": [
-            "uploads/articles/ai-copilot-screenshot.png",
-            "uploads/articles/esp32-breadboard.jpg",
+            "static/uploads/articles/ai-in-embedded-development/images/ai-copilot-screenshot.png",
+            "static/uploads/articles/ai-in-embedded-development/images/esp32-breadboard.jpg",
         ],
         "diagrams": [
-            "uploads/diagrams/cloud-vs-edge-ai.svg",
-            "uploads/diagrams/i2c-sensor-block.png",
+            "static/uploads/articles/ai-in-embedded-development/diagrams/i2c-sensor-block.png",
         ],
         "attachments": [
-            "uploads/files/sensor_driver_port.c",
-            "uploads/files/ai-embedded-workflow-checklist.pdf",
+            "static/uploads/articles/ai-in-embedded-development/files/sensor_driver_port.c",
         ],
         "videos": [
-            "uploads/videos/esp32-demo.mp4",
+            "static/uploads/articles/ai-in-embedded-development/videos/esp32-demo.mp4",
         ],
         "body": """\
 There's a growing split in the embedded community. Half the engineers I talk to swear by AI coding tools.
@@ -81,7 +79,7 @@ Here
 When you open a 3-year-old driver written by someone who left the company,
 asking an LLM to explain what a function does and what could go wrong is genuinely useful.
 
-![Copilot suggesting C code in Neovim](asset:uploads/articles/ai-copilot-screenshot.png)
+![Copilot suggesting C code in Neovim](asset:static/uploads/articles/ai-in-embedded-development/images/ai-copilot-screenshot.png)
 
 ```c
 // Pasted a 60-line I2C transaction handler into Claude.
@@ -90,7 +88,7 @@ asking an LLM to explain what a function does and what could go wrong is genuine
 while (!(I2C1->SR1 & I2C_SR1_ADDR)); // no timeout — hangs forever if NACK
 ```
 
-![I2C bus topology](asset:uploads/diagrams/i2c-sensor-block.png)
+![I2C bus topology](asset:static/uploads/articles/ai-in-embedded-development/diagrams/i2c-sensor-block.png)
 
 ## 3. Writing Unit Tests
 
@@ -106,7 +104,7 @@ void test_crc16_empty(void) {
 }
 ```
 
-![ESP32 sensor demo](asset:uploads/videos/esp32-demo.mp4)
+![ESP32 sensor demo](asset:static/uploads/articles/ai-in-embedded-development/videos/esp32-demo.mp4)
 
 # Where AI Will Waste Your Time
 
@@ -174,10 +172,10 @@ This is a bigger topic that deserves its own article.
         "seo_description": "How I built a portable NAS with a Raspberry Pi 4, dual SSDs, and a 3D-printed enclosure. Includes parts list, wiring, and software setup.",
         "tags": ["Raspberry Pi", "Linux", "Docker", "Python"],
         "category": "Self-Hosting",
-        "cover": "uploads/articles/portable-nas-cover.jpg",
-        "inline_assets": ["uploads/articles/nas-internals.jpg"],
+        "cover": "",
+        "inline_assets": ["static/uploads/articles/portable-raspberry-pi-nas/images/nas-internals.jpg"],
         "diagrams": [],
-        "attachments": ["uploads/files/portable-nas-bom.pdf"],
+        "attachments": [],
         "body": """\
 I wanted a NAS I could take anywhere — one that fits in a backpack, runs off a battery,
 and doesn't require a wall socket to be useful. This is the full build log.
@@ -199,6 +197,8 @@ and doesn't require a wall socket to be useful. This is the full build log.
 | Waveshare UPS HAT | 18650 battery pack, I2C fuel gauge |
 | 4-port USB 3.0 hub | Powered, plugged into Pi USB 3 port |
 | 3D-printed enclosure | Designed in FreeCAD |
+
+![NAS Internals](asset:static/uploads/articles/portable-raspberry-pi-nas/images/nas-internals.jpg)
 
 # Power Budget
 
@@ -252,7 +252,7 @@ Next version I'd use a proper PCIe-to-SATA HAT instead.
         "seo_description": "How a missing deep sleep command on a Waveshare e-ink display caused persistent ghosting artifacts and how I found it.",
         "tags": ["E-Ink", "ESP32", "Debugging", "C"],
         "category": "Embedded Systems",
-        "cover": "uploads/articles/eink-debug-cover.jpg",
+        "cover": "static/uploads/articles/eink-refresh-bug/images/eink-debug-cover.jpg",
         "inline_assets": [],
         "diagrams": [],
         "attachments": [],
@@ -306,7 +306,7 @@ thinking it was unnecessary boilerplate.
         "seo_description": "",
         "tags": ["AI", "Embedded", "ESP32", "C", "Debugging"],
         "category": "Embedded Systems",
-        "cover": "assets/cover.png",
+        "cover": "static/uploads/articles/ai-in-embedded-development-article/images/cover.png",
         "inline_assets": [],
         "diagrams": [],
         "attachments": [],
@@ -566,7 +566,7 @@ The embedded engineer's job isn't going away. The skill ceiling is just shifting
     "seo_description": "Step-by-step guide to writing a UART driver from scratch on the STM32F4 without HAL or CubeMX. Register-level programming explained.",
     "tags": ["STM32", "C", "Embedded", "Debugging"],
     "category": "Embedded Systems",
-    "cover": "uploads/articles/uart-stm32-cover.jpg",
+    "cover": "static/uploads/articles/uart-driver-stm32/images/uart-stm32-cover.webp",
     "inline_assets": [],
     "diagrams": [],
     "attachments": [],
@@ -783,7 +783,7 @@ Learn this pattern on UART because UART is debuggable with any cheap USB adapter
     "seo_description": "How to install and configure Syncthing on a Raspberry Pi as a self-hosted file sync server. systemd, firewall, and remote web UI setup.",
     "tags": ["Raspberry Pi", "Linux", "Self-Hosting"],
     "category": "Self-Hosting",
-    "cover": "uploads/articles/syncthing-cover.jpg",
+    "cover": "",
     "inline_assets": [],
     "diagrams": [],
     "attachments": [],

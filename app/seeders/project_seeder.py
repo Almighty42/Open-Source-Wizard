@@ -49,6 +49,28 @@ def _seed_project_joins(project, data):
             is_cover=True,
         ))
 
+    # Inline assets 
+    for asset_path in data.get("inline_assets", []):
+        asset = _get_or_warn(Asset, "path", asset_path)
+        if asset:
+            db.session.add(ProjectAsset(
+                project_id=project.id,
+                asset_id=asset.id,
+                role="inline",
+                is_cover=False,
+            ))
+
+    # Videos 
+    for asset_path in data.get("videos", []):
+        asset = _get_or_warn(Asset, "path", asset_path)
+        if asset:
+            db.session.add(ProjectAsset(
+                project_id=project.id,
+                asset_id=asset.id,
+                role="video",
+                is_cover=False,
+            ))
+
     # Gallery
     for asset_path in data.get("gallery", []):
         asset = _get_or_warn(Asset, "path", asset_path)

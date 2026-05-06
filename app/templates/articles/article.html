@@ -7,7 +7,7 @@
 <div id="main-page" style="align-items: start;">
 {% if cover %}
 <img class="article-cover"
-     src="{{ cover.path }}"
+     src="/{{ cover.path }}"
      alt="{{ cover.alt_text or '' }}"
      onload="this.classList.add('loaded')"
      onerror="this.style.display='none'" />
@@ -80,7 +80,7 @@
 		<div class="article-footer-attachments">
 			{% for attachment in attachments %}
 			<a class="article-attachment" 
-				href="{{ attachment.asset.path }}"
+				href="/{{ attachment.asset.path }}"
 				download
 				target="_blank"
 				rel="noopener noreferrer">

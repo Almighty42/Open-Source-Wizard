@@ -5,96 +5,91 @@ from app.seeders.base import BaseSeeder
 CORE_ASSETS = [
     # --- Article covers ---
     {
-        "path": "uploads/articles/ai-embedded-cover.jpg",
+        "path": "static/uploads/articles/ai-in-embedded-development/images/ai-embedded-cover.jpg",
         "alt_text": "ESP32 development board next to a laptop showing C code",
         "caption": "AI-assisted firmware development at the workbench",
     },
     {
-        "path": "uploads/articles/portable-nas-cover.jpg",
-        "alt_text": "Raspberry Pi inside a compact 3D-printed enclosure",
-        "caption": "The finished portable NAS build",
+        "path": "static/uploads/articles/portable-raspberry-pi-nas/images/nas-internals.jpg",
+        "alt_text": "Raspberry Pi NAS internals with SSDs and wiring",
+        "caption": "Internal layout of the portable Raspberry Pi NAS build",
     },
     {
-        "path": "uploads/articles/eink-debug-cover.jpg",
+        "path": "static/uploads/articles/eink-refresh-bug/images/eink-debug-cover.jpg",
         "alt_text": "E-ink display showing partial refresh artifact",
         "caption": "Partial refresh ghosting on the 4.2 inch Waveshare panel",
     },
-
-    # --- Project covers ---
     {
-        "path": "uploads/projects/trmnl-server-cover.jpg",
+        "path": "static/uploads/articles/ai-in-embedded-development-article/images/cover.png",
+        "alt_text": "Neovim window with AI-suggested embedded C code",
+        "caption": "Using AI tools inside a terminal-focused firmware workflow",
+    },
+    {
+        "path": "static/uploads/articles/uart-driver-stm32/images/uart-stm32-cover.webp",
+        "alt_text": "STM32 development board connected via USB-UART adapter",
+        "caption": "Bare-metal UART driver running on an STM32F4 board",
+    },
+
+    # --- Project covers  ---
+    {
+        "path": "static/uploads/projects/self-hosted-trmnl-server/images/trmnl-server-cover.jpg",
         "alt_text": "TRMNL dashboard running on a self-hosted server",
         "caption": "Self-hosted TRMNL server behind Nginx",
     },
     {
-        "path": "uploads/projects/kindle-dashboard-cover.jpg",
+        "path": "static/uploads/projects/kindle-dashboard-mod/images/kindle-dashboard-cover.jpg",
         "alt_text": "Jailbroken Kindle displaying a custom dashboard",
         "caption": "Jailbroken Kindle 4 running a live dashboard",
-    },
-    {
-        "path": "uploads/projects/esp32-sensor-cover.jpg",
-        "alt_text": "ESP32 sensor node on a breadboard with battery pack",
-        "caption": "ESP32 sensor node with BME280 and LiPo battery",
     },
 
     # --- Inline article images ---
     {
-        "path": "uploads/articles/ai-copilot-screenshot.png",
+        "path": "static/uploads/articles/ai-in-embedded-development/images/ai-copilot-screenshot.png",
         "alt_text": "GitHub Copilot suggesting C code in Neovim",
         "caption": "Copilot autocompleting an I2C init function",
     },
     {
-        "path": "uploads/articles/esp32-breadboard.jpg",
+        "path": "static/uploads/articles/ai-in-embedded-development/images/esp32-breadboard.jpg",
         "alt_text": "ESP32 wired to an I2C sensor breakout on a breadboard",
         "caption": "I2C sensor wiring during driver port testing",
     },
     {
-        "path": "uploads/articles/nas-internals.jpg",
+        "path": "static/uploads/articles/portable-raspberry-pi-nas/images/nas-internals.jpg",
         "alt_text": "Internal wiring of the portable NAS enclosure",
         "caption": "Power routing and USB hub inside the enclosure",
     },
 
+    # --- Inline project images ---
+
+    {
+        "path": "static/uploads/projects/self-hosted-trmnl-server/images/trmnl-ui-screenshot.webp",
+        "alt_text": "Placeholder",
+        "caption": "Placeholder",
+    },
+
+    {
+        "path": "static/uploads/projects/kindle-dashboard-mod/images/dashboard.png",
+        "alt_text": "Placeholder",
+        "caption": "Placeholder",
+    },
+
     # --- Diagrams ---
     {
-        "path": "uploads/diagrams/i2c-sensor-block.svg",
-        "alt_text": "Block diagram showing MCU to I2C sensor connection",
-        "caption": "I2C bus topology for the sensor node",
-    },
-    {
-        "path": "uploads/diagrams/cloud-vs-edge-ai.svg",
-        "alt_text": "Diagram comparing cloud AI and edge AI architectures",
-        "caption": "Cloud AI vs edge AI — where inference runs",
-    },
-    {
-        "path": "uploads/diagrams/esp32-power-schematic.svg",
-        "alt_text": "Schematic showing ESP32 power circuit with LDO regulator",
-        "caption": "Power supply circuit for the ESP32 sensor node",
-    },
-    {
-        "path": "uploads/diagrams/i2c-sensor-block.png",
+        "path": "static/uploads/articles/ai-in-embedded-development/diagrams/i2c-sensor-block.png",
         "alt_text": "Block diagram showing MCU to I2C sensor connection",
         "caption": "I2C bus topology for the sensor node",
     },
 
     # --- Attachments ---
     {
-        "path": "uploads/files/sensor_driver_port.c",
+        "path": "static/uploads/articles/ai-in-embedded-development/files/sensor_driver_port.c",
         "alt_text": None,
         "caption": "Ported I2C sensor driver for ESP-IDF",
     },
-    {
-        "path": "uploads/files/portable-nas-bom.pdf",
-        "alt_text": None,
-        "caption": "Full bill of materials for the portable NAS build",
-    },
-    {
-        "path": "uploads/files/ai-embedded-workflow-checklist.pdf",
-        "alt_text": None,
-        "caption": "AI-assisted embedded development workflow checklist",
-    },
 
+    # --- Videos ---
     {
-        "path": "uploads/videos/esp32-demo.mp4",
+        "path": "static/uploads/articles/ai-in-embedded-development/videos/esp32-demo.mp4",
         "alt_text": None,
         "caption": "ESP32 sensor node demo",
     },

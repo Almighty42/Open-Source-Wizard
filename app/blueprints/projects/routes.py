@@ -1,6 +1,6 @@
 from flask import  render_template, abort, request
 from flask_login import current_user
-from app.models import ProjectAsset, Project, Category, Tag
+from app.models import ProjectAsset, Project, Category, Tag, ProjectCategory, ProjectTag
 from app.models.base import Status, Role
 from . import project_bp
 from app import db
@@ -66,10 +66,14 @@ def projects():
 @project_bp.route("/<slug>")
 def project(slug):
     project = (
-            db.session.query(Project)
-            .options(joinedload(Project.project_assets).joinedload(ProjectAsset.asset))
-            .where(Project.slug == slug)
-            .first()
+        db.session.query(Project)
+        .options(
+        joinedload(Project.project_assets).joinedload(ProjectAsset.asset),
+        joinedload(Project.project_tags).joinedload(ProjectTag.tag),
+        joinedload(Project.project_categories).joinedload(ProjectCategory.category),
+    )
+    .where(Project.slug == slug)
+    .first()
     )
 
     if project is None:
@@ -84,6 +88,12 @@ def project(slug):
         for aa in project.project_assets
         if aa.role == Role.attachment
     ]
+    for pa in project.project_assets:
+        print("ProjectAsset:", pa)
+        print("asset.id:", pa.asset.id)
+        print("asset.path:", pa.asset.path)
+        print("role:", pa.role)
+        print("is_cover:", pa.is_cover)
     rendered_body = render_markdown(project.body, project.project_assets)
     delete_form = DeleteForm()
 

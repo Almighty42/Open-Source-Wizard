@@ -1,7 +1,7 @@
 {% macro project_card(project) %}
     <article class="project-card">
         {% if project.cover_image %}
-            <img src="{{project.cover_image.path}}" />
+            <img src="/{{project.cover_image.path}}" />
         {% else %}
             <img src="{{ url_for('static', filename='assets/placeholder.png') }}" />
         {% endif %}

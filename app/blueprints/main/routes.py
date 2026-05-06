@@ -1,4 +1,3 @@
-# TODO: IMPORTANT - Make better seeders which conform to new image codes
 # TODO: IMPORTANT - Test out making a article with images
 from flask import  render_template
 from . import main_bp
