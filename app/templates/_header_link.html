@@ -1,8 +1,6 @@
-{% macro link(endpoint, text) %}
-<a
-  class="{{ 'foreground-1' if request.endpoint == endpoint else 'foreground-2' }}"
-  href="{{ url_for(endpoint) }}"
->
-  {% if request.endpoint == endpoint %}&#62;{% endif %} [ {{ text }} ]</a
->
+{% macro link(endpoint, class,  text) %}
+    <a class="{{ class }} {{ 'selected' if request.endpoint == endpoint else 'unselected' }}"
+       href="{{ url_for(endpoint) }}">
+        {% if request.endpoint == endpoint %}&#62;{% endif %}
+    [ {{ text }} ]</a>
 {% endmacro %}

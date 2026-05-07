@@ -5,7 +5,7 @@
   data-dark-src="/static/assets/{{ dark_uri }}"
   id="{{ id }}"
   class="{{ class }}"
-  src="{{ url_for('static', filename='assets/{{ light_uri }}') }}"
+  src="{{ url_for('static', filename='assets/' ~ light_uri) }}"
   alt="{{ alt }}"
 />
 {% endmacro %}

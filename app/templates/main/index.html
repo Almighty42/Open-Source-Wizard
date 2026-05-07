@@ -2,58 +2,41 @@
 {% import "components/_article.html" as article_comp %}
 {% import "components/_project.html" as project_comp %}
 {% import "_image.html" as image_comp %}
-
 {% block content %}
-
-{% include 'components/_header.html' %}
-
-<div id="main-page">
-	<h1>Welcome Wanderer</h1>
-	{{ image_comp.image(
-	'images/hero.svg', 
-	'images/hero_dark.svg', 
-	'hero', 
-	'site-hero', 
-	'Hero Section Image Svg') }}
-	<p style="text-align:center;" >
-	Software engineering, embedded systems, and projects — documented as I go
-	</p>
-	<section>
-		<div class="section-heading" >
-			<h2>
-				Recent Articles
-			</h2>
-			<a href="{{ url_for('article.articles') }}" > &#62; See more</a>
-		</div>
-		<hr>
-		<div class="articles" >
-			{% for article in articles %}
-				{{ article_comp.article_card(article) }}
-			{% endfor %}
-		</div>
-	</section>
-
-	<section style="margin-bottom: 0px;" >
-		<div class="section-heading" >
-			<h2>
-				Recent Projects 
-			</h2>
-			<a href="{{ url_for('project.projects') }}" > &#62; See more</a>
-		</div>
-		<hr>
-		<div class="articles" >
-			{% for project in projects %}
-				{{ project_comp.project_card(project) }}
-			{% endfor %}
-		</div>
-	</section>
-	<img
-	data-theme-image
-	data-light-src="/static/assets/images/footer-hero.svg"
-	data-dark-src="/static/assets/images/footer-hero_dark.svg"
-	id="site-footer_hero" class="footer-hero" src="{{ url_for('static', filename='assets/images/footer-hero.svg') }}" alt="Hero Section Image Svg" />
-</div>
-
-{% include 'components/_footer.html' %}
-
+    {% include 'components/_header.html' %}
+    <div class="page" id="main-page">
+        <h1 class="page__heading-1">Welcome Wanderer</h1>
+        {{ image_comp.image('images/hero.svg',
+                'images/hero_dark.svg',
+                'page__hero',
+                'site-hero',
+                'Hero Section Image Svg') }}
+        <p>Software engineering, embedded systems, and projects — documented as I go</p>
+        <section class="page__section">
+            <div class="page__section-header">
+                <h2 class="page__heading-2">Recent Articles</h2>
+                <a class="page__link-anchor" href="{{ url_for('article.articles') }}">&#62; See more</a>
+            </div>
+            <hr class="page__divider">
+            <div class="page__cards">
+                {% for article in articles %}{{ article_comp.article_card(article) }}{% endfor %}
+            </div>
+        </section>
+        <section class="page__section" style="margin-bottom: 0px;">
+            <div class="page__section-header">
+                <h2 class="page__heading-2">Recent Projects</h2>
+                <a class="page__link-anchor" href="{{ url_for('project.projects') }}">&#62; See more</a>
+            </div>
+            <hr class="page__divider" >
+            <div class="page__cards">
+                {% for project in projects %}{{ project_comp.project_card(project) }}{% endfor %}
+            </div>
+        </section>
+        {{ image_comp.image('images/footer-hero.svg',
+                'images/footer_dark.svg',
+                'hero',
+                'site-footer_hero',
+                'Second Hero Section Image Svg') }}
+    </div>
+    {% include 'components/_footer.html' %}
 {% endblock %}

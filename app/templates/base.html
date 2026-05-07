@@ -11,6 +11,12 @@
         <link rel="icon"
               href="{{ url_for('static', filename='favicon.ico') }}"
               sizes="any">
+        <link rel="preload"
+              as="image"
+              href="{{ url_for('static', filename='assets/icons/logo.svg') }}">
+        <link rel="preload"
+              as="image"
+              href="{{ url_for('static', filename='assets/icons/logo_dark.svg') }}">
         <link rel="stylesheet"
               href="{{ url_for('static', filename='css/app.css') }}" />
         <link rel="preconnect" href="https://fonts.googleapis.com">

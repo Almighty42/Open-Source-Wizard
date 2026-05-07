@@ -1,36 +1,41 @@
+@use "../base";
+
 .header {
-  width: 70%;
-  height: 100%;
-  padding: 1rem;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--color-border);
+  height: var(--header-height);
+  padding: var(--space-4);
+  @include base.flex-between();
+  border-bottom: solid var(--border-width-thin) var(--color-border-2);
 
-  &__logo_block {
+  &__logo-block {
     width: 100%;
-    align-items: center;
-    gap: 16px;
-
-    >p {
-      font-size: 0.9rem;
-      user-select: none;
-    }
+    @include base.flex(row, flex-start, center, var(--space-4));
   }
 
-  >ul {
-    gap: 1.5rem;
+  &__logo-text {
+    font-size: var(--text-sm);
+    user-select: none;
+  }
 
-    >li {
-      >a {
-        font-size: 0.8rem;
-        text-decoration: none;
-        white-space: nowrap;
-      }
-    }
+  &__links {
+    @include base.flex(row, flex-start, center, var(--space-6));
+  }
+
+  &__link-anchor {
+    font-size: var(--text-xs);
+    text-decoration: none;
+    white-space: nowrap;
+    color: var(--color-text-tertiary);
+  }
+
+  &__link-anchor.selected {
+    color: var(--color-text-primary);
   }
 }
 
-#mode_switch {
+#change-theme {
   cursor: pointer;
   user-select: none;
+  border: none;
+  padding: 0;
+  background: transparent;
 }

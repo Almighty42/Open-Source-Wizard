@@ -17,7 +17,7 @@ const CHECK_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"
 </svg>`;
 
 document.addEventListener("DOMContentLoaded", () => {
-	const mode_switch = document.getElementById("mode_switch");
+	const change_theme = document.getElementById("change-theme");
 	const searchInput = document.querySelector("#nav-search input");
 	const filterForm = document.querySelector("form[id$='-filter']");
 	const itemsList = document.getElementById("articles-list") || document.getElementById("projects-list");
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	initRemoteSelect("#cover-asset-select", { maxItems: 1 });
 	initRemoteSelect("#inline-assets-select", { maxItems: null });
 
-	mode_switch?.addEventListener("click", () => {
+	change_theme?.addEventListener("click", () => {
 		const currentTheme = root.getAttribute("data-theme") || "light";
 		const newTheme = currentTheme === "dark" ? "light" : "dark";
 

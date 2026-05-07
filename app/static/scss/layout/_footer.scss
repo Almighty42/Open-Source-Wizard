@@ -1,31 +1,23 @@
-footer {
-  width: 70%;
-  height: 100%;
-  padding: 1rem;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid var(--color-border);
+@use "../base";
 
-  >div {
-    width: 100%;
-    align-items: center;
-    gap: 16px;
+.footer {
+  height: fit-content;
+  padding: var(--space-4);
+  @include base.flex-between();
+  border-top: solid var(--border-width-thin) var(--color-border-2);
 
-    >img {}
-
-    >p {
-      font-size: 0.9rem;
-    }
+  &__links {
+    @include base.flex(row, flex-start, center, var(--space-6));
   }
 
-  >ul {
-    gap: 1.5rem;
+  &__link-anchor {
+    font-size: var(--text-xs);
+    text-decoration: none;
+    white-space: nowrap;
+    color: var(--color-text-secondary);
+  }
 
-    >li {
-      >a {
-        font-size: 0.8rem;
-        text-decoration: none;
-      }
-    }
+  &__trademark {
+    font-size: var(--text-xs);
   }
 }

@@ -1,44 +1,26 @@
 {% import "_image.html" as image_comp %}
 {% import "_header_link.html" as link_comp %}
-
 <header class="header">
-    <div class="header__logo_block">
+    <div class="header__logo-block">
         {{ image_comp.image('icons/logo.svg',
                 'icons/logo_dark.svg',
-                'header__logo_block__logo',
+                '',
                 '',
                 'Open Source Wizard Logo') }}
-        <p class="foreground-1">[ Open Source Wizard ]</p>
+        <p class="header__logo-text foreground-1">[ Open Source Wizard ]</p>
     </div>
-    <ul>
-        <li>
-            {{ link_comp.link('main.index', '/') }}
-        </li>
-        <li>
-            <a class="{{ 'foreground-1' if request.endpoint == 'article.articles' else 'foreground-2' }}"
-               href="{{ url_for('article.articles') }}">
-                {% if request.endpoint == 'article.articles' %}&#62;{% endif %}
-            [ /Articles ]</a>
-        </li>
-        <li>
-            <a class="{{ 'foreground-1' if request.endpoint == 'project.projects' else 'foreground-2' }}"
-               href="{{ url_for('project.projects') }}">
-                {% if request.endpoint == 'project.projects' %}&#62;{% endif %}
-            [ /Projects ]</a>
-        </li>
-        <li>
-            <a class="{{ 'foreground-1' if request.endpoint == 'main.about' else 'foreground-2' }}"
-               href="{{ url_for('main.about') }}">
-                {% if request.endpoint == 'main.about' %}&#62;{% endif %}
-            [ /About ]</a>
-        </li>
+    <ul role="list" class="header__links">
+        <li>{{ link_comp.link('main.index', 'header__link-anchor', '/') }}</li>
+        <li>{{ link_comp.link('article.articles', 'header__link-anchor', '/Articles') }}</li>
+        <li>{{ link_comp.link('project.projects', 'header__link-anchor', '/Projects') }}</li>
+        <li>{{ link_comp.link('main.about', 'header__link-anchor', '/About') }}</li>
         {% if current_user.is_authenticated %}
             <li>
-                <a class="foreground-2" href="{{ url_for('auth.logout') }}">[ /Logout ]</a>
+                <a class=" header__link-anchor" href="{{ url_for('auth.logout') }}">[ /Logout ]</a>
             </li>
         {% endif %}
         <li>
-            <a class="foreground-2" id="mode_switch">[ ☼ ]</a>
+            <button class=" header__link-anchor" id="change-theme">[ ☼ ]</button>
         </li>
     </ul>
 </header>
