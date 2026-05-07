@@ -1,8 +1,8 @@
-from .articles import create_article, remove_article, update_article
-from .projects import create_project, remove_project, update_project
-from .assets import create_asset, update_asset
-from .tags import add_tag_db
-from .categories import add_category_db
+from .articles.articles_service import create_article, remove_article, update_article
+from .projects.projects_service import create_project, remove_project, update_project
+from .assets.assets_service import create_asset, update_asset
+from .tags.tags_service import create_tag
+from .categories.categories_service import create_category
 
 __all__ = [
         "create_article",
@@ -13,6 +13,6 @@ __all__ = [
         "update_project",
         "create_asset",
         "update_asset",
-        "add_tag_db",
-        "add_category_db",
+        "create_tag",
+        "create_category",
         ]

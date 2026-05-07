@@ -1,18 +1,10 @@
+import { initRemoteSelect, updateLabel, syncHiddenInputs } from './tomselect.js'
+import { closeLightbox } from './lightbox.js'
+import { update_theme } from './theme.js'
+import { fetchArticles, syncProjectDateState, syncPublishedDateState } from './form.js'
+
 const root = document.documentElement;
 
-function update_theme() {
-	const mode_switch = document.getElementById("mode_switch");
-	const theme = root.getAttribute("data-theme") || "light";
-	const is_dark = theme === "dark";
-
-	if (mode_switch) {
-		mode_switch.textContent = is_dark ? "[ ☾ ]" : "[ ☼ ]";
-	}
-
-	document.querySelectorAll("[data-theme-image]").forEach((img) => {
-		img.src = is_dark ? img.dataset.darkSrc : img.dataset.lightSrc;
-	});
-}
 
 const saved_theme = localStorage.getItem("theme");
 if (saved_theme) {
@@ -95,23 +87,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (isMulti) {
 				const checked = [...options].filter((o) => o.classList.contains("checked"));
+
 				if (checked.length === 0) {
 					valueDisplay.textContent = "All";
 				} else if (checked.length <= MAX_VISIBLE) {
-					valueDisplay.textContent = checked.map((o) => o.textContent.trim()).join(", ");
+					valueDisplay.textContent = checked
+						.map((o) => o.textContent.trim())
+						.join(", ");
 				} else {
-					const visible = checked.slice(0, MAX_VISIBLE).map((o) => o.textContent.trim()).join(", ");
+					const visible = checked
+						.slice(0, MAX_VISIBLE)
+						.map((o) => o.textContent.trim())
+						.join(", ");
+
 					valueDisplay.textContent = `${visible} +${checked.length - MAX_VISIBLE}`;
 				}
 			} else {
 				const selected = select.querySelector(".custom-select__option.selected");
-				if (selected) valueDisplay.textContent = selected.textContent.trim();
+				if (selected) {
+					valueDisplay.textContent = selected.textContent.trim();
+				}
 			}
 		}
 
 		function syncHiddenInputs() {
 			select.querySelectorAll("input[type='hidden']").forEach((i) => i.remove());
+
 			const checked = [...options].filter((o) => o.classList.contains("checked"));
+
 			checked.forEach((o) => {
 				const input = document.createElement("input");
 				input.type = "hidden";
@@ -140,8 +143,14 @@ document.addEventListener("DOMContentLoaded", () => {
 					option.classList.add("selected");
 					updateLabel();
 
-					const hidden = select.querySelector("input[type='hidden']");
-					if (hidden) hidden.value = option.dataset.value;
+					let hidden = select.querySelector("input[type='hidden']");
+					if (!hidden) {
+						hidden = document.createElement("input");
+						hidden.type = "hidden";
+						hidden.name = name;
+						select.appendChild(hidden);
+					}
+					hidden.value = option.dataset.value || "";
 
 					select.classList.remove("open");
 					fetchArticles();
@@ -149,30 +158,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		});
 
-		document.addEventListener("click", () => select.classList.remove("open"));
+		document.addEventListener("click", () => {
+			select.classList.remove("open");
+		});
 	});
 
-	function getFilterParams() {
-		if (!filterForm) return "";
-		return new URLSearchParams(new FormData(filterForm)).toString();
-	}
 
-	async function fetchArticles() {
-		if (!filterForm || !itemsList) return;
-
-		const params = getFilterParams();
-		const baseUrl = filterForm.action;
-
-		window.history.replaceState({}, "", `${baseUrl}?${params}`);
-
-		const res = await fetch(`${baseUrl}?${params}`, {
-			headers: { "X-Requested-With": "XMLHttpRequest" }
-		});
-
-		if (res.ok) {
-			itemsList.innerHTML = await res.text();
-		}
-	}
 
 	let debounceTimer;
 	searchInput?.addEventListener("input", () => {
@@ -204,11 +195,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		});
 
-	function closeLightbox() {
-		if (!lightbox) return;
-		lightbox.classList.remove("active");
-		document.body.style.overflow = "";
-	}
 
 	lightboxClose?.addEventListener("click", closeLightbox);
 	lightbox?.addEventListener("click", (e) => {
@@ -218,40 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (e.key === "Escape") closeLightbox();
 	});
 
-	function syncPublishedDateState() {
-		if (!statusField || !publishedAtField) return;
 
-		const shouldDisable =
-			statusField.value === "draft" || statusField.value === "archived";
-
-		publishedAtField.disabled = shouldDisable;
-
-		if (shouldDisable) {
-			publishedAtField.value = "";
-		}
-	}
-
-	function syncProjectDateState() {
-		if (!projectStateField) return;
-
-		if (startedAtField) {
-			const disableStarted = projectStateField.value === "planned";
-			startedAtField.disabled = disableStarted;
-
-			if (disableStarted) {
-				startedAtField.value = "";
-			}
-		}
-
-		if (completedAtField) {
-			const disableCompleted = projectStateField.value !== "finished";
-			completedAtField.disabled = disableCompleted;
-
-			if (disableCompleted) {
-				completedAtField.value = "";
-			}
-		}
-	}
 
 	statusField?.addEventListener("change", syncPublishedDateState);
 	projectStateField?.addEventListener("change", syncProjectDateState);
@@ -260,47 +213,3 @@ document.addEventListener("DOMContentLoaded", () => {
 	syncProjectDateState();
 });
 
-function initRemoteSelect(selector, { valueField = "value", labelField = "text", searchField = "text", maxItems = null } = {}) {
-	const el = document.querySelector(selector);
-	if (!el) return;
-
-	new TomSelect(el, {
-		valueField,
-		labelField,
-		searchField,
-		maxItems,
-		preload: false,
-		create: false,
-		loadThrottle: 250,
-		plugins: ['remove_button', 'virtual_scroll'],
-		firstUrl: function (query) {
-			const url = new URL(el.dataset.remoteUrl, window.location.origin);
-			url.searchParams.set("q", query || "");
-			url.searchParams.set("page", "1");
-			return url.toString();
-		},
-		load: function (query, callback) {
-			const url = this.getUrl(query);
-			fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
-				.then((res) => res.json())
-				.then((data) => {
-					if (data.has_more) {
-						const nextUrl = new URL(url);
-						const nextPage = Number(nextUrl.searchParams.get("page") || "1") + 1;
-						nextUrl.searchParams.set("page", String(nextPage));
-						this.setNextUrl(query, nextUrl.toString());
-					}
-					callback(data.results);
-				})
-				.catch(() => callback());
-		},
-		render: {
-			option: function (item, escape) {
-				return `<div>${escape(item.text)}</div>`;
-			},
-			item: function (item, escape) {
-				return `<div>${escape(item.text)}</div>`;
-			}
-		}
-	});
-}

@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div class="article-title">
-                    {% if article.is_featured %}{{ inline_svg("assets/featured.svg") }}{% endif %}
+                    {% if article.is_featured %}{{ inline_svg("assets/icons/featured.svg") }}{% endif %}
                     <h1>{{ article.title }}</h1>
                 </div>
                 <div class="article-description">
@@ -50,7 +50,7 @@
                 {% if is_auth %}
                     <a class="article-edit"
                        href="{{ url_for('admin.edit_article', slug=article.slug) }}">
-                        {{ inline_svg("assets/edit.svg") }}
+                        {{ inline_svg("assets/icons/edit.svg") }}
                         Edit
                     </a>
                     <form method="POST"
@@ -58,7 +58,7 @@
                           class="article-delete-form">
                         {{ delete_form.hidden_tag() }}
                         <button type="submit" class="article-edit article-delete">
-                            {{ inline_svg("assets/delete.svg") }}
+                            {{ inline_svg("assets/icons/delete.svg") }}
                             <p style="text-decoration: underline;">Delete</p>
                         </button>
                     </form>
@@ -69,7 +69,7 @@
             {{ rendered_body | safe }}
         </section>
         <a id="top-link" href="#">
-            <img src="{{ url_for('static', filename='assets/to_the_top.svg') }}" />
+            <img src="{{ url_for('static', filename='assets/icons/to_the_top.svg') }}" />
         </a>
         <section class="article-footer">
             {% if attachments %}
@@ -81,11 +81,11 @@
                            target="_blank"
                            rel="noopener noreferrer">
                             {% if attachment.role == "attachment" %}
-                                {{ inline_svg("assets/attachment.svg") }}
+                                {{ inline_svg("assets/icons/attachment.svg") }}
                             {% elif attachment.role == "video" %}
-                                {{ inline_svg("assets/video.svg") }}
+                                {{ inline_svg("assets/icons/video.svg") }}
                             {% elif attachment.role == "gallery" %}
-                                {{ inline_svg("assets/gallery.svg") }}
+                                {{ inline_svg("assets/icons/gallery.svg") }}
                             {% endif %}
                             {{ attachment.asset.caption }}
                         </a>

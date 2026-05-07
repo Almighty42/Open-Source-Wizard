@@ -3,7 +3,7 @@
         {% if project.cover_image %}
             <img src="/{{project.cover_image.path}}" />
         {% else %}
-            <img src="{{ url_for('static', filename='assets/placeholder.png') }}" />
+            <img src="{{ url_for('static', filename='assets/icons/components/placeholder.png') }}" />
         {% endif %}
         <div class="project-text">
             <div class="project-info-extra">

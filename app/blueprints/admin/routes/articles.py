@@ -12,7 +12,11 @@ from app.models import (
 from app.decorators import admin_required
 from app.blueprints.admin import admin_bp
 from app.blueprints.admin.services import create_article, update_article, remove_article
+from app.blueprints.admin.utils import (
+        build_category_choices, build_attachment_asset_choices, build_cover_asset_choices, build_inline_asset_choices, build_tag_choices
+        )
 from app.blueprints.admin.exceptions import ArticleCreateError, ArticleUpdateError, ArticleDeleteError
+from app.blueprints.admin.selectors import fetch_categories, fetch_tags, fetch_assets
 
 from sqlalchemy.orm import joinedload
 

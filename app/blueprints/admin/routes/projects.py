@@ -6,12 +6,17 @@ from app.models import (
         Project,
         ProjectAsset,
         ProjectCategory,
-        ProjectTag
+        ProjectTag,
+        Role
         )
 from app.decorators import admin_required
 from app.blueprints.admin import admin_bp
-from app.blueprints.admin.services import create_project, update_project, delete_project
+from app.blueprints.admin.services import create_project, update_project, remove_project
 from app.blueprints.admin.exceptions import ProjectCreateError, ProjectUpdateError, ProjectDeleteError
+from app.blueprints.admin.utils import (
+        build_category_choices, build_attachment_asset_choices, build_cover_asset_choices, build_inline_asset_choices, build_tag_choices
+        )
+from app.blueprints.admin.selectors import fetch_categories, fetch_tags, fetch_assets
 
 from sqlalchemy.orm import joinedload
 
@@ -158,7 +163,7 @@ def delete_project(slug):
         abort(404)
 
     try:
-        delete_project(project)
+        remove_project(project)
         flash(f'Project "{project.title}" deleted successfully.', "success")
         return redirect(url_for("project.projects"))
     except ProjectDeleteError as e:

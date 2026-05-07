@@ -1,0 +1,11 @@
+{% macro image(light_uri, dark_uri, class, id, alt) %}
+<img
+  data-theme-image
+  data-light-src="/static/assets/{{ light_uri }}"
+  data-dark-src="/static/assets/{{ dark_uri }}"
+  id="{{ id }}"
+  class="{{ class }}"
+  src="{{ url_for('static', filename='assets/{{ light_uri }}') }}"
+  alt="{{ alt }}"
+/>
+{% endmacro %}

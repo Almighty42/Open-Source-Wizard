@@ -1,6 +1,5 @@
 import re
 import os
-from flask import url_for
 
 VIDEO_EXTENSIONS = {".mp4", ".webm", ".ogg"}
 

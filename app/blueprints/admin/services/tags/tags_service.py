@@ -1,8 +1,8 @@
-from flask import flash, redirect, url_for
 from app import db
+from app.blueprints.admin.exceptions import TagCreateError
 from app.models import Tag
 
-def add_tag_db(form_data):
+def create_tag(form_data) -> Tag:
     try:
         tag = Tag(
             name=form_data.name.data.strip(),
@@ -15,9 +15,8 @@ def add_tag_db(form_data):
         db.session.add(tag)
         db.session.commit()
 
-        flash("Tag created successfully.", "success")
-        return redirect(url_for("admin.add_tag"))
+        return tag
 
     except Exception:
         db.session.rollback()
-        flash("Failed to create tag.", "error")
+        raise TagCreateError()

@@ -1,7 +1,6 @@
-# TODO: REFACTOR
 from flask import abort, render_template, request
 from flask_login import current_user
-from app.filters.render import render_markdown
+from app.filters import render_markdown
 from app.models import  Article
 from app import db
 from app.models import (
@@ -10,7 +9,6 @@ from app.models import (
         ArticleCategory,
         Category,
         Tag,
-        Article,
         )
 from app.models.base import  Status, Role
 from . import article_bp

@@ -1,8 +1,8 @@
-from flask import flash, redirect, url_for
 from app import db
+from app.blueprints.admin.exceptions import CategoryCreateError
 from app.models import Category
 
-def add_category_db(form_data):
+def create_category(form_data):
     try:
         category = Category(
             name=form_data.name.data.strip(),
@@ -16,9 +16,8 @@ def add_category_db(form_data):
         db.session.add(category)
         db.session.commit()
 
-        flash("Category created successfully.", "success")
-        return redirect(url_for("admin.add_category"))
+        return category
 
     except Exception:
         db.session.rollback()
-        flash("Failed to create category.", "error")
+        raise CategoryCreateError()

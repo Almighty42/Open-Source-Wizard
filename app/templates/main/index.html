@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% import "components/_article.html" as article_comp %}
 {% import "components/_project.html" as project_comp %}
+{% import "_image.html" as image_comp %}
 
 {% block content %}
 
@@ -8,11 +9,12 @@
 
 <div id="main-page">
 	<h1>Welcome Wanderer</h1>
-	<img
-	data-theme-image
-	data-light-src="/static/assets/hero.svg"
-	data-dark-src="/static/assets/hero_dark.svg"
-	id="site-hero" class="hero" src="{{ url_for('static', filename='assets/hero.svg') }}" alt="Hero Section Image Svg" />
+	{{ image_comp.image(
+	'images/hero.svg', 
+	'images/hero_dark.svg', 
+	'hero', 
+	'site-hero', 
+	'Hero Section Image Svg') }}
 	<p style="text-align:center;" >
 	Software engineering, embedded systems, and projects — documented as I go
 	</p>
@@ -47,9 +49,9 @@
 	</section>
 	<img
 	data-theme-image
-	data-light-src="/static/assets/footer-hero.svg"
-	data-dark-src="/static/assets/footer-hero_dark.svg"
-	id="site-footer_hero" class="footer-hero" src="{{ url_for('static', filename='assets/footer-hero.svg') }}" alt="Hero Section Image Svg" />
+	data-light-src="/static/assets/images/footer-hero.svg"
+	data-dark-src="/static/assets/images/footer-hero_dark.svg"
+	id="site-footer_hero" class="footer-hero" src="{{ url_for('static', filename='assets/images/footer-hero.svg') }}" alt="Hero Section Image Svg" />
 </div>
 
 {% include 'components/_footer.html' %}

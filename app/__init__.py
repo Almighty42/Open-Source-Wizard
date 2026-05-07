@@ -5,8 +5,6 @@ from scripts.seed import seed_bp
 from app.blueprints import main_bp, auth_bp, article_bp, project_bp, errors_bp, admin_bp, api_bp
 from app.filters import register_filters
 from app.utils import inline_svg
-from app.blueprints.admin.exceptions import ProjectCreateError
-from app.exceptions import generic_catch_exception
 
 import sqlalchemy as sa
 
@@ -36,8 +34,6 @@ def create_app(config=Config):
     app.register_blueprint(errors_bp)
     app.register_blueprint(api_bp)
     app.register_blueprint(seed_bp)
-
-    app.register_error_handler(ProjectCreateError,generic_catch_exception )
 
     register_filters(app)
 
