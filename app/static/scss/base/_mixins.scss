@@ -34,10 +34,10 @@ $breakpoints: (
   outline-offset: 2px;
 }
 
-@mixin flex($direction: row,
+@mixin flex($gap: null,
+  $direction: row,
   $justify: flex-start,
   $align: stretch,
-  $gap: null,
   $wrap: nowrap,
   $display: flex) {
   display: $display;
@@ -52,9 +52,75 @@ $breakpoints: (
 }
 
 @mixin flex-center($direction: row, $gap: null) {
-  @include flex($direction, center, center, $gap);
+  @include flex($gap, $direction, center, center, );
 }
 
 @mixin flex-between($align: center, $gap: null) {
-  @include flex(row, space-between, $align, $gap);
+  @include flex($gap, row, space-between, $align, );
+}
+
+@mixin base-border($side: null) {
+  @if $side ==null {
+    border: solid var(--color-border-1) var(--border-width-base);
+  }
+
+  @else if $side =="bottom" {
+    border-bottom: solid var(--color-border-1) var(--border-width-base);
+  }
+
+  @else if $side =="left" {
+    border-left: solid var(--color-border-1) var(--border-width-base);
+  }
+
+  @else if $side =="top" {
+    border-top: solid var(--color-border-1) var(--border-width-base);
+  }
+
+  @else if $side =="right" {
+    border-right: solid var(--color-border-1) var(--border-width-base);
+  }
+}
+
+@mixin base-border-thin($side: null) {
+  @if $side ==null {
+    border: solid var(--color-border-1) var(--border-width-thin);
+  }
+
+  @else if $side =="bottom" {
+    border-bottom: solid var(--color-border-1) var(--border-width-thin);
+  }
+
+  @else if $side =="left" {
+    border-left: solid var(--color-border-1) var(--border-width-thin);
+  }
+
+  @else if $side =="top" {
+    border-top: solid var(--color-border-1) var(--border-width-thin);
+  }
+
+  @else if $side =="right" {
+    border-right: solid var(--color-border-1) var(--border-width-thin);
+  }
+}
+
+@mixin dashed-border($side: null) {
+  @if $side ==null {
+    border: dashed var(--color-border-1) var(--border-width-base);
+  }
+
+  @else if $side =="bottom" {
+    border-bottom: dashed var(--color-border-1) var(--border-width-base);
+  }
+
+  @else if $side =="left" {
+    border-left: dashed var(--color-border-1) var(--border-width-base);
+  }
+
+  @else if $side =="top" {
+    border-top: dashed var(--color-border-1) var(--border-width-base);
+  }
+
+  @else if $side =="right" {
+    border-right: dashed var(--color-border-1) var(--border-width-base);
+  }
 }

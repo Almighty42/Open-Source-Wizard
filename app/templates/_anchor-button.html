@@ -1,0 +1,11 @@
+{% macro button(icon="", text="", link="", slug="") %}
+<a
+  class="anchor-button"
+  {% if link %}
+    href="{{ url_for(link, slug=slug) if slug else url_for(link) }}"
+  {% endif %}
+>
+  {% if icon %}{{ inline_svg(icon) }}{% endif %}
+  {{ text }}
+</a>
+{% endmacro %}

@@ -1,89 +1,58 @@
 {% extends "base.html" %}
-{% import "components/_project.html" as project_comp %}
+{% import "components/_project-card.html" as project_comp %}
 {% import "components/_pagination.html" as paginator %}
-
+{% import "_input.html" as input_comp %}
+{% import "_dropdown.html" as dropdown_comp %}
+{% import "_anchor-button.html" as button_comp %}
 {% block content %}
-
-{% include 'components/_header.html' %}
-
-<div id="main-page">
-	<nav>
-		<h1>Projects</h1>
-		<div class="nav-subdiv">
-			<form id="article-filter" action="{{ url_for('project.projects') }}" method="get">
-				<div id="nav-search" class="input-box">
-					<input
-					type="text"
-					name="q"
-					placeholder="Search"
-					value="{{ request.args.get('q', '') }}"
-					/>
-				</div>
-
-				<div id="nav-categories" class="custom-select" data-name="category">
-					<div class="custom-select__trigger">
-						<span class="custom-select__value">All</span>
-						<span class="select-arrow" aria-hidden="true">
-						{{ inline_svg('assets/dropdown.svg') }}
-						</span>
-					</div>
-					<ul class="custom-select__dropdown">
-						<li class="custom-select__option {% if not request.args.get('category') %}selected{% endif %}"
-						data-value="">All</li>
-						{% for category in categories %}
-						<li class="custom-select__option {% if request.args.get('category') == category.slug %}selected{% endif %}"
-						data-value="{{ category.slug }}">{{ category.name }}</li>
-						{% endfor %}
-					</ul>
-					<input type="hidden" name="category" value="{{ request.args.get('category', '') }}">
-				</div>
-
-				<div id="nav-tags" class="custom-select custom-multiselect" data-name="tag">
-					<div class="custom-select__trigger">
-						<span class="custom-select__value">All</span>
-						<span class="select-arrow" aria-hidden="true">
-							{{ inline_svg('assets/dropdown.svg') }}
-						</span>
-					</div>
-					<ul class="custom-select__dropdown">
-						{% for tag in tags %}
-						<li class="custom-select__option {% if tag.slug in request.args.getlist('tag') %}checked{% endif %}"
-						data-value="{{ tag.slug }}">
-						<span class="custom-select__checkbox"></span>
-						{{ tag.name }}
-						</li>
-						{% endfor %}
-					</ul>
-					{% for tag in tags %}
-					{% if tag.slug in request.args.getlist('tag') %}
-					<input type="hidden" name="tag" value="{{ tag.slug }}">
-					{% endif %}
-					{% endfor %}
-				</div>
-			</form>
-		</div>
-	</nav>
-
-	<div class="articles" id="articles-list" style="margin-top: 40px;">
-		{% if is_admin %}
-		<div class="articles-actions">
-			<a href="{{ url_for('admin.add_project') }}" class="add-article">Add Project</a>
-			<a href="{{ url_for('admin.add_tag') }}" class="add-article">Add Tag</a>
-			<a href="{{ url_for('admin.add_category') }}" class="add-article">Add Category</a>
-			<a href="{{ url_for('admin.add_asset') }}" class="add-article" > Add Asset </a>
-		</div>
-		{% endif %}
-
-		{% for project in projects %}
-			{{ project_comp.project_card(project) }}
-		{% else %}
-			<p>No projects found.</p>
-		{% endfor %}
-
-		{{ paginator.pagination_controls(pagination) }}
-	</div>
-</div>
-
-{% include 'components/_footer.html' %}
-
+    {% include 'components/_header.html' %}
+    <div class="page">
+        <nav class="navigation">
+            <h1>Projects</h1>
+            <div>
+                <form class="navigation__form"
+                      id="article-filter"
+                      action="{{ url_for('project.projects') }}"
+                      method="get">
+                    {{ input_comp.input(label="Search",
+                                        type="text",
+                                        id="nav-search",
+                                        name="q",
+                                        value=request.args.get('q', '') ,
+                    inline=True
+                    )
+                    }}
+                    {{ dropdown_comp.dropdown(is_multiselect=False,
+                                        id="nav-categories",
+                                        values=categories,
+                                        type="category") }}
+                    {{ dropdown_comp.dropdown(is_multiselect=True,
+                                        id="nav-tags",
+                                        values=tags,
+                                        type="tags") }}
+                </form>
+            </div>
+        </nav>
+        <div class="card-list" id="articles-list">
+            {% if is_admin %}
+                <div class="card-list__actions">
+                    {{ button_comp.button(icon="", text="Add Project", link="admin.add_project") }}
+                    {{ button_comp.button(icon="", text="Add Tag", link="admin.add_tag") }}
+                    {{ button_comp.button(icon="", text="Add Category", link="admin.add_category") }}
+                    {{ button_comp.button(icon="", text="Add Asset", link="admin.add_asset") }}
+                </div>
+            {% endif %}
+            <div class="card-list__body">
+                {% if projects %}
+                    {% for project in projects %}
+                        {{ project_comp.project_card(project) }}
+                        {{ paginator.pagination_controls(pagination) }}
+                    {% endfor %}
+                {% else %}
+                    <p>No projects found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% include 'components/_footer.html' %}
 {% endblock %}

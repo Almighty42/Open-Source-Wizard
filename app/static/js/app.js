@@ -73,10 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	update_theme();
 
-	document.querySelectorAll(".custom-select").forEach((select) => {
-		const trigger = select.querySelector(".custom-select__trigger");
-		const options = select.querySelectorAll(".custom-select__option");
-		const valueDisplay = select.querySelector(".custom-select__value");
+	document.querySelectorAll(".dropdown").forEach((select) => {
+		const trigger = select.querySelector(".dropdown__trigger");
+		const options = select.querySelectorAll(".dropdown__option");
+		const valueDisplay = select.querySelector(".dropdown__value");
 		const isMulti = select.classList.contains("custom-multiselect");
 		const name = select.dataset.name;
 
@@ -86,26 +86,26 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!valueDisplay) return;
 
 			if (isMulti) {
-				const checked = [...options].filter((o) => o.classList.contains("checked"));
+				const dropdown__checked = [...options].filter((o) => o.classList.contains("dropdown__option--checked"));
 
-				if (checked.length === 0) {
+				if (dropdown__checked.length === 0) {
 					valueDisplay.textContent = "All";
-				} else if (checked.length <= MAX_VISIBLE) {
-					valueDisplay.textContent = checked
+				} else if (dropdown__checked.length <= MAX_VISIBLE) {
+					valueDisplay.textContent = dropdown__checked
 						.map((o) => o.textContent.trim())
 						.join(", ");
 				} else {
-					const visible = checked
+					const visible = dropdown__checked
 						.slice(0, MAX_VISIBLE)
 						.map((o) => o.textContent.trim())
 						.join(", ");
 
-					valueDisplay.textContent = `${visible} +${checked.length - MAX_VISIBLE}`;
+					valueDisplay.textContent = `${visible} +${dropdown__checked.length - MAX_VISIBLE}`;
 				}
 			} else {
-				const selected = select.querySelector(".custom-select__option.selected");
-				if (selected) {
-					valueDisplay.textContent = selected.textContent.trim();
+				const dropdown__selected = select.querySelector(".dropdown__option.dropdown__selected");
+				if (dropdown__selected) {
+					valueDisplay.textContent = dropdown__selected.textContent.trim();
 				}
 			}
 		}
@@ -113,9 +113,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		function syncHiddenInputs() {
 			select.querySelectorAll("input[type='hidden']").forEach((i) => i.remove());
 
-			const checked = [...options].filter((o) => o.classList.contains("checked"));
+			const dropdown__checked = [...options].filter((o) => o.classList.contains("dropdown__option--checked"));
 
-			checked.forEach((o) => {
+			dropdown__checked.forEach((o) => {
 				const input = document.createElement("input");
 				input.type = "hidden";
 				input.name = name;
@@ -134,13 +134,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		options.forEach((option) => {
 			option.addEventListener("click", () => {
 				if (isMulti) {
-					option.classList.toggle("checked");
+					option.classList.toggle("dropdown__option--checked");
 					syncHiddenInputs();
 					updateLabel();
 					fetchArticles();
 				} else {
-					options.forEach((o) => o.classList.remove("selected"));
-					option.classList.add("selected");
+					options.forEach((o) => o.classList.remove("dropdown__option--selected"));
+					option.classList.add("dropdown__option--selected");
 					updateLabel();
 
 					let hidden = select.querySelector("input[type='hidden']");

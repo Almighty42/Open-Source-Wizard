@@ -4,73 +4,73 @@
 
 {% include 'components/_header.html' %}
 
-<div id="main-page" class="admin-page">
-	<section class="admin-form-shell">
-		<div class="admin-page-heading">
-			<p class="admin-eyebrow">Admin</p>
-			<h1>Add Category</h1>
+<div> 
+	<section class="admin-form">
+		<div class="admin-form__heading-section">
+			<p class="admin-form__heading-subtitle">Admin</p>
+			<h1 class="admin-form__heading-title">Add Category</h1>
 		</div>
 
-		<form class="admin-form" method="POST" action="{{ url_for('admin.add_category') }}">
+		<form class="admin-form__body" method="POST" action="{{ url_for('admin.add_category') }}">
 			{{ form.hidden_tag() }}
 
-			<div class="form-block">
-				{{ form.name.label }}
-				{{ form.name(placeholder="Embedded Systems") }}
+			<div class="admin-form__section input-box--md">
+				{{ form.name.label(class_="input-box--md__label") }}
+				{{ form.name(placeholder="Embedded Systems", class_="input-box--md__input") }}
 				{% for error in form.name.errors %}
 				<p class="form-error">{{ error }}</p>
 				{% endfor %}
 			</div>
 
-			<div class="form-block">
-				{{ form.slug.label }}
-				{{ form.slug(placeholder="embedded-systems") }}
+			<div class="admin-form__section input-box--md">
+				{{ form.slug.label(class_="input-box--md__label") }}
+				{{ form.slug(placeholder="embedded-systems", class_="input-box--md__input") }}
 				{% for error in form.slug.errors %}
 				<p class="form-error">{{ error }}</p>
 				{% endfor %}
 			</div>
 
-			<div class="form-block">
-				{{ form.description.label }}
-				{{ form.description(rows="4", placeholder="Optional short description for this category.") }}
+			<div class="admin-form__section input-box--md">
+				{{ form.description.label(class_="input-box--md__label") }}
+				{{ form.description(rows="4", placeholder="Optional short description for this category.", class_="input-box--md__input") }}
 				{% for error in form.description.errors %}
 				<p class="form-error">{{ error }}</p>
 				{% endfor %}
 			</div>
 
-			<div class="form-block">
-				{{ form.seo_title.label }}
-				{{ form.seo_title(placeholder="Optional SEO title") }}
+			<div class="admin-form__section input-box--md">
+				{{ form.seo_title.label(class_="input-box--md__label") }}
+				{{ form.seo_title(placeholder="Optional SEO title", class_="input-box--md__input") }}
 				{% for error in form.seo_title.errors %}
 				<p class="form-error">{{ error }}</p>
 				{% endfor %}
 			</div>
 
-			<div class="form-block">
-				{{ form.seo_description.label }}
-				{{ form.seo_description(rows="4", placeholder="Optional SEO description") }}
+			<div class="admin-form__section input-box--md">
+				{{ form.seo_description.label(class_="input-box--md__label") }}
+				{{ form.seo_description(rows="4", placeholder="Optional SEO description", class_="input-box--md__input") }}
 				{% for error in form.seo_description.errors %}
 				<p class="form-error">{{ error }}</p>
 				{% endfor %}
 			</div>
 
-			<div class="form-block">
-				{{ form.sort_order.label }}
-				{{ form.sort_order(placeholder="0") }}
+			<div class="admin-form__section input-box--md">
+				{{ form.sort_order.label(class_="input-box--md__label") }}
+				{{ form.sort_order(placeholder="0", class_="input-box--md__input") }}
 				{% for error in form.sort_order.errors %}
 				<p class="form-error">{{ error }}</p>
 				{% endfor %}
 			</div>
 
 			<div class="form-actions">
-				{{ form.submit(type="submit") }}
+				{{ form.submit(type="submit", class_="button") }}
 			</div>
 
 			{% with messages = get_flashed_messages(with_categories=true) %}
 			{% if messages %}
-			<div class="form-messages">
+			<div class="admin-form__messages">
 				{% for category, message in messages %}
-				<p class="form-message {{ category }}">{{ message }}</p>
+				<p class="admin-form__message {{ category }}">{{ message }}</p>
 				{% endfor %}
 			</div>
 			{% endif %}

@@ -20,7 +20,6 @@ from app.blueprints.admin.services.projects.projects_builders import (
         add_project_tags
         )
 
-# NOTE: Main functions
 def create_project(form_data) -> Project :
     try:
         project = build_project(form_data)

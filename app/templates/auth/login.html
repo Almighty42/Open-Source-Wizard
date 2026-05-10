@@ -1,22 +1,24 @@
 {% extends "base.html" %}
-
+{% import "_image.html" as image_comp %}
 {% block content %}
 
-<div id="login-page">
-	<img data-theme-image data-light-src="/static/assets/icons/logo.svg" data-dark-src="/static/assets/icons/logo_dark.svg"
-		id="site-logo" src="{{ url_for('static', filename='assets/icons/logo.svg') }}"
-		alt="Open Source Wizard Logo" />
-	<form action="" method="post" novalidate >
+<div class="page login">
+        {{ image_comp.image('icons/logo.svg',
+                'images/logo_dark.svg',
+                'login__logo',
+                'site-logo',
+                'Open Source Wizard Logo') }}
+	<form class="login__form" action="" method="post" novalidate >
 		{{ form.hidden_tag() }}
-		<div class="input-box" >
-			<p>{{ form.username.label }}</p>
-			{{ form.username(size=32) }}
+		<div class="input-box--sm" >
+			<p>{{ form.username.label(class_="input-box--sm__label") }}</p>
+			{{ form.username(size=32, class_="input-box--sm__input") }}
 		</div>
-		<div class="input-box" >
-			<p>{{ form.password.label }}</p>
-			{{ form.password(size=32) }}
+		<div class="input-box--sm" >
+			<p>{{ form.password.label(class_="input-box--sm__label") }}</p>
+			{{ form.password(size=32, class_="input-box--sm__input") }}
 		</div>
-		{{ form.submit() }}
+		{{ form.submit(class_="button") }}
 	</form>
 </div>
 

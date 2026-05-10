@@ -59,6 +59,3 @@ class TagCreateError(AdminServiceError):
 class CategoryCreateError(AdminServiceError):
     default_message = "Something went wrong while trying to create the category, try again"
     default_details = "Failed to create category, DB error"
-
-
-# TODO: Make other custom exceptions here

@@ -1,0 +1,21 @@
+{% macro input(label, type, id, name, value, inline=False) %}
+<div class="input-box--sm">
+  {% if not inline %}
+  <p class="input-box--sm__label">{{ label }}</p>
+  {% endif %}
+  <input
+    type="{{ type }}"
+    class="input-box--sm__input"
+    id="{{ id }}"
+    name="{{ name }}"
+    value="{{ value }}"
+    {%
+    if
+    inline
+    %}placeholder="{{ label }}"
+    {%
+    endif
+    %}
+  />
+</div>
+{% endmacro %}

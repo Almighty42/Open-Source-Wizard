@@ -1,14 +1,14 @@
 {% macro project_card(project) %}
     <article class="project-card">
         {% if project.cover_image %}
-            <img src="/{{project.cover_image.path}}" />
+            <img class="project-card__cover" src="/{{project.cover_image.path}}" />
         {% else %}
-            <img src="{{ url_for('static', filename='assets/icons/components/placeholder.png') }}" />
+            <img class="project-card__cover" src="{{ url_for('static', filename='assets/icons/components/placeholder.png') }}" />
         {% endif %}
-        <div class="project-text">
-            <div class="project-info-extra">
-                <p>{{ project.primary_category.name | upper }}</p>
-                <div style="gap: 16px;" >
+        <div class="project-card__body">
+            <div class="project-card__category-body">
+                <p class="project-card__category" >{{ project.primary_category.name | upper }}</p>
+                <div class="project-card__status" style="gap: 16px;" >
                     {% if project.status.value == "draft" %}
                         <b>[ DRAFT ]</b>
                     {% elif project.status.value == "archived" %}
@@ -23,13 +23,13 @@
                     {% endif %}
                 </div>
             </div>
-            <h3>
+            <h3 class="project-card__title" >
                 <a href="{{ url_for('project.project', slug=project.slug) }}">{{ project.title }}</a>
             </h3>
-            <div>
-                <p>{{ project.excerpt }}</p>
-                <hr>
-                <ul class="article-tags">
+            <div class="project-card__content-section" >
+                <p class="project-card__excerpt" >{{ project.excerpt }}</p>
+                <hr class="project-card__divider" >
+                <ul role="list" class="project-card__tags">
                     {% for tag in project.tags %}
                         <li>
                             <a href="{{ url_for('project.projects', tag=tag.slug) }}">[ {{ tag.name|upper }} ]</a>

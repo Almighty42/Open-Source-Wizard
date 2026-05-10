@@ -7,7 +7,7 @@
   border-top: solid var(--border-width-thin) var(--color-border-2);
 
   &__links {
-    @include base.flex(row, flex-start, center, var(--space-6));
+    @include base.flex(var(--space-6), row, flex-start, center);
   }
 
   &__link-anchor {

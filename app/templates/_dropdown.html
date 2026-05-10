@@ -1,0 +1,50 @@
+{% macro dropdown(is_multiselect, id, values, type) %}
+<div
+  id="{{ id }}"
+  class="dropdown {% if is_multiselect %}custom-multiselect{% endif %}"
+  data-name="{{ type }}"
+>
+  <div class="dropdown__trigger">
+    <span class="dropdown__value">All</span>
+    <span class="select-arrow" aria-hidden="true"
+      >{{ inline_svg("assets/dropdown.svg") }}</span
+    >
+  </div>
+  {% if is_multiselect %}
+  <ul role="list" class="dropdown__body">
+    {% for value in values %}
+    <li
+      class="dropdown__option {% if value.slug in request.args.getlist(type) %}dropdown__option--checked{% endif %}"
+      data-value="{{ value.slug }}"
+    >
+      <span class="dropdown__checkbox"></span>
+      {{ value.name }}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <ul role="list" class="dropdown__body">
+    <li
+      class="dropdown__option {% if not request.args.get(type) %}dropdown__option--selected{% endif %}"
+      data-value=""
+    >
+      All
+    </li>
+    {% for value in values %}
+    <li
+      class="dropdown__option {% if request.args.get(type) == value.slug %}dropdown__option--selected{% endif %}"
+      data-value="{{ value.slug }}"
+    >
+      {{ value.name }}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <input
+    type="hidden"
+    name="{{ type }}"
+    value="{{ request.args.get(type, '') }}"
+  />
+</div>
+
+{% endmacro %}

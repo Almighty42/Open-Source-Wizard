@@ -1,6 +1,6 @@
 {% macro article_card(article) %}
 <article class="article-card">
-	<p class="date" >
+	<p class="article-card__date" >
 	{% if article.status == "draft" %}
 	[ DRAFT ]
 	{% elif article.status == "archived" %}
@@ -9,22 +9,22 @@
 	{{ article.published_at | date }}
 	{% endif %}
 	</p>
-	<div class="article-card-body">
-		<div class="article-info">
-			<p class="title">
+	<div class="article-card__body">
+		<div class="article-card__header">
+			<p class="article-card__category">
 				{{ article.primary_category.name | upper }}
 			</p>
-			<p class="read-time" >
-				{{ article.read_time }} MIN READ
+			<p class="article-card__read-time" >
+				{{ article.read_time | upper }} MIN READ
 			</p>
 		</div>
-		<h3>
+		<h3 class="article-card__title" >
 			<a href="{{ url_for('article.article', slug=article.slug) }}">{{ article.title }}</a>
 		</h3>
-		<div class="article-text" >
-			<p> {{ article.excerpt }} </p>
-			<hr>
-			<ul class="article-tags">
+		<div class="article-card__content-section" >
+			<p class="article-card__content-excerpt" > {{ article.excerpt }} </p>
+			<hr class="article-card__divider" >
+			<ul role="list" class="article-card__tags">
 				{% for tag in article.tags %}
 				<li>
 					<a href="{{ url_for('article.articles', tag=tag.slug) }}">[ {{ tag.name|upper }} ]</a>

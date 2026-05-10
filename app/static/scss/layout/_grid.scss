@@ -1,0 +1,14 @@
+@use "../base";
+
+.card-list {
+  margin-top: var(--space-8);
+  @include base.flex(var(--space-8), column);
+
+  &__actions {
+    @include base.flex(var(--space-4));
+  }
+
+  &__body {
+    @include base.flex(var(--space-10), column);
+  }
+}

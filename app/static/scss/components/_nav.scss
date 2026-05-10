@@ -1,0 +1,10 @@
+@use "../base";
+
+.navigation {
+  @include base.flex-between(end);
+  width: 100%;
+
+  &__form {
+    @include base.flex-between(end, var(--space-4));
+  }
+}

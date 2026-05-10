@@ -1,0 +1,38 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 14px;
+}
+
+.pagination__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  padding: 8px 12px;
+  border: 2px solid var(--color-fg-1);
+  text-decoration: none;
+  color: var(--color-fg-1);
+  box-sizing: border-box;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.pagination__btn:hover {
+  background: var(--color-fg-1);
+  color: var(--color-bg);
+}
+
+.pagination__btn--disabled {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+
+.pagination__info {
+  color: var(--color-fg-2);
+}

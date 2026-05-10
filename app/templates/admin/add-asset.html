@@ -4,60 +4,60 @@
 
 {% include 'components/_header.html' %}
 
-<div id="main-page" class="admin-page">
-  <section class="admin-form-shell">
-    <div class="admin-page-heading">
-      <p class="admin-eyebrow">Admin</p>
-      <h1>Add Asset</h1>
+<div>
+  <section class="admin-form">
+    <div class="admin-form__heading-section">
+      <p class="admin-form__heading-subtitle">Admin</p>
+      <h1 class="admin-form__heading-title">Add Asset</h1>
     </div>
 
     <form
-      class="admin-form"
+      class="admin-form__body"
       method="POST"
       action="{{ url_for('admin.add_asset') }}"
       enctype="multipart/form-data"
     >
       {{ form.hidden_tag() }}
 
-      <div class="form-block">
-        {{ form.file.label }}
+      <div class="admin-form__section input-box--md">
+        {{ form.file.label(class_="input-box--md__label") }}
         {{ form.file() }}
         {% for error in form.file.errors %}
-        <p class="form-error">{{ error }}</p>
+        <p class="admin-form__error">{{ error }}</p>
         {% endfor %}
       </div>
 
-      <div class="form-block">
-        {{ form.path.label }}
-        {{ form.path(placeholder="/static/uploads/projects/example/cover.webp") }}
+      <div class="admin-form__section input-box--md">
+        {{ form.path.label(class_="input-box--md__label") }}
+        {{ form.path(placeholder="/static/uploads/projects/example/cover.webp", class_="input-box--md__input") }}
         {% for error in form.path.errors %}
-        <p class="form-error">{{ error }}</p>
+        <p class="admin-form__error">{{ error }}</p>
         {% endfor %}
       </div>
 
-      <div class="form-block">
-        {{ form.alt_text.label }}
-        {{ form.alt_text(placeholder="Optional alt text for accessibility") }}
+      <div class="admin-form__section input-box--md">
+        {{ form.alt_text.label(class_="input-box--md__label") }}
+        {{ form.alt_text(placeholder="Optional alt text for accessibility", class_="input-box--md__input") }}
         {% for error in form.alt_text.errors %}
-        <p class="form-error">{{ error }}</p>
+        <p class="admin-form__error">{{ error }}</p>
         {% endfor %}
       </div>
 
-      <div class="form-block">
-        {{ form.caption.label }}
-        {{ form.caption(placeholder="Optional short caption") }}
+      <div class="admin-form__section input-box--md">
+        {{ form.caption.label(class_="input-box--md__label") }}
+        {{ form.caption(placeholder="Optional short caption", class_="input-box--md__input") }}
         {% for error in form.caption.errors %}
-        <p class="form-error">{{ error }}</p>
+        <p class="admin-form__error">{{ error }}</p>
         {% endfor %}
       </div>
 
-      <div class="form-actions">{{ form.submit(type="submit") }}</div>
+      <div class="form-actions">{{ form.submit(type="submit", class_="button") }}</div>
 
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-      <div class="form-messages">
+      <div class="admin-form__messages">
         {% for category, message in messages %}
-        <p class="form-message {{ category }}">{{ message }}</p>
+        <p class="admin-form__message {{ category }}">{{ message }}</p>
         {% endfor %}
       </div>
       {% endif %}

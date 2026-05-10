@@ -1,162 +1,165 @@
 {% extends "base.html" %}
 {% block content %}
     {% include 'components/_header.html' %}
-    <div id="main-page" class="admin-page">
-        <section class="admin-form-shell">
-            <div class="admin-page-heading">
-                <p class="admin-eyebrow">Admin</p>
-                <h1>{{ page_title }}</h1>
+    <div>
+        <section class="admin-form">
+            <div class="admin-form__heading-section">
+                <p class="admin-form__heading-subtitle">Admin</p>
+                <h1 class="admin-form__heading-title">{{ page_title }}</h1>
             </div>
-            <form class="admin-form"
+            <form class="admin-form__body"
                   method="POST"
                   action="{{ form_action }}#preview-anchor">
                 {{ form.hidden_tag() }}
-                <div class="form-block">
-                    {{ form.title.label }}
-                    {{ form.title(placeholder="Introduction to UART") }}
-                    {% for error in form.title.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                <div class="admin-form__section input-box--md">
+                    {{ form.title.label(class_="input-box--md__label") }}
+                    {{ form.title(placeholder="Introduction to UART", class_="input-box--md__input") }}
+                    {% for error in form.title.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                 </div>
-                <div class="form-row">
-                    <div class="form-block">
-                        {{ form.slug.label }}
-                        {{ form.slug(placeholder="introduction-to-uart") }}
-                        {% for error in form.slug.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                <div class="admin-form__row-section">
+                    <div class="admin-form__section input-box--md">
+                        {{ form.slug.label(class_="input-box--md__label") }}
+                        {{ form.slug(placeholder="introduction-to-uart", class_="input-box--md__input") }}
+                        {% for error in form.slug.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                     </div>
-                    <div class="form-block">
-                        {{ form.status.label }}
-                        {{ form.status(id="status") }}
-                        {% for error in form.status.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    <div class="admin-form__section input-box--md">
+                        {{ form.status.label(class_="input-box--md__label") }}
+                        {{ form.status(id="status", class_="input-box--md__input") }}
+                        {% for error in form.status.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                     </div>
                 </div>
                 {% if is_project %}
-                    <div class="form-row">
-                        <div class="form-block">
-                            {{ form.project_state.label }}
-                            {{ form.project_state() }}
-                            {% for error in form.project_state.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    <div class="admin-form__row-section">
+                        <div class="admin-form__section">
+                            {{ form.project_state.label(class_="input-box--md__label") }}
+                            {{ form.project_state(class_="input-box--md__input") }}
+                            {% for error in form.project_state.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                         </div>
-                        <div class="form-block">
-                            {{ form.platform.label }}
-                            {{ form.platform(placeholder="ESP32, Raspberry Pi, Web, Linux") }}
-                            {% for error in form.platform.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                        <div class="admin-form__section">
+                            {{ form.platform.label(class_="input-box--md__label") }}
+                            {{ form.platform(placeholder="ESP32, Raspberry Pi, Web, Linux", class_="input-box--md__input") }}
+                            {% for error in form.platform.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-block">
-                            {{ form.repo_url.label }}
-                            {{ form.repo_url(placeholder="https://github.com/username/project") }}
-                            {% for error in form.repo_url.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    <div class="admin-form__row-section">
+                        <div class="admin-form__section">
+                            {{ form.repo_url.label(class_="input-box--md__label") }}
+                            {{ form.repo_url(placeholder="https://github.com/username/project", class_="input-box--md__input") }}
+                            {% for error in form.repo_url.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                         </div>
-                        <div class="form-block">
-                            {{ form.demo_url.label }}
-                            {{ form.demo_url(placeholder="https://example.com/demo") }}
-                            {% for error in form.demo_url.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                        <div class="admin-form__section">
+                            {{ form.demo_url.label(class_="input-box--md__label") }}
+                            {{ form.demo_url(placeholder="https://example.com/demo", class_="input-box--md__input") }}
+                            {% for error in form.demo_url.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                         </div>
                     </div>
                 {% endif %}
-                <div class="form-block">
+                <div class="admin-form__section">
                     <label for="is_featured" class="checkbox-label">
                         {{ form.is_featured(id="is_featured") }}
                         <span>{{ form.is_featured.label.text }}</span>
                     </label>
-                    {% for error in form.is_featured.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    {% for error in form.is_featured.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                 </div>
-                <div class="form-block">
-                    {{ form.excerpt.label }}
-                    {{ form.excerpt(rows="4",
+                <div class="admin-form__section">
+                    {{ form.excerpt.label(class_="input-box--md__label") }}
+                    {{ form.excerpt(rows="4", class_="input-box--md__input",
                                         placeholder="A short introduction shown in article cards and previews."
                                         if not is_project
                                         else "A short project description shown in project cards and previews.") }}
-                    {% for error in form.excerpt.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    {% for error in form.excerpt.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                 </div>
-                <div class="form-block">
-                    {{ form.body.label }}
+                <div class="admin-form__section">
+                    {{ form.body.label(class_="input-box--md__label") }}
                     {{ form.body(rows="20",
+                                        class_="input-box--md__input",
                                         placeholder="# Introduction
                                         Write your article here in Markdown..."
                                         if not is_project
                                         else "# Overview
                                         Describe the project, goals, stack, implementation details, and results...") }}
-                    {% for error in form.body.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    {% for error in form.body.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                 </div>
-                <div class="form-row">
-                    <div class="form-block">
-                        {{ form.category.label }}
-                        {{ form.category() }}
-                        {% for error in form.category.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                <div class="admin-form__row-section">
+                    <div class="admin-form__section">
+                        {{ form.category.label(class_="input-box--md__label") }}
+                        {{ form.category(class_="input-box--md__input") }}
+                        {% for error in form.category.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                     </div>
-                    <div class="form-block">
-                        {{ form.published_at.label }}
-                        {{ form.published_at(id="published_at") }}
-                        {% for error in form.published_at.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    <div class="admin-form__section">
+                        {{ form.published_at.label(class_="input-box--md__label") }}
+                        {{ form.published_at(id="published_at", class_="input-box--md__input") }}
+                        {% for error in form.published_at.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                     </div>
                 </div>
                 {% if is_project %}
-                    <div class="form-row">
-                        <div class="form-block">
-                            {{ form.started_at.label }}
-                            {{ form.started_at() }}
-                            {% for error in form.started_at.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    <div class="admin-form__row-section">
+                        <div class="admin-form__section">
+                            {{ form.started_at.label(class_="input-box--md__label") }}
+                            {{ form.started_at(class_="input-box--md__input") }}
+                            {% for error in form.started_at.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                         </div>
-                        <div class="form-block">
-                            {{ form.completed_at.label }}
-                            {{ form.completed_at() }}
-                            {% for error in form.completed_at.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                        <div class="admin-form__section">
+                            {{ form.completed_at.label(class_="input-box--md__label") }}
+                            {{ form.completed_at(class_="input-box--md__input") }}
+                            {% for error in form.completed_at.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                         </div>
                     </div>
                 {% endif %}
-                <div class="form-block">
-                    {{ form.tags.label }}
-                    {{ form.tags(multiple=True, id="tags-select", data_remote_url=url_for('api.search_tags') 
+                <div class="admin-form__section">
+                    {{ form.tags.label(class_="input-box--md__label") }}
+                    {{ form.tags(multiple=True, id="tags-select", class_="input-box--md__input", data_remote_url=url_for('api.search_tags') 
                     ) }}
-                    <p class="form-help">Search and select tags.</p>
-                    {% for error in form.tags.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    <p>Search and select tags.</p>
+                    {% for error in form.tags.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                 </div>
-                <div class="form-block">
-                    {{ form.cover_asset.label }}
-                    {{ form.cover_asset(id="cover-asset-select",
+                <div class="admin-form__section">
+                    {{ form.cover_asset.label(class_="input-box--md__label") }}
+                    {{ form.cover_asset(id="cover-asset-select", class_="input-box--md__input",
                                         data_remote_url=url_for('api.search_assets') 
                     ) }}
-                    <p class="form-help">Search for a single cover image or file.</p>
-                    {% for error in form.cover_asset.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    <p>Search for a single cover image or file.</p>
+                    {% for error in form.cover_asset.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                 </div>
-                <div class="form-block">
-                    {{ form.attachment_assets.label }}
+                <div class="admin-form__section">
+                    {{ form.attachment_assets.label(class_="input-box--md__label") }}
                     {{ form.attachment_assets(multiple=True,
                                         id="attachments-select",
+                                        class_="input-box--md__input",
                                         data_remote_url=url_for('api.search_assets') 
                     ) }}
-                    <p class="form-help">
+                    <p>
                         {% if is_project %}
                             Search and attach supporting files, images, videos, or documents.
                         {% else %}
                             Search and attach optional article files.
                         {% endif %}
                     </p>
-                    {% for error in form.attachment_assets.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    {% for error in form.attachment_assets.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                 </div>
-                <div class="form-block">
-                    {{ form.inline_assets.label }}
+                <div class="admin-form__section">
+                    {{ form.inline_assets.label(class_="input-box--md__label") }}
                     {{ form.inline_assets(multiple=True,
                                         id="inline-assets-select",
+                                        class_="input-box--md__input",
                                         data_remote_url=url_for('api.search_assets') 
                     ) }}
-                    <p class="form-help">Search and attach inline images or media referenced inside Markdown.</p>
-                    {% for error in form.inline_assets.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                    <p>Search and attach inline images or media referenced inside Markdown.</p>
+                    {% for error in form.inline_assets.errors %}<p class="admin-form__error">{{ error }}</p>{% endfor %}
                 </div>
-                <div class="form-actions">
-                    {{ form.preview(type="submit") }}
-                    {{ form.submit(type="submit", value=submit_label) }}
+                <div class="admin-form__actions">
+                    {{ form.preview(type="submit", class_="button") }}
+                    {{ form.submit(type="submit", value=submit_label, class_="button") }}
                 </div>
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages or form.errors %}
-                        <div class="form-messages">
-                            {% for category, message in messages %}<p class="form-message {{ category }}">{{ message }}</p>{% endfor %}
+                        <div class="admin-form__messages">
+                            {% for category, message in messages %}<p class="admin-form__message {{ category }}">{{ message }}</p>{% endfor %}
                             {% if form.errors %}
-                                <p class="form-message error">Please fix the following errors:</p>
+                                <p class="admin-form__message error">Please fix the following errors:</p>
                                 {% for field_name, errors in form.errors.items() %}
                                     {% for error in errors %}
-                                        <p class="form-message error">
+                                        <p class="admin-form__message error">
                                             {% if form[field_name].label %}
                                                 <strong>{{ form[field_name].label.text }}:</strong> {{ error }}
                                             {% else %}
