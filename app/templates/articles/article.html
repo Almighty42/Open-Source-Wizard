@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% import "_sidebar.html" as sidebar_comp %}
-{% import "_anchor-button.html" as button_comp %}
-{% import "_delete-button.html" as delete_button_comp %}
-{% import "_lightbox.html" as lightbox %}
+{% import "macros/_sidebar.html" as sidebar_comp %}
+{% import "macros/_anchor-button.html" as button_comp %}
+{% import "macros/_delete-button.html" as delete_button_comp %}
+{% import "macros/_lightbox.html" as lightbox %}
+{% import "macros/_image.html" as image_comp %}
 {% block content %}
     {% include 'components/_header.html' %}
     <div class="page post">
@@ -18,33 +19,31 @@
                 <div class="post__info">
                     <div class=" post__date ">
                         {% if article.status.value == "published" %}
-                            <p class="post__date-text" >{{ article.published_at | date }}</p>
+                            <p class="post__date-text">{{ article.published_at | date }}</p>
                         {% elif article.status.value == "draft" %}
-                            <p class="post__date-text" >DRAFT</p>
+                            <p class="post__date-text">DRAFT</p>
                         {% elif article.status.value == "archived" %}
-                            <p class="post__date-text" >ARCHIVED</p>
+                            <p class="post__date-text">ARCHIVED</p>
                         {% endif %}
                     </div>
                     <div class="post__category">
                         <p class="post__category-text">{{ primary_category.name | upper }}</p>
-                        <p class="post__category-text" >{{ article.read_time }} MIN READ</p>
+                        <p class="post__category-text">{{ article.read_time }} MIN READ</p>
                     </div>
                 </div>
                 <div class="post__title">
                     {% if article.is_featured %}{{ inline_svg("assets/icons/featured.svg") }}{% endif %}
-                    <h1 class="post__title-text" >{{ article.title }}</h1>
+                    <h1 class="post__title-text">{{ article.title }}</h1>
                 </div>
                 <div class="post__excerpt">
                     <p class="post__excerpt-text">{{ article.excerpt }}</p>
                 </div>
             </section>
             <div class="post__sidebar-section">
-                {% if article_headings %}
-                {{ sidebar_comp.sidebar(article_headings) }}
-                {% endif %}
+                {% if article_headings %}{{ sidebar_comp.sidebar(article_headings) }}{% endif %}
                 {% if is_auth %}
-                {{ button_comp.button(icon="assets/icons/edit.svg", text="Edit", link="admin.edit_article", slug=article.slug) }}
-                {{ delete_button_comp.delete_button(link="admin.delete_article", slug=article.slug, delete_form=delete_form) }}
+                    {{ button_comp.button(icon="assets/icons/edit.svg", text="Edit", link="admin.edit_article", slug=article.slug) }}
+                    {{ delete_button_comp.delete_button(link="admin.delete_article", slug=article.slug, delete_form=delete_form) }}
                 {% endif %}
             </div>
         </div>
@@ -52,7 +51,10 @@
             {{ rendered_body | safe }}
         </section>
         <a class="post__top-link" id="top-link" href="#">
-            <img src="{{ url_for('static', filename='assets/icons/to_the_top.svg') }}" />
+            {{ image_comp.image('icons/to_the_top.svg',
+                        'icons/to_the_top_dark.svg',
+                        '',
+                        '') }}
         </a>
         <section class="post__footer">
             {% if attachments %}

@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% import "_sidebar.html" as sidebar_comp %}
-{% import "_anchor-button.html" as button_comp %}
-{% import "_delete-button.html" as delete_button_comp %}
-{% import "_lightbox.html" as lightbox %}
+{% import "macros/_sidebar.html" as sidebar_comp %}
+{% import "macros/_anchor-button.html" as button_comp %}
+{% import "macros/_delete-button.html" as delete_button_comp %}
+{% import "macros/_lightbox.html" as lightbox %}
+{% import "macros/_image.html" as image_comp %}
 {% block content %}
     {% include 'components/_header.html' %}
     <div class="page post">
@@ -81,7 +82,10 @@
             {{ rendered_body | safe }}
         </section>
         <a  class="post__top-link" id="top-link" href="#">
-            <img src="{{ url_for('static', filename='assets/to_the_top.svg') }}" />
+            {{ image_comp.image('icons/to_the_top.svg',
+                        'icons/to_the_top_dark.svg',
+                        '',
+                        '') }}
         </a>
         <section class="post__footer">
             {% if attachments %}

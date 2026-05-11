@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
     {% include 'components/_header.html' %}
-    {% import "_image.html" as image_comp %}
+    {% import "macros/_image.html" as image_comp %}
     <div class="page">
         {{ image_comp.image('images/star.svg',
                 'images/star_dark.svg',

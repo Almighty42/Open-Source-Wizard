@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "components/_article-card.html" as article_comp %}
 {% import "components/_project-card.html" as project_comp %}
-{% import "_image.html" as image_comp %}
+{% import "macros/_image.html" as image_comp %}
 {% block content %}
     {% include 'components/_header.html' %}
     <div class="page" id="main-page">
@@ -33,7 +33,7 @@
             </div>
         </section>
         {{ image_comp.image('images/footer-hero.svg',
-                'images/footer_dark.svg',
+                'images/footer-hero_dark.svg',
                 'page__hero',
                 'site-footer_hero',
                 'Second Hero Section Image Svg') }}

@@ -124,3 +124,29 @@
   --sidebar-width: 18rem;
   --form-width: 40rem;
 }
+
+[data-theme="dark"] {
+  --color-bg: var(--color-foreground-1);
+  --color-border-1: var(--color-foreground-6);
+  --color-border-2: var(--color-foreground-3);
+  --color-text-primary: var(--color-foreground-8);
+  --color-text-secondary: var(--color-foreground-6);
+  --color-text-tertiary: var(--color-foreground-5);
+  --color-code-background: var(--primitive-neutral-800);
+  --color-action-primary: var(--color-foreground-10);
+  --color-action-primary-hover: var(--color-foreground-1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: var(--color-foreground-1);
+    --color-border-1: var(--color-foreground-9);
+    --color-border-2: var(--color-foreground-4);
+    --color-text-primary: var(--color-foreground-10);
+    --color-text-secondary: var(--color-foreground-9);
+    --color-text-tertiary: var(--color-foreground-8);
+    --color-code-background: var(--primitive-neutral-800);
+    --color-action-primary: var(--color-foreground-10);
+    --color-action-primary-hover: var(--color-foreground-1);
+  }
+}
