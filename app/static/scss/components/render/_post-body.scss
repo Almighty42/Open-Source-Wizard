@@ -1,0 +1,138 @@
+@use "../../abstracts";
+
+.post-body {
+  width: 100%;
+  height: fit-content;
+  @include abstracts.flex(var(--space-15), column);
+  margin: 0px;
+
+  // --- Heading sizes ---
+  .block-h1>h1 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .block-h2>h2 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .block-h3>h3 {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+  }
+
+  // --- Block spacing ---
+  .block-h1+.block-h1 {
+    margin-top: var(--space-20);
+  }
+
+  .block-h2+.block-h2 {
+    margin-top: var(--space-10);
+  }
+
+  .block-h3+.block-h3 {
+    margin-top: var(--space-6);
+  }
+
+  .block-h1>.block-h2 {
+    margin-top: var(--space-16);
+  }
+
+  .block-h2>.block-h3 {
+    margin-top: var(--space-8);
+  }
+
+  .block-h1,
+  .block-h2,
+  .block-h3 {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    >*+* {
+      margin-top: var(--space-8);
+    }
+
+    >h1+*,
+    >h2+*,
+    >h3+* {
+      margin-top: var(--space-6);
+    }
+
+    >*+.code-block,
+    >.code-block+*,
+    >*+figure,
+    >figure+* {
+      margin-top: var(--space-10);
+    }
+  }
+
+  // --- Figures ---
+  figure.inline-image img,
+  figure.diagram img {
+    cursor: zoom-in;
+  }
+
+  // --- Tables ---
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-8) 0;
+    font-size: var(--text-sm);
+  }
+
+  thead tr {
+    border-bottom: 2px solid var(--color-border-1);
+    border-top: 2px solid var(--color-border-1);
+  }
+
+  th {
+    text-align: left;
+    padding: var(--space-3) var(--space-4);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    font-size: var(--text-xs);
+    border-left: 2px solid var(--color-border-1);
+
+    &:last-child {
+      border-right: 2px solid var(--color-border-1);
+    }
+  }
+
+  td {
+    padding: var(--space-3) var(--space-4);
+    color: var(--color-text-secondary);
+    border-bottom: 2px dashed var(--color-border-1);
+    border-left: 2px solid var(--color-border-1);
+
+    &:last-child {
+      border-right: 2px solid var(--color-border-1);
+    }
+  }
+
+  tbody tr:last-child {
+    border-bottom: 2px solid var(--color-border-1);
+
+    td {
+      border-bottom: none;
+    }
+  }
+
+  // --- Inline code ---
+  p code,
+  li code,
+  td code,
+  blockquote code {
+    display: inline;
+    font-family: var(--font-display);
+    font-size: var(--text-xs);
+    background: color-mix(in srgb, var(--color-text-primary) 8%, transparent);
+    color: var(--color-text-primary);
+    padding: 0.1em 0.4em;
+    border-radius: var(--radius-sm);
+    border: 1px solid color-mix(in srgb, var(--color-border-1) 40%, transparent);
+  }
+}

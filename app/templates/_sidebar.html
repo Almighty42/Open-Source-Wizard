@@ -1,0 +1,11 @@
+{% macro sidebar(values) %}
+<div class="sidebar">
+  <ul role="list" class="sidebar__list">
+    {% for value in values %}
+    <li class="sidebar__item">
+      <a class="sidebar__anchor" href="#{{ value.id }}">{{ value.text }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endmacro %}

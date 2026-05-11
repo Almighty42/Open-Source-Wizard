@@ -1,7 +1,7 @@
-@use "../../base";
+@use "../../abstracts";
 
 .login {
-  @include base.flex-center(column, var(--space-4));
+  @include abstracts.flex-center(column, var(--space-4));
   min-height: 100vh;
 
   &__logo {
@@ -9,6 +9,6 @@
   }
 
   &__form {
-    @include base.flex(var(--space-6), column);
+    @include abstracts.flex(var(--space-6), column);
   }
 }

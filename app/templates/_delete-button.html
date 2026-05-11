@@ -1,0 +1,9 @@
+{% macro delete_button(link="", slug="", delete_form="") %}
+<form method="POST" action="{{ url_for(link, slug=slug) }}">
+  {{ delete_form.hidden_tag() }}
+  <button type="submit" class="button">
+    {{ inline_svg("assets/icons/delete.svg") }}
+    <p style="text-decoration: underline">Delete</p>
+  </button>
+</form>
+{% endmacro %}

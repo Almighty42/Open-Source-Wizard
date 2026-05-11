@@ -11,8 +11,8 @@
     </div>
     <ul role="list" class="header__links">
         <li>{{ link_comp.link('main.index', 'header__link-anchor', '/') }}</li>
-        <li>{{ link_comp.link('article.articles', 'header__link-anchor', '/Articles') }}</li>
-        <li>{{ link_comp.link('project.projects', 'header__link-anchor', '/Projects') }}</li>
+        <li>{{ link_comp.link(['article.articles', 'article.article'], 'header__link-anchor', '/Articles') }}</li>
+        <li>{{ link_comp.link(['project.projects', 'project.project'], 'header__link-anchor', '/Projects') }}</li>
         <li>{{ link_comp.link('main.about', 'header__link-anchor', '/About') }}</li>
         {% if current_user.is_authenticated %}
             <li>

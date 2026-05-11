@@ -24,9 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	const topLink = document.getElementById("top-link");
 
 	const lightbox = document.getElementById("lightbox");
-	const lightboxImg = document.getElementById("lightbox-img");
-	const lightboxCaption = document.getElementById("lightbox-caption");
-	const lightboxClose = document.getElementById("lightbox-close");
+	const lightboxImg = document.getElementById("lightbox__img");
+	const lightboxCaption = document.getElementById("lightbox__caption");
+	const lightboxClose = document.getElementById("lightbox__close");
 
 	const statusField = document.getElementById("status");
 	const publishedAtField = document.getElementById("published_at");
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					valueDisplay.textContent = `${visible} +${dropdown__checked.length - MAX_VISIBLE}`;
 				}
 			} else {
-				const dropdown__selected = select.querySelector(".dropdown__option.dropdown__selected");
+				const dropdown__selected = select.querySelector(".dropdown__option--selected");
 				if (dropdown__selected) {
 					valueDisplay.textContent = dropdown__selected.textContent.trim();
 				}
@@ -175,13 +175,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (!topLink) return;
 
 		if (window.scrollY > 50) {
-			topLink.classList.add("visible");
+			topLink.classList.add("post__top-link--visible");
 		} else {
-			topLink.classList.remove("visible");
+			topLink.classList.remove("post__top-link--visible");
 		}
 	});
 
-	document.querySelectorAll(".article-body figure.inline-image img, .article-body figure.diagram img")
+	document.querySelectorAll(".post-body figure.inline-image img, .post-body figure.diagram img")
 		.forEach((img) => {
 			img.addEventListener("click", () => {
 				if (!lightbox || !lightboxImg || !lightboxCaption) return;

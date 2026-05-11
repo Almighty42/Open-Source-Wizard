@@ -1,0 +1,11 @@
+@use "../../abstracts";
+
+.error-page {
+  // min-width: 100vw;
+  min-height: 100vh;
+  @include abstracts.flex-center(column, var(--space-4));
+
+  &__logo {
+    width: var(--space-16);
+  }
+}

@@ -1,13 +1,13 @@
-@use "../base";
+@use "../abstracts";
 
 .admin-form {
   width: 100%;
-  @include base.flex(var(--space-10), column);
+  @include abstracts.flex(var(--space-10), column);
   padding: var(--space-12) 0 var(--space-24) 0;
   margin: 0px !important;
 
   &__heading-section {
-    @include base.flex(var(--space-3), column);
+    @include abstracts.flex(var(--space-3), column);
   }
 
   &__heading-subtitle {
@@ -19,17 +19,17 @@
   &__heading-title {}
 
   &__body {
-    @include base.flex(var(--space-6), column);
+    @include abstracts.flex(var(--space-6), column);
   }
 
   &__section {
     width: 100%;
-    @include base.flex(var(--space-3), column);
+    @include abstracts.flex(var(--space-3), column);
   }
 
   &__row-section {
     width: 100%;
-    @include base.flex-between(end, var(--space-6));
+    @include abstracts.flex-between(end, var(--space-6));
   }
 
   &__section-label {
@@ -42,7 +42,7 @@
   &__section-select,
   &__section-textarea {
     width: 100%;
-    @include base.base-border();
+    @include abstracts.base-border();
     background: var(--color-bg);
     color: var(--color-text-primary);
     padding: var(--space-4);
@@ -56,7 +56,7 @@
   }
 
   &__actions {
-    @include base.flex(var(--space-4), row);
+    @include abstracts.flex(var(--space-4), row);
   }
 
   &__error {
@@ -70,6 +70,6 @@
 
   &__message {
     padding: var(--space-4);
-    @include base.base-border();
+    @include abstracts.base-border();
   }
 }

@@ -1,7 +1,7 @@
-@use "../base";
+@use "../abstracts";
 
 .page {
-  @include base.flex-center(column);
+  @include abstracts.flex-center(column);
   position: relative;
   padding: var(--space-12) 0px;
 
@@ -14,16 +14,16 @@
   }
 
   &__section {
-    @include base.flex(var(--space-5), column);
+    @include abstracts.flex(var(--space-5), column);
     margin: var(--space-24) 0px;
   }
 
   &__section-text-body {
-    @include base.flex-center(column, var(--space-4));
+    @include abstracts.flex-center(column, var(--space-4));
   }
 
   &__paragraph-section {
-    @include base.flex(var(--space-4), column);
+    @include abstracts.flex(var(--space-4), column);
   }
 
   &__section-text {
@@ -31,12 +31,12 @@
   }
 
   &__section-header {
-    @include base.flex-between(end);
+    @include abstracts.flex-between(end);
   }
 
   &__links {
     width: 100%;
-    @include base.flex-between();
+    @include abstracts.flex-between();
     padding: var(--space-16) var(--space-24) var(--space-8) var(--space-24) !important;
   }
 
@@ -51,6 +51,6 @@
   }
 
   &__cards {
-    @include base.flex(var(--space-12), column);
+    @include abstracts.flex(var(--space-12), column);
   }
 }

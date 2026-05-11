@@ -1,0 +1,85 @@
+@use "../../abstracts";
+
+.code-block {
+  width: 100%;
+  height: fit-content;
+  @include abstracts.flex(0px, column);
+}
+
+.code-actions {
+  @include abstracts.flex(0, row, end);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+}
+
+.code-actions svg {
+  color: inherit;
+}
+
+.code-lang {
+  @include abstracts.base-border("top");
+  @include abstracts.base-border("left");
+  @include abstracts.base-border("right");
+  padding: var(--space-2) var(--space-4);
+  width: fit-content;
+}
+
+.code-lang-icon {}
+
+.code-lang-text {}
+
+.code-copy-btn {
+  @include abstracts.base-border("top");
+  @include abstracts.base-border("left");
+  @include abstracts.flex(var(--space-2));
+  padding: var(--space-2) var(--space-4);
+  width: fit-content;
+  cursor: pointer;
+  user-select: none;
+
+  >p {
+    font-family: var(--font-display);
+
+  }
+
+  >.code-copy-icon {
+    @include abstracts.flex(0px, row, flex-start, center);
+  }
+
+}
+
+.code-content {
+  width: 100%;
+  height: fit-content;
+  @include abstracts.base-border();
+  padding: var(--space-4);
+  background: var(--color-code-background);
+  overflow: hidden;
+
+  // html[data-theme="light"] & {
+  //   background: #f8f8f2;
+  // }
+
+  display: block !important;
+
+  .highlight {
+    display: block;
+  }
+
+  pre {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  code {
+    display: block;
+    white-space: pre;
+  }
+}
+
+.code-copy-btn.copied {
+  color: var(--color-text-tertiary);
+  pointer-events: none;
+}

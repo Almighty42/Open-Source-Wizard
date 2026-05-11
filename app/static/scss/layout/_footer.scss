@@ -1,13 +1,13 @@
-@use "../base";
+@use "../abstracts";
 
 .footer {
   height: fit-content;
   padding: var(--space-4);
-  @include base.flex-between();
+  @include abstracts.flex-between();
   border-top: solid var(--border-width-thin) var(--color-border-2);
 
   &__links {
-    @include base.flex(var(--space-6), row, flex-start, center);
+    @include abstracts.flex(var(--space-6), row, flex-start, center);
   }
 
   &__link-anchor {

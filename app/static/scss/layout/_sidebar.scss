@@ -1,0 +1,72 @@
+@use "../abstracts";
+
+.sidebar {
+  width: 100%;
+  @include abstracts.base-border();
+  padding: var(--space-3);
+
+  &__list {
+    width: 100%;
+    @include abstracts.flex(var(--space-2), column);
+  }
+
+  &__item {
+    width: 100%;
+
+    &::before {
+      content: "→";
+      margin-right: var(--space-2);
+      font-size: var(--text-sm);
+    }
+  }
+
+  &__anchor {
+    font-size: var(--text-sm);
+  }
+}
+
+
+.article-sidebar {
+  flex-direction: column;
+  width: fit-content;
+  height: fit-content;
+  max-width: 240px;
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 16px;
+
+  >a.article-edit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid var(--color-border);
+    padding: 6px 12px;
+    width: fit-content;
+    color: var(--color-fg-1);
+
+    >svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  >a.article-edit:hover {
+    background: var(--color-fg-1);
+    color: var(--color-bg);
+  }
+
+  >button.article-edit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid var(--color-border);
+    padding: 6px 12px;
+    width: fit-content;
+    color: var(--color-fg-1);
+  }
+
+  >button.article-edit:hover {
+    background: var(--color-fg-1);
+    color: var(--color-bg);
+  }
+}

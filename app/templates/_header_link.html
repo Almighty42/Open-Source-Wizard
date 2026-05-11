@@ -1,6 +1,15 @@
-{% macro link(endpoint, class,  text) %}
-    <a class="{{ class }} {{ 'selected' if request.endpoint == endpoint else 'unselected' }}"
-       href="{{ url_for(endpoint) }}">
-        {% if request.endpoint == endpoint %}&#62;{% endif %}
-    [ {{ text }} ]</a>
+{% macro link(endpoints, class, text) %}
+  {% if endpoints is string %}
+    {% set endpoint_list = [endpoints] %}
+  {% else %}
+    {% set endpoint_list = endpoints %}
+  {% endif %}
+
+  {% set is_active = request.endpoint in endpoint_list %}
+
+  <a class="{{ class }} {{ 'selected' if is_active else 'unselected' }}"
+     href="{{ url_for(endpoint_list[0]) }}">
+    {% if is_active %}&#62;{% endif %}
+    [ {{ text }} ]
+  </a>
 {% endmacro %}

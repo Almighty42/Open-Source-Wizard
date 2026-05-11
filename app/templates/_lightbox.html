@@ -1,0 +1,9 @@
+{% macro lightbox() %}
+<div id="lightbox" class="lightbox" aria-modal="true" role="dialog">
+  <button id="lightbox__close" class="lightbox__close" aria-label="Close">
+    &times;
+  </button>
+  <img id="lightbox__img" class="lightbox__img" src="" alt="" />
+  <p id="lightbox__caption" class="lightbox__caption"></p>
+</div>
+{% endmacro %}

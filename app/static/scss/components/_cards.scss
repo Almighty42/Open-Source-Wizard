@@ -1,8 +1,8 @@
-@use "../base";
+@use "../abstracts";
 
 .article-card {
-  @include base.base-border();
-  @include base.flex();
+  @include abstracts.base-border();
+  @include abstracts.flex();
 
   &__date {
     height: fit-content;
@@ -11,17 +11,17 @@
     font-weight: var(--font-weight-medium);
     white-space: nowrap;
     padding: var(--space-6);
-    @include base.base-border("bottom");
+    @include abstracts.base-border("bottom");
   }
 
   &__body {
-    @include base.flex(var(--space-4), column);
-    @include base.dashed-border("left");
+    @include abstracts.flex(var(--space-4), column);
+    @include abstracts.dashed-border("left");
   }
 
   &__header {
-    @include base.flex-between();
-    @include base.base-border("bottom");
+    @include abstracts.flex-between();
+    @include abstracts.base-border("bottom");
     padding: var(--space-6);
   }
 
@@ -39,7 +39,7 @@
 
   &__content-section {
     padding: 0 var(--space-8) var(--space-8) var(--space-8);
-    @include base.flex(var(--space-4), column);
+    @include abstracts.flex(var(--space-4), column);
   }
 
   &__content-excerpt {
@@ -57,20 +57,20 @@
   }
 
   &__tags {
-    @include base.flex(var(--space-2));
+    @include abstracts.flex(var(--space-2));
   }
 }
 
 .project-card {
   height: fit-content;
   padding: var(--space-8);
-  @include base.flex(var(--space-8));
-  @include base.base-border();
+  @include abstracts.flex(var(--space-8));
+  @include abstracts.base-border();
 
   &__cover {
     width: 25%;
-    @include base.flex();
-    @include base.base-border();
+    @include abstracts.flex();
+    @include abstracts.base-border();
     flex-shrink: 0;
     aspect-ratio: 4 / 3;
     object-fit: cover;
@@ -80,19 +80,19 @@
 
   &__body {
     width: 100%;
-    @include base.flex(var(--space-4), column);
+    @include abstracts.flex(var(--space-4), column);
   }
 
   &__category-body {
-    @include base.flex-between();
+    @include abstracts.flex-between();
   }
 
   &__status {
-    @include base.flex(var(--space-4));
+    @include abstracts.flex(var(--space-4));
   }
 
   &__content-section {
-    @include base.flex(var(--space-4), column);
+    @include abstracts.flex(var(--space-4), column);
   }
 
   &__excerpt {
@@ -107,6 +107,6 @@
   }
 
   &__tags {
-    @include base.flex(var(--space-2));
+    @include abstracts.flex(var(--space-2));
   }
 }

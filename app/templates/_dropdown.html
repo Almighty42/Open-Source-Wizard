@@ -40,11 +40,13 @@
     {% endfor %}
   </ul>
   {% endif %}
-  <input
-    type="hidden"
-    name="{{ type }}"
-    value="{{ request.args.get(type, '') }}"
-  />
+{% if is_multiselect %}
+  {% for slug in request.args.getlist(type) %}
+    <input type="hidden" name="{{ type }}" value="{{ slug }}" />
+  {% endfor %}
+{% else %}
+  <input type="hidden" name="{{ type }}" value="{{ request.args.get(type, '') }}" />
+{% endif %}
 </div>
 
 {% endmacro %}

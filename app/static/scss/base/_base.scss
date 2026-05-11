@@ -1,4 +1,4 @@
-@use "mixins";
+@use "../abstracts";
 
 html {
   box-sizing: border-box;
@@ -105,4 +105,14 @@ pre {
 
 pre {
   overflow-x: auto;
+}
+
+figure {
+  @include abstracts.flex(var(--space-4), column, flex-start, center);
+
+  >img,
+  video {
+    @include abstracts.base-border();
+    max-width: 90%;
+  }
 }

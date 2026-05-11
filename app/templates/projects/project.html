@@ -1,134 +1,116 @@
 {% extends "base.html" %}
+{% import "_sidebar.html" as sidebar_comp %}
+{% import "_anchor-button.html" as button_comp %}
+{% import "_delete-button.html" as delete_button_comp %}
+{% import "_lightbox.html" as lightbox %}
 {% block content %}
     {% include 'components/_header.html' %}
-    <div id="main-page" style="align-items: start;">
+    <div class="page post">
         {% if cover %}
-            <img class="article-cover"
-                src="/{{ cover.path }}"
+            <img class="post__cover"
+                 src="/{{ cover.path }}"
                  alt="{{ cover.alt_text or '' }}"
-                 onload="this.classList.add('loaded')"
+                 onload="this.classList.add('--loaded')"
                  onerror="this.style.display='none'" />
         {% else %}
-            <img class="article-cover"
-                 src="{{ url_for('static', filename='assets/placeholder.png') }}"
+            <img class="post__cover"
+                 src="{{ url_for('static', filename='assets/icons/components/placeholder.png') }}"
                  alt="{{ cover.alt_text or '' }}"
-                 onload="this.classList.add('loaded')"
+                 onload="this.classList.add('--loaded')"
                  onerror="this.style.display='none'" />
         {% endif %}
-        <div class="article-header-box">
-            <section class="article-header">
-                <div class="article-info">
-                    <div class="article-date">
+        <div class="post__header-section">
+            <section class="post__header">
+                <div class="post__info">
+                    <div class=" post__status ">
                         {% if project.status.value == "published" %}
-                            <p>{{ project.published_at | date }}</p>
+                            <p class="post__status-text">{{ project.published_at | date }}</p>
                         {% elif project.status.value == "draft" %}
-                            <p>DRAFT</p>
+                            <p class="post__status-text">DRAFT</p>
                         {% elif project.status.value == "archived" %}
-                            <p>ARCHIVED</p>
+                            <p class="post__status-text">ARCHIVED</p>
                         {% endif %}
                     </div>
-                    <div class="article-info-category">
-                        <p>{{ primary_category.name | upper }}</p>
-                        <p>[ {{ project.project_state.value | upper }} ]</p>
+                    <div class="post__category">
+                        <p class="post__category-text">{{ primary_category.name | upper }}</p>
+                        <p class="post__category-text">[ {{ project.project_state.value | upper }} ]</p>
                     </div>
                 </div>
                 {% if project.started_at or project.platform %}
-                    <div class="project-info">
-                        {% if project.started_at %}<p>[ START ] - {{ project.started_at | date }}</p>{% endif %}
+                    <div class="post__extra">
+                        {% if project.started_at %}<p class="post__extra-text" >[ START ] - {{ project.started_at | date }}</p>{% endif %}
                         {% if project.completed_at %}
-                            <p>[ END ] - {{ project.completed_at | date }}</p>
+                            <p class="post__extra-text" >[ END ] - {{ project.completed_at | date }}</p>
                         {% else %}
-                            <p>[ END ] - UNSPECIFIED</p>
+                            <p class="post__extra-text" >[ END ] - UNSPECIFIED</p>
                         {% endif %}
-                        {% if project.platform %}<p>[ PLATFORM ] - {{ project.platform | upper }}</p>{% endif %}
+                        {% if project.platform %}<p class="post__extra-text" >[ PLATFORM ] - {{ project.platform | upper }}</p>{% endif %}
                     </div>
                 {% endif %}
-                <div class="article-title">
-                    {% if project.is_featured %}{{ inline_svg("assets/featured.svg") }}{% endif %}
-                    <h1>{{ project.title }}</h1>
+                <div class="post__title">
+                    {% if project.is_featured %}{{ inline_svg("assets/icons/featured.svg") }}{% endif %}
+                    <h1 class="post__title-text" >{{ project.title }}</h1>
                 </div>
-                <div class="article-description">
-                    <p>{{ project.excerpt }}</p>
+                <div class="post__excerpt">
+                    <p class="post__excerpt-text" >{{ project.excerpt }}</p>
                 </div>
             </section>
-            <div class="article-sidebar">
-                <div class="article-contents">
-                    <ul class="contents-table">
-                        {% for heading in project_headings %}
-                            <li>
-                                <a href="#{{ heading.id }}">{{ heading.text }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+            <div class="post__sidebar-section">
+                {% if project_headings %}
+                {{ sidebar_comp.sidebar(project_headings) }}
+                {% endif %}
                 {% if is_auth %}
-                    <a class="article-edit"
-                       href="{{ url_for('admin.edit_project', slug=project.slug) }}">
-                        {{ inline_svg("assets/edit.svg") }}
-                        Edit
-                    </a>
-                    <form method="POST"
-                          action="{{ url_for('admin.delete_project', slug=project.slug) }}"
-                          class="article-delete-form">
-                        {{ delete_form.hidden_tag() }}
-                        <button type="submit" class="article-edit article-delete">
-                            {{ inline_svg("assets/delete.svg") }}
-                            <p style="text-decoration: underline;">Delete</p>
-                        </button>
-                    </form>
+                {{ button_comp.button(icon="assets/icons/edit.svg", text="Edit", link="admin.edit_project", slug=project.slug) }}
+                {{ delete_button_comp.delete_button(link="admin.delete_project", slug=project.slug, delete_form=delete_form) }}
                 {% endif %}
                 {% if project.repo_url %}
-                    <a class="article-edit" href="{{ project.repo_url }}">
-                        {{ inline_svg("assets/about-me-icons/github.svg") }}
-                        Repo
+                    <a class="anchor-button" href="{{ project.repo_url }}">
+                        {{ inline_svg("assets/icons/about-me-icons/github.svg") }}
+                        Github
                     </a>
                 {% endif %}
                 {% if project.demo_url %}
-                    <a class="article-edit" href="{{ project.demo_url }}">
+                    <a class="anchor-button" href="{{ project.demo_url }}">
                         {{ inline_svg("assets/web.svg") }}
                         Demo
                     </a>
                 {% endif %}
             </div>
         </div>
-        <section class="article-body">
+        <section class="post-body">
             {{ rendered_body | safe }}
         </section>
-        <a id="top-link" href="#">
+        <a  class="post__top-link" id="top-link" href="#">
             <img src="{{ url_for('static', filename='assets/to_the_top.svg') }}" />
         </a>
-        <section class="article-footer">
+        <section class="post__footer">
             {% if attachments %}
-                <div class="article-footer-attachments">
+                <div class="post__attachments">
                     {% for attachment in attachments %}
-                        <a class="article-attachment"
-			    href="/{{ attachment.asset.path }}"
+                        <a class="post__attachment"
+                           href="/{{ attachment.asset.path }}"
                            download
                            target="_blank"
                            rel="noopener noreferrer">
                             {% if attachment.role == "attachment" %}
-                                {{ inline_svg("assets/attachment.svg") }}
+                                {{ inline_svg("assets/icons/attachment.svg") }}
                             {% elif attachment.role == "video" %}
-                                {{ inline_svg("assets/video.svg") }}
+                                {{ inline_svg("assets/icons/video.svg") }}
                             {% elif attachment.role == "gallery" %}
-                                {{ inline_svg("assets/gallery.svg") }}
+                                {{ inline_svg("assets/icons/gallery.svg") }}
                             {% endif %}
                             {{ attachment.asset.caption }}
                         </a>
                     {% endfor %}
                 </div>
             {% endif %}
-            <div class="article-footer-tags">
+            <div class="post__tags">
                 {% for tag in tags %}
                     <a href="{{ url_for('project.projects', tag=tag.slug) }}">[ {{ tag.name | upper }} ]</a>
                 {% endfor %}
             </div>
         </section>
     </div>
-    <div id="lightbox" aria-modal="true" role="dialog">
-        <button id="lightbox-close" aria-label="Close">&times;</button>
-        <img id="lightbox-img" src="" alt="" />
-        <p id="lightbox-caption"></p>
-    </div>
+    {{ lightbox.lightbox() }}
     {% include 'components/_footer.html' %}
 {% endblock %}

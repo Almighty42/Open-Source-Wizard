@@ -1,0 +1,27 @@
+@use "../../abstracts";
+
+blockquote {
+  height: fit-content;
+  @include abstracts.flex(var(--space-3), column);
+  padding: var(--space-4);
+  @include abstracts.dashed-border();
+
+  >.blockquote-header {
+    @include abstracts.flex(var(--space-3), row, flex-start, center);
+
+    >.blockquote-label {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-semibold);
+      font-family: var(--font-body);
+    }
+
+    >.blockquote-icon {
+      @include abstracts.flex(var(--space-3), row, flex-start, center);
+      height: fit-content;
+    }
+  }
+
+  >.blockquote-content {
+    width: 100%;
+  }
+}

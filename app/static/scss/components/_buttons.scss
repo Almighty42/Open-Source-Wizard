@@ -1,13 +1,12 @@
-@use "../base";
+@use "../abstracts";
 
 .button {
-  @include base.flex-center(row, var(--space-2));
-  @include base.base-border();
+  @include abstracts.flex-center(row, var(--space-2));
+  @include abstracts.base-border();
   font-size: var(--text-sm);
   padding: var(--space-1) var(--space-3);
   color: var(--color-text-primary);
   background-color: var(--color-bg);
-
   cursor: pointer;
 
   &:hover {
@@ -18,12 +17,13 @@
 
 .anchor-button {
   width: fit-content;
-  @include base.flex-center(row, var(--space-2));
-  @include base.base-border();
+  @include abstracts.flex-center(row, var(--space-2));
+  @include abstracts.base-border();
   font-size: var(--text-sm);
   padding: var(--space-1) var(--space-3);
   color: var(--color-text-primary);
   background-color: var(--color-bg);
+  cursor: pointer;
 
   >svg {
     width: var(--space-6);

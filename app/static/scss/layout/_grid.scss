@@ -1,14 +1,19 @@
-@use "../base";
+@use "../abstracts";
 
 .card-list {
   margin-top: var(--space-8);
-  @include base.flex(var(--space-8), column);
+  @include abstracts.flex(var(--space-8), column);
 
   &__actions {
-    @include base.flex(var(--space-4));
+    @include abstracts.flex(var(--space-4));
   }
 
   &__body {
-    @include base.flex(var(--space-10), column);
+    @include abstracts.flex(var(--space-10), column);
+  }
+
+  &__no-data {
+    @include abstracts.flex-center();
+    margin-top: var(--space-4);
   }
 }

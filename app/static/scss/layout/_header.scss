@@ -1,14 +1,14 @@
-@use "../base";
+@use "../abstracts";
 
 .header {
   height: var(--header-height);
   padding: var(--space-4);
-  @include base.flex-between();
+  @include abstracts.flex-between();
   border-bottom: solid var(--border-width-thin) var(--color-border-2);
 
   &__logo-block {
     width: 100%;
-    @include base.flex(var(--space-4), row, flex-start, center);
+    @include abstracts.flex(var(--space-4), row, flex-start, center);
   }
 
   &__logo-text {
@@ -17,7 +17,7 @@
   }
 
   &__links {
-    @include base.flex(var(--space-6), row, flex-start, center);
+    @include abstracts.flex(var(--space-6), row, flex-start, center);
   }
 
   &__link-anchor {
