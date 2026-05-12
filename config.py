@@ -7,8 +7,8 @@ load_dotenv()
 
 class Config:
     APP_NAME = "Open Source Wizard"
-    DEBUG = True
-    TESTING = False
+    DEBUG = os.environ.get('DEBUG', 'False').lower() in ('1', 'true', 'yes')
+    TESTING = os.environ.get('TESTING', 'False').lower() in ('1', 'true', 'yes')
     ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME")
 
     HOST = os.getenv("HOST", "127.0.0.1")

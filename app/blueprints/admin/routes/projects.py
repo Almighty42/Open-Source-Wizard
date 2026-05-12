@@ -1,4 +1,5 @@
 from flask import  render_template, request, flash, abort, url_for, redirect
+from flask_login import current_user
 from app import db
 from app.forms import ProjectForm
 from app.filters.render import render_markdown
@@ -19,6 +20,9 @@ from app.blueprints.admin.utils import (
 from app.blueprints.admin.selectors import fetch_categories, fetch_tags, fetch_assets
 
 from sqlalchemy.orm import joinedload
+
+import logging
+logger =  logging.getLogger(__name__)
 
 @admin_bp.route("/add-project", methods=["GET", "POST"])
 @admin_required
@@ -45,10 +49,11 @@ def add_project():
         elif form.submit.data:
             try:
                 project = create_project(form)
+                logger.info("Project created: slug=%s user=%s", project.slug, current_user.id)
                 return redirect(url_for("project.project", slug=project.slug))
             except ProjectCreateError as e:
-                # TODO: LOGGING
                 flash(f"{e.message}")
+                logger.error("Failed to create project: slug=%s, message=%s, details=%s", form.slug, e.message, e.details, exc_info=True)
     elif request.method == "POST":
         flash("Please fix the errors in the form.", "error")
 
@@ -131,10 +136,11 @@ def edit_project(slug):
         elif form.submit.data:
             try:
                 updated_project = update_project(project, form)
+                logger.info("Project updated: id=%s user=%s", updated_project.id, current_user.id)
                 return redirect(url_for("project.project", slug=updated_project.slug))
             except ProjectUpdateError as e:
-                # TODO: LOGGING
                 flash(f"{e.message}")
+                logger.error("Failed to update project: id=%s, message=%s, details=%s", project.id, e.message, e.details, exc_info=True)
     elif request.method == "POST":
         flash("Please fix the errors in the form.", "error")
 
@@ -165,6 +171,8 @@ def delete_project(slug):
     try:
         remove_project(project)
         flash(f'Project "{project.title}" deleted successfully.', "success")
+        logger.warning("Project deleted: id=%s user=%s", project.id, current_user.id)
         return redirect(url_for("project.projects"))
     except ProjectDeleteError as e:
+        logger.error("Failed to delete project: id=%s, message=%s, details=%s", project.id, e.message, e.details, exc_info=True)
         flash(f"{e.message}")

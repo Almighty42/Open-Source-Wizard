@@ -88,17 +88,9 @@ def project(slug):
         for aa in project.project_assets
         if aa.role == Role.attachment
     ]
-    for pa in project.project_assets:
-        print("ProjectAsset:", pa)
-        print("asset.id:", pa.asset.id)
-        print("asset.path:", pa.asset.path)
-        print("role:", pa.role)
-        print("is_cover:", pa.is_cover)
+
     rendered_body = render_markdown(project.body, project.project_assets)
     delete_form = DeleteForm()
-
-    for attachment in attachments:
-        print(attachment.metadata)
 
     return render_template("projects/project.html", 
                            project=project,

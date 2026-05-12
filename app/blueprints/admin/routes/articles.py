@@ -1,4 +1,5 @@
 from flask import  render_template, request, flash, abort, url_for, redirect
+from flask_login import current_user
 from app import db
 from app.forms import ArticleForm
 from app.filters.render import render_markdown
@@ -19,6 +20,9 @@ from app.blueprints.admin.exceptions import ArticleCreateError, ArticleUpdateErr
 from app.blueprints.admin.selectors import fetch_categories, fetch_tags, fetch_assets
 
 from sqlalchemy.orm import joinedload
+
+import logging
+logger =  logging.getLogger(__name__)
 
 @admin_bp.route("/add-article", methods=["GET", "POST"])
 @admin_required
@@ -47,10 +51,11 @@ def add_article():
         elif form.submit.data:
             try:
                 article = create_article(form)
+                logger.info("Article created: slug=%s user=%s", article.slug, current_user.id)
                 return redirect(url_for("article.article", slug=article.slug))
             except ArticleCreateError as e:
-                # TODO: LOGGING
                 flash(f"{e.message}")
+                logger.error("Failed to create article: slug=%s, message=%s, details=%s", form.slug, e.message, e.details, exc_info=True)
     elif request.method == "POST":
         flash("Please fix the errors in the form.", "error")
 
@@ -127,10 +132,11 @@ def edit_article(slug):
         elif form.submit.data:
             try:
                 updated_article = update_article(article, form)
+                logger.info("Article updated: id=%s user=%s", updated_article.id, current_user.id)
                 return redirect(url_for("article.article", slug=updated_article.slug))
             except ArticleUpdateError as e:
-                # TODO: LOGGING
                 flash(f"{e.message}")
+                logger.error("Failed to update article: id=%s, message=%s, details=%s", article.id, e.message, e.details, exc_info=True)
     elif request.method == "POST":
         flash("Please fix the errors in the form.", "error")
 
@@ -161,6 +167,8 @@ def delete_article(slug):
     try:
         remove_article(article)
         flash(f'Article "{article.title}" deleted successfully.', "success")
+        logger.warning("Article deleted: id=%s,  user=%s", article.id, current_user.id)
         return redirect(url_for("article.articles"))
     except ArticleDeleteError as e:
+        logger.error("Failed to delete article: id=%s, message=%s, details=%s", article.id, e.message, e.details, exc_info=True)
         flash(f"{e.message}")

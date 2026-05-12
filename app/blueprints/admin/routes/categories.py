@@ -1,4 +1,5 @@
 from flask import render_template, flash, redirect, url_for
+from flask_login import current_user
 from app import db
 from app.models import Category
 from app.blueprints.admin.exceptions import CategoryCreateError, CategoryDeleteError
@@ -7,6 +8,9 @@ from app.decorators import admin_required
 from app.blueprints.admin import admin_bp
 from app.forms import CategoryForm, DeleteForm
 import sqlalchemy as sql
+
+import logging
+logger =  logging.getLogger(__name__)
 
 @admin_bp.route("/add-category", methods=["GET", "POST"])
 @admin_required
@@ -17,9 +21,11 @@ def add_category():
         try:
             create_category(form)
             flash("Category created successfully.", "success")
+            logger.info("Category created: slug=%s user=%s", form.slug, current_user.id)
             return redirect(url_for("admin.add_category"))
         except CategoryCreateError as e:
             flash(f"{e.message}")
+            logger.error("Failed to create category: slug=%s, message=%s, details=%s", form.slug, e.message, e.details, exc_info=True)
     elif form.is_submitted():
         flash("Please fix the errors in the form.", "error")
 
@@ -55,8 +61,10 @@ def delete_category(category_id):
         db.session.delete(category)
         db.session.commit()
         flash(f"Category '{category.name}' deleted.", "success")
+        logger.warning("Category deleted: id=%s user=%s", category.id, )
     except Exception as e:
         db.session.rollback()
+        logger.error("Failed to delete category, id=%s",category.id, exc_info=True)
         raise CategoryDeleteError(message="Failed to delete category.", details=str(e))
 
     return redirect(url_for("admin.categories"))

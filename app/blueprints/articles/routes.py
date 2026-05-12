@@ -108,8 +108,6 @@ def article(slug):
     rendered_body = render_markdown(article.body, article.article_assets)
     delete_form = DeleteForm()
 
-    print(cover)
-
     return render_template(
         "articles/article.html",
         article=article,

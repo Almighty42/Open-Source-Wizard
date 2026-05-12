@@ -1,4 +1,5 @@
 from flask import render_template, flash, redirect, url_for
+from flask_login import current_user
 from app import db
 from app.models import Asset
 from app.forms import AssetForm, DeleteForm
@@ -8,6 +9,9 @@ from app.blueprints.admin.services import create_asset
 from app.blueprints.admin.exceptions import AssetCreateError, AssetDeleteError
 import sqlalchemy as sql
 
+import logging
+logger =  logging.getLogger(__name__)
+
 @admin_bp.route("/add-asset", methods=["GET", "POST"])
 @admin_required
 def add_asset():
@@ -16,9 +20,11 @@ def add_asset():
     if form.validate_on_submit():
         try:
             create_asset(form)
+            logger.info("Asset created: path=%s user=%s", form.path, current_user.id)
             return redirect(url_for("admin.add_asset"))
         except AssetCreateError as e:
             flash(f"{e.message}")
+            logger.error("Failed to create asset: path=%s, message=%s, details=%s", form.path, e.message, e.details, exc_info=True)
     elif form.is_submitted():
         flash("Please fix the errors in the form.", "error")
 
@@ -58,8 +64,10 @@ def delete_asset(asset_id):
         db.session.delete(asset)
         db.session.commit()
         flash(f"Asset '{asset.path}' deleted.", "success")
+        logger.warning("Asset deleted: id=%s user=%s", asset.id, current_user.id)
     except Exception as e:
         db.session.rollback()
+        logger.error("Failed to delete asset, id=%s",asset.id, exc_info=True)
         raise AssetDeleteError(message="Failed to delete asset.", details=str(e))
 
     return redirect(url_for("admin.assets"))
