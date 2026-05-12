@@ -72,7 +72,12 @@ def configure_logging():
                 "level": "WARNING",
                 "handlers": ["console"],
                 "propagate": False,
-            }
+            },
+            "MARKDOWN": {
+                "level": "WARNING",
+                "handlers": ["console"],
+                "propagate": False,
+            },
         },
         "formatters": {
             "default": {

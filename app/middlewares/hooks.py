@@ -10,6 +10,9 @@ def register_hooks(app):
 
     @app.after_request
     def after_request(response):
+        if request.path.startswith("/static"):
+            return response 
+
         duration_ms = round((time.time() - g.start_time) * 1000, 2)
         app.logger.info(
             "%s %s %s — %dms [%s]",
