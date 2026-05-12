@@ -21,6 +21,7 @@
 
   &__header-section {
     @include abstracts.flex(var(--space-6));
+    margin-bottom: var(--space-12);
   }
 
   &__header {
