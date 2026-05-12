@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+{% include 'components/_header.html' %}
+
+<div class="page">
+  <h1>Assets</h1>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th class="data-table__heading">ID</th>
+        <th class="data-table__heading">Preview</th>
+        <th class="data-table__heading">Path</th>
+        <th class="data-table__heading">Alt Text</th>
+        <th class="data-table__heading">Caption</th>
+        <th class="data-table__heading">Created</th>
+        <th class="data-table__heading">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for asset in assets %}
+        <tr class="data-table__row">
+          <td class="data-table__cell data-table__cell--id">{{ asset.id }}</td>
+          <td class="data-table__cell">
+            <img
+              src="{{ url_for('static', filename=asset.path) }}"
+              alt="{{ asset.alt_text or '' }}"
+              class="data-table__thumbnail"
+              loading="lazy"
+            >
+          </td>
+          <td class="data-table__cell data-table__cell--mono">{{ asset.path }}</td>
+          <td class="data-table__cell data-table__cell--muted">{{ asset.alt_text or "—" }}</td>
+          <td class="data-table__cell data-table__cell--muted">{{ asset.caption or "—" }}</td>
+          <td class="data-table__cell data-table__cell--mono">{{ asset.created_at | date }}</td>
+          <td class="data-table__cell data-table__cell--actions">
+            <form method="POST" action="{{ url_for('admin.delete_asset', asset_id=asset.id) }}">
+              {{ delete_form.hidden_tag() }}
+              {{ delete_form.submit(class="anchor-button anchor-button--danger") }}
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td class="data-table__empty" colspan="7">No assets yet.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include 'components/_footer.html' %}
+{% endblock %}

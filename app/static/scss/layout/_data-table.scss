@@ -1,0 +1,78 @@
+@use "../abstracts";
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-12);
+
+  &__heading {
+    text-align: left;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    color: var(--color-text-tertiary);
+    @include abstracts.base-border("top");
+    @include abstracts.base-border("bottom");
+
+    &:first-child {
+      @include abstracts.base-border("left");
+    }
+
+    &:last-child {
+      @include abstracts.base-border("right");
+    }
+  }
+
+  &__row {
+    &:not(:last-child) td {
+      border-bottom: var(--border-width-thin) dashed var(--color-border-2);
+    }
+
+    &:last-child {
+      border-bottom: var(--border-width-base) solid var(--color-border-1);
+    }
+  }
+
+  &__cell {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+    vertical-align: middle;
+    border-left: var(--border-width-base) solid var(--color-border-1);
+
+    &:last-child {
+      border-right: var(--border-width-base) solid var(--color-border-1);
+    }
+
+    &--id {
+      color: var(--color-text-tertiary);
+      width: 3rem;
+      text-align: right;
+    }
+
+    &--mono {
+      font-family: var(--font-display);
+      font-size: var(--text-xs);
+    }
+
+    &--muted {
+      color: var(--color-text-tertiary);
+    }
+
+    &--actions {
+      white-space: nowrap;
+      text-align: right;
+      @include abstracts.flex(var(--space-2), row, flex-end, center);
+    }
+  }
+
+  &__empty {
+    padding: var(--space-8) var(--space-4);
+    text-align: center;
+    color: var(--color-text-tertiary);
+    font-size: var(--text-sm);
+    border: var(--border-width-base) solid var(--color-border-1);
+  }
+}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+{% include 'components/_header.html' %}
+
+<div class="page">
+  <h1>Categories</h1>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th class="data-table__heading">ID</th>
+        <th class="data-table__heading">Name</th>
+        <th class="data-table__heading">Slug</th>
+        <th class="data-table__heading">Description</th>
+        <th class="data-table__heading">Sort Order</th>
+        <th class="data-table__heading">Created</th>
+        <th class="data-table__heading">Updated</th>
+        <th class="data-table__heading">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for category in categories %}
+        <tr class="data-table__row">
+          <td class="data-table__cell data-table__cell--id">{{ category.id }}</td>
+          <td class="data-table__cell">{{ category.name }}</td>
+          <td class="data-table__cell data-table__cell--mono">{{ category.slug }}</td>
+          <td class="data-table__cell data-table__cell--muted">{{ category.description or "—" }}</td>
+          <td class="data-table__cell data-table__cell--id">{{ category.sort_order }}</td>
+          <td class="data-table__cell data-table__cell--mono">{{ category.created_at | date }}</td>
+          <td class="data-table__cell data-table__cell--mono">{{ category.updated_at | date }}</td>
+          <td class="data-table__cell data-table__cell--actions">
+            <form method="POST" action="{{ url_for('admin.delete_category', category_id=category.id) }}">
+              {{ delete_form.hidden_tag() }}
+              {{ delete_form.submit(class="anchor-button anchor-button--danger") }}
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td class="data-table__empty" colspan="8">No categories yet.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include 'components/_footer.html' %}
+{% endblock %}

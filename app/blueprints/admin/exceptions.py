@@ -56,6 +56,18 @@ class TagCreateError(AdminServiceError):
     default_message = "Something went wrong while trying to create the tag, try again"
     default_details = "Failed to create tag, DB error"
 
+class TagDeleteError(AdminServiceError):
+    default_message = "Something went wrong while trying to delete the tag, try again"
+    default_details = "Failed to delete tag, DB error"
+
+class CategoryDeleteError(AdminServiceError):
+    default_message = "Something went wrong while trying to delete the category, try again"
+    default_details = "Failed to delete category, DB error"
+
+class AssetDeleteError(AdminServiceError):
+    default_message = "Something went wrong while trying to delete the asset, try again"
+    default_details = "Failed to delete asset, DB error"
+
 class CategoryCreateError(AdminServiceError):
     default_message = "Something went wrong while trying to create the category, try again"
     default_details = "Failed to create category, DB error"

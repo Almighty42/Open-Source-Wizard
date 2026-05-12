@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+    {% include
+    'components/_header.html' %}
+    <div class="page">
+        <h1>Tags</h1>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th class="data-table__heading">ID</th>
+                    <th class="data-table__heading">Name</th>
+                    <th class="data-table__heading">Slug</th>
+                    <th class="data-table__heading">Description</th>
+                    <th class="data-table__heading">Created</th>
+                    <th class="data-table__heading">Updated</th>
+                    <th class="data-table__heading">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tag in tags %}
+                    <tr class="data-table__row">
+                        <td class="data-table__cell data-table__cell--id">{{ tag.id }}</td>
+                        <td class="data-table__cell">{{ tag.name }}</td>
+                        <td class="data-table__cell data-table__cell--mono">{{ tag.slug }}</td>
+                        <td class="data-table__cell data-table__cell--muted">{{ tag.description or "—" }}</td>
+                        <td class="data-table__cell data-table__cell--mono">{{ tag.created_at | date }}</td>
+                        <td class="data-table__cell data-table__cell--mono">{{ tag.updated_at | date }}</td>
+                        <td class="data-table__cell data-table__cell--actions">
+                            <form method="POST"
+                                  action="{{ url_for('admin.delete_tag', tag_id=tag.id) }}">
+                                {{ delete_form.hidden_tag() }}
+                                {{ delete_form.submit(class="anchor-button anchor-button--danger") }}
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td class="data-table__empty" colspan="7">No tags yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% include 'components/_footer.html' %}
+{% endblock %}

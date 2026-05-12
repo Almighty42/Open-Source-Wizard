@@ -1,9 +1,12 @@
-from flask import  render_template, flash, redirect, url_for
-from app.blueprints.admin.exceptions import CategoryCreateError
+from flask import render_template, flash, redirect, url_for
+from app import db
+from app.models import Category
+from app.blueprints.admin.exceptions import CategoryCreateError, CategoryDeleteError
 from app.blueprints.admin.services import create_category
 from app.decorators import admin_required
 from app.blueprints.admin import admin_bp
-from app.forms import CategoryForm
+from app.forms import CategoryForm, DeleteForm
+import sqlalchemy as sql
 
 @admin_bp.route("/add-category", methods=["GET", "POST"])
 @admin_required
@@ -21,7 +24,39 @@ def add_category():
         flash("Please fix the errors in the form.", "error")
 
     return render_template(
-            "admin/add-category.html",
-            form=form,
-            title="Add Category",
-            )
+        "admin/add-category.html",
+        form=form,
+        title="Add Category",
+    )
+
+@admin_bp.route("/categories")
+@admin_required
+def categories():
+    categories = db.session.scalars(sql.select(Category).order_by(Category.sort_order, Category.name)).all()
+    delete_form = DeleteForm()
+    return render_template("admin/categories.html", title="Categories", categories=categories, delete_form=delete_form)
+
+@admin_bp.route("/delete-category/<int:category_id>", methods=["POST"])
+@admin_required
+def delete_category(category_id):
+    delete_form = DeleteForm()
+
+    if not delete_form.validate_on_submit():
+        flash("Invalid request.", "error")
+        return redirect(url_for("admin.categories"))
+
+    category = db.session.get(Category, category_id)
+
+    if not category:
+        flash("Category not found.", "error")
+        return redirect(url_for("admin.categories"))
+
+    try:
+        db.session.delete(category)
+        db.session.commit()
+        flash(f"Category '{category.name}' deleted.", "success")
+    except Exception as e:
+        db.session.rollback()
+        raise CategoryDeleteError(message="Failed to delete category.", details=str(e))
+
+    return redirect(url_for("admin.categories"))
