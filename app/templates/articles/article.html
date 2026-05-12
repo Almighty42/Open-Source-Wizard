@@ -1,4 +1,28 @@
 {% extends "base.html" %}
+
+{% block og_title %}{{ article.title }} — Open Source Wizard{% endblock %}
+{% block og_description %}{{ article.excerpt }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_image %}{% if cover %}/{{ cover.path }}{% endif %}{% endblock %}
+
+{% block extra_head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ article.title | tojson }}",
+  "description": "{{ article.excerpt | tojson }}",
+  "datePublished": "{{ article.published_at.isoformat() }}",
+  "author": {
+    "@type": "Person",
+    "name": "Almighty42",
+    "url": "{{ url_for('main.about', _external=True) }}"
+  },
+  "url": "{{ request.url }}"
+}
+</script>
+{% endblock %}
+
 {% import "macros/_sidebar.html" as sidebar_comp %}
 {% import "macros/_anchor-button.html" as button_comp %}
 {% import "macros/_delete-button.html" as delete_button_comp %}

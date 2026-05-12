@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <script>
     (function() {
@@ -14,10 +14,24 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% if title %}
-            <title>Open Source Wizard - {{ title }}</title>
+            <title>{{ title }} — Open Source Wizard</title>
         {% else %}
             <title>Open Source Wizard</title>
         {% endif %}
+        {% if description %}
+            <meta name="description" content="{{ description }}">
+        {% else %}
+            <meta name="description"
+                  content="Open Source Wizard — electronics, embedded systems, and DIY hardware projects.">
+        {% endif %}
+        <meta property="og:title"
+              content="{% block og_title %}Open Source Wizard{% endblock %}">
+        <meta property="og:description"
+              content="{% block og_description %}Electronics, embedded systems and DIY hardware projects.{% endblock %}">
+        <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+        <meta property="og:url" content="{{ request.url }}">
+        <meta property="og:image" content="{% block og_image %}{% endblock %}">
+        {% block extra_head %}{% endblock %}
         <link rel="icon"
               href="{{ url_for('static', filename='favicon.ico') }}"
               sizes="any">

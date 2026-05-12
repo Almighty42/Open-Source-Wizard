@@ -61,6 +61,7 @@ def projects():
         tags=tags,
         is_admin=current_user.is_authenticated,
         title="Projects",
+        description="Hardware and software projects — ESP32, Raspberry Pi, e-ink displays and more."
     )
 
 @project_bp.route("/<slug>")
@@ -103,4 +104,5 @@ def project(slug):
                            is_auth=current_user.is_authenticated,
                             delete_form=delete_form,
                             title="Project",
+                            description=project.excerpt
     )

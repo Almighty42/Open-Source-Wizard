@@ -1,5 +1,5 @@
 # TODO: LATER - Make a script to delete empty article / project folders
-from flask import  render_template
+from flask import  render_template, url_for
 from . import main_bp
 from app import db
 from app.models import Article, Project, ProjectAsset
@@ -29,11 +29,18 @@ def index():
         .all()
     )
 
-    return render_template("main/index.html", articles=articles, projects=projects)
+    return render_template("main/index.html",
+                           articles=articles,
+                           projects=projects,
+                            title="Home",
+                            description="Electronics, embedded systems and DIY hardware.",
+                            og_image=url_for('static', filename='assets/images/hero.svg', _external=True),
+                           )
 
 @main_bp.route("/about")
 def about():
     return render_template(
             "main/about.html",
-            title="About"
+            title="About",
+            description="Almighty42 — embedded systems developer and electronics enthusiast.",
             )

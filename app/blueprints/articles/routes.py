@@ -66,6 +66,7 @@ def articles():
         tags=tags,
         is_admin=current_user.is_authenticated,
         title="Articles",
+        description="Technical articles on embedded systems, electronics, and DIY hardware."
     )
 
 @article_bp.route("/<slug>")
@@ -119,5 +120,6 @@ def article(slug):
         attachments=attachments,
         is_auth=current_user.is_authenticated,
         delete_form=delete_form,
-        title="Article",
+        title="Article", 
+        description=article.excerpt
     )
