@@ -10,6 +10,7 @@ class Config:
     DEBUG = os.environ.get('DEBUG', 'False').lower() in ('1', 'true', 'yes')
     TESTING = os.environ.get('TESTING', 'False').lower() in ('1', 'true', 'yes')
     ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME")
+    CSS_VERSION = "1.1"
 
     HOST = os.getenv("HOST", "127.0.0.1")
     PORT = int(os.getenv("PORT", 3001))
