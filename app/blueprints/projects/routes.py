@@ -103,6 +103,6 @@ def project(slug):
                            attachments=attachments,
                            is_auth=current_user.is_authenticated,
                             delete_form=delete_form,
-                            title="Project",
+                            title=project.title,
                             description=project.excerpt
     )

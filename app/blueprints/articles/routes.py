@@ -120,6 +120,6 @@ def article(slug):
         attachments=attachments,
         is_auth=current_user.is_authenticated,
         delete_form=delete_form,
-        title="Article", 
+        title=article.title, 
         description=article.excerpt
     )
