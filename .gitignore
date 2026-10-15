@@ -3,7 +3,7 @@ pyrightconfig.json
 __pycache__/
 .env
 app.db
-migrations/
+app.db.bak
 about_text.txt
 app/static/uploads/
 logs/

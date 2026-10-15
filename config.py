@@ -12,6 +12,7 @@ class Config:
     if not SECRET_KEY:
         if not DEBUG:
             raise RuntimeError("SECRET_KEY is not set")
+        SECRET_KEY = "dev-only-insecure-key"
     _secret = "dev-only-insecure-key"
     TESTING = os.environ.get('TESTING', 'False').lower() in ('1', 'true', 'yes')
     ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME")
