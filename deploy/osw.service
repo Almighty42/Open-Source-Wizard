@@ -1,0 +1,16 @@
+[Unit]
+Description=Open Source Wizard (Gunicorn)
+After=network.target
+
+[Service]
+User=deploy
+Group=www-data
+WorkingDirectory=/srv/osw
+ExecStart=/srv/osw/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:3001 run:app
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
