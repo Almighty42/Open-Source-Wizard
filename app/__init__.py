@@ -4,6 +4,7 @@ from config import Config
 from app.extensions import db, login_manager, migrate, limiter
 from scripts.seed import seed_bp
 from app.blueprints import main_bp, auth_bp, article_bp, project_bp, errors_bp, admin_bp, api_bp
+from werkzeug.middleware.proxy_fix import ProxyFix
 from app.filters import register_filters
 from app.utils import inline_svg
 
@@ -18,6 +19,7 @@ def create_app(config=Config):
     configure_logging()
 
     app = Flask(__name__)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
     app.config.from_object(config)
 
     app.add_url_rule(
