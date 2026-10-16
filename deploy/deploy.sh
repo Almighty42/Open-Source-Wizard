@@ -52,6 +52,14 @@ set -euo pipefail
 APP_DIR="$1"; BRANCH="$2"; SERVICE="$3"; PORT="$4"; FORCE="$5"
 
 cd "$APP_DIR"
+
+# Preflight: fail before changing anything if passwordless restart is not configured.
+if ! sudo -n -l /usr/bin/systemctl restart "$SERVICE" >/dev/null 2>&1; then
+  echo "ERROR: passwordless sudo for 'systemctl restart $SERVICE' is not set up on the server." >&2
+  echo "See DEPLOY.md section 7 (/etc/sudoers.d/osw-deploy). Nothing was changed." >&2
+  exit 1
+fi
+
 OLD="$(git rev-parse HEAD)"
 BACKUP=""
 
@@ -59,8 +67,10 @@ rollback() {
   echo "!! Deploy failed. Rolling code back to ${OLD:0:7}" >&2
   git reset --hard "$OLD" >&2
   sudo -n systemctl restart "$SERVICE" >&2 || true
-  [[ -n "$BACKUP" ]] && echo "!! Database backup from before the migration: $BACKUP" >&2
-  echo "!! Migrations are NOT undone automatically. Restore the backup if the schema changed." >&2
+  if [[ -n "$BACKUP" ]]; then
+    echo "!! Database backup from before the migration: $BACKUP" >&2
+    echo "!! Migrations are NOT undone automatically. Restore the backup if the schema changed." >&2
+  fi
 }
 trap rollback ERR
 
