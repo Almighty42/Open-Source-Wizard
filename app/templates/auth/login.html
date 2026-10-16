@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% import "macros/_image.html" as image_comp %}
+
+{% block extra_head %}
+<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
 {% block content %}
 
 <div class="page login">

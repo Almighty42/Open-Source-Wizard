@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /logout
+Sitemap: {{ site_url }}/sitemap.xml

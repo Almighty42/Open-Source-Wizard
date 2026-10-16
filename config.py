@@ -23,6 +23,11 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
             'sqlite:///' + os.path.join(basedir, 'app.db')
 
+    SITE_URL = os.environ.get(
+            "SITE_URL",
+            "https://opensourcewizard.com"
+            ).rstrip("/")
+
     REMEMBER_COOKIE_DURATION = timedelta(hours=1)
     REMEMBER_COOKIE_SECURE = True
     REMEMBER_COOKIE_HTTPONLY = True
