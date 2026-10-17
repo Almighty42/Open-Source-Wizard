@@ -6,7 +6,7 @@
   ![Python](https://img.shields.io/badge/python-3.12+-blue) ![Flask](https://img.shields.io/badge/flask-3.1-black) ![License](https://img.shields.io/badge/license-MIT-green)
 </div>
 
-<img width="1366" height="696" alt="Screenshot of the homepage" src="https://github.com/user-attachments/assets/2f382152-9657-4c98-b28f-7dc6aca214c5" />
+<img width="1337" height="695" alt="Screenshot of the homepage" src="https://github.com/user-attachments/assets/0f074916-ec17-4d85-942c-9ea86dcc3842" />
 
 ## Features
 
@@ -20,12 +20,86 @@
 
 - **Backend:** Python, Flask
 - **Database:** SQLite
-- **Frontend:** Jinja templates, Sass, vanilla JavaScript
+- **Frontend:** Jinja templates, Sass, JavaScript
 - **Hosting:** DigitalOcean, Cloudflare
 
 ## Run locally
 
-todo...
+**Requirements:** Python 3.12 or newer and Git.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Almighty42/Open-Source-Wizard.git
+cd Open-Source-Wizard
+
+# 2. Create and activate a virtual environment
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Configure the environment
+cp .env.example .env
+
+# 5. Create the database
+flask db upgrade
+
+# 6. (Optional) Fill it with fake demo content
+flask seed all
+
+# 7. Start the development server
+flask run --port 3001
+```
+
+Then open [http://127.0.0.1:3001](http://127.0.0.1:3001).
+
+### Configuration
+
+Edit `.env` before the first run:
+
+| Variable | Description | Example |
+|---|---|---|
+| `DEBUG` | Use `True` locally. Without it, the app refuses to start unless `SECRET_KEY` is set | `True` |
+| `SECRET_KEY` | Required in production. Generate with `python -c "import secrets; print(secrets.token_hex(32))"` | |
+| `ADMIN_USERNAME` | Username of the admin account | `admin` |
+| `LOG_LEVEL` | Logging verbosity | `INFO` |
+| `LOG_DIR` | Where log files are written | `logs` |
+| `HOST` / `PORT` | Bind address and port | `127.0.0.1` / `3001` |
+| `SITE_URL` | Canonical URL used in the sitemap | `https://opensourcewizard.com` |
+
+### Admin account
+
+The admin user is created through the Flask shell, so no password lives in the code:
+
+```bash
+flask shell
+```
+
+```python
+import getpass
+from app.models import User
+u = User(username="admin", is_admin=True, login_attempts=0)
+u.set_password(getpass.getpass("Password: "))
+db.session.add(u)
+db.session.commit()
+exit()
+```
+
+The username must match `ADMIN_USERNAME` in `.env`. Then log in at `/login`.
+
+### Note on HTTPS
+
+Session cookies are marked `Secure`, so logging in over plain `http://` may not work in every browser. Chrome and Firefox treat `localhost` and `127.0.0.1` as secure contexts and normally accept them. If login doesn't stick, test over HTTPS.
+
+### Styles
+
+Styles are written in Sass under `app/static/scss/` and compiled to `app/static/css/app.css`, which is committed. To change styles, recompile:
+
+```bash
+pip install libsass            # or: npm install -g sass
+sass app/static/scss/app.scss app/static/css/app.css
+```
 
 ## Deployment
 
