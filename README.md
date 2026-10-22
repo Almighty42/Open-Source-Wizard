@@ -115,6 +115,10 @@ deploy/deploy.sh --push     # push local commits, then deploy
 
 The script pulls the new code on the server, installs changed dependencies, backs up and migrates the database when migrations changed, restarts the service and checks that the site responds. If a step fails, it rolls the code back to the previous commit.
 
+### Weekly report
+
+A weekly systemd timer on the server writes a health report (traffic, 5xx/429 counts, app and nginx errors, service status, disk, backup age). The owner's laptop fetches it over a restricted SSH key and shows a desktop notification. See [deploy/DEPLOY.md](deploy/DEPLOY.md#17-weekly-report) for setup.
+
 ## Project Structure
 
 ```text
@@ -142,7 +146,7 @@ Open-Source-Wizard/
 │   ├── templates/        # Jinja templates (pages, components, macros, seo)
 │   ├── extensions.py     # Database, login manager, rate limiter
 │   └── __init__.py       # Application factory
-├── deploy/               # Server config, deploy script, runbook
+├── deploy/               # Server config, deploy script, weekly report
 ├── migrations/           # Database migrations
 ├── scripts/              # Seed script
 ├── config.py
@@ -154,7 +158,6 @@ Open-Source-Wizard/
 
 ## TODO
 - Create / Implement a backup script
-- Create / Implement a info / error log script for informing the administrator
 
 ## License
 

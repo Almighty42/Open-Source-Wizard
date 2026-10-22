@@ -1,28 +1,30 @@
 # Deploying Open Source Wizard (opensourcewizard.com)
 
-Runbook for running the site on a DigitalOcean droplet behind Cloudflare, updating it with `deploy/deploy.sh`, and rebuilding it from scratch.
+Runbook for running the site on a DigitalOcean droplet behind Cloudflare, updating it with `deploy/deploy.sh`, monitoring it with the weekly report, and rebuilding it from scratch.
 Contains no secrets. Never commit `.env`, `origin.key`, `origin.pem`, database files or passwords.
 
 ## Architecture
-
 ```
 Browser -> Cloudflare (proxy, public HTTPS)
-        -> nginx :443 (Cloudflare Origin certificate)
-        -> Gunicorn 127.0.0.1:3001 (systemd service "osw")
-        -> Flask app (run:app) -> SQLite (/srv/osw/app.db)
+-> nginx :443 (Cloudflare Origin certificate)
+-> Gunicorn 127.0.0.1:3001 (systemd service "osw")
+-> Flask app (run:app) -> SQLite (/srv/osw/app.db)
 ```
 
 | Item | Value |
 |---|---|
 | Server user | `deploy` |
 | App directory | `/srv/osw` |
-| Virtualenv | `/srv/osw/venv` |
+| Virtualenv | `/srv/osw/.venv` |
 | Database | `/srv/osw/app.db` (SQLite) |
 | Uploads | `/srv/osw/app/static/uploads/` (exists only on the server, back it up) |
 | Backups on server | `/srv/osw/backups/` |
+| Weekly reports on server | `/srv/osw/reports/` (kept 60 days, mode 700) |
+| Weekly reports on main system | `~/osw-reports/` |
 | Service | `osw` (`deploy/osw.service`) |
 | nginx site | `deploy/osw.nginx.conf` |
-| Update script | `deploy/deploy.sh` (run from your laptop) |
+| Update script | `deploy/deploy.sh` (run from your main system) |
+| Report script | `deploy/weekly-report.sh` (runs on the server, section 17) |
 | Server Python | 3.12 (Ubuntu 24.04); local development uses 3.14. The app was verified to import and run on 3.12. |
 
 Files in `deploy/`:
@@ -30,9 +32,12 @@ Files in `deploy/`:
 | File | Purpose |
 |---|---|
 | `DEPLOY.md` | This runbook |
-| `deploy.sh` | One-command update from your laptop (section 11) |
+| `deploy.sh` | One-command update from your main system (section 11) |
 | `osw.service` | systemd unit for Gunicorn |
 | `osw.nginx.conf` | nginx site config |
+| `weekly-report.sh` | Generates the weekly health report on the server (section 17) |
+| `osw-report.service` | systemd unit that runs `weekly-report.sh` |
+| `osw-report.timer` | systemd timer for the report, Mondays 06:00 |
 
 ## 0. Before you start (rebuilding from scratch)
 
@@ -82,13 +87,12 @@ sudo ufw allow 443/tcp
 sudo ufw enable
 ```
 
-Shortcut in `~/.ssh/config` on your laptop (the deploy script uses the `osw` alias):
-
+Shortcut in `~/.ssh/config` on your main system (the deploy script uses the `osw` alias):
 ```
 Host osw
-    HostName SERVER_IP
-    User deploy
-    IdentityFile ~/.ssh/digitalocean-ssh-key
+HostName SERVER_IP
+User deploy
+IdentityFile ~/.ssh/digitalocean-ssh-key
 ```
 
 The key has a passphrase, so load it once per session: `ssh-add ~/.ssh/digitalocean-ssh-key`.
@@ -119,7 +123,7 @@ With 512 MiB, watch `free -h` after startup. If memory is tight, change `--worke
 
 ```bash
 sudo mkdir -p /srv/osw && sudo chown deploy:deploy /srv/osw
-git clone https://github.com/Almighty42/Open-Source-Wizard.git /srv/osw
+git clone [https://github.com/Almighty42/Open-Source-Wizard.git](https://github.com/Almighty42/Open-Source-Wizard.git) /srv/osw
 cd /srv/osw
 python3 -m venv venv
 ./venv/bin/pip install --no-cache-dir -r requirements.txt
@@ -232,7 +236,7 @@ sudo nginx -t && sudo systemctl reload nginx
 4. Test locally (`-k` is needed because the Origin CA is only trusted by Cloudflare):
 
 ```bash
-curl -skI --resolve opensourcewizard.com:443:127.0.0.1 https://opensourcewizard.com
+curl -skI --resolve opensourcewizard.com:443:127.0.0.1 [https://opensourcewizard.com](https://opensourcewizard.com)
 ```
 
 nginx serves only `/static/` directly from `/srv/osw/app/static/`. Everything else, including `/robots.txt` and `/sitemap.xml`, goes to Gunicorn. The database, `.env` and `backups/` are outside the static directory and are not reachable over HTTP.
@@ -243,11 +247,11 @@ nginx serves only `/static/` directly from `/srv/osw/app/static/`. Everything el
 2. Leave the five `eforward*.registrar-servers.com` MX records and the SPF TXT record alone: they belong to Namecheap email forwarding, not to the website. Keep them DNS only.
 3. SSL/TLS > Overview: set encryption mode to **Full (strict)**.
 4. SSL/TLS > Edge Certificates: enable **Always Use HTTPS**.
-5. Test from your laptop:
+5. Test from your main system:
 
 ```bash
 dig A opensourcewizard.com +short
-curl -sI --max-time 30 https://opensourcewizard.com | grep -iE "^(HTTP|server|cf-ray)"
+curl -sI --max-time 30 [https://opensourcewizard.com](https://opensourcewizard.com) | grep -iE "^(HTTP|server|cf-ray)"
 ```
 
 Expect `HTTP/2 200` and `server: cloudflare`.
@@ -255,10 +259,7 @@ Expect `HTTP/2 200` and `server: cloudflare`.
 6. Lock the origin to Cloudflare only (so nobody can bypass it or spoof `CF-Connecting-IP`). Do this only after the site works through Cloudflare. SSH is unaffected.
 
 ```bash
-for ip in $( (curl -s https://www.cloudflare.com/ips-v4; echo; curl -s https://www.cloudflare.com/ips-v6) ); do
-  sudo ufw allow from "$ip" to any port 443 proto tcp
-done
-sudo ufw status numbered
+sudo /srv/osw/deploy/cloudflare-ufw.sh
 sudo ufw delete allow 443/tcp
 sudo ufw delete allow 80/tcp
 sudo ufw status numbered
@@ -273,10 +274,11 @@ Verify: the public site still returns 200, and `curl -sk --max-time 5 https://SE
 - [ ] Create and publish the real post; upload an image and confirm it loads from `/static/uploads/...`.
 - [ ] Hammer the login form until the limiter returns 429, then confirm other visitors (for example your phone on mobile data) are not blocked, and that `/srv/osw/logs/app.log` shows real client IPs, not `127.0.0.1`.
 - [ ] `sudo reboot`, then confirm the site returns by itself (systemd and nginx both enabled).
+- [ ] `systemctl list-timers osw-report.timer` shows the next Monday run, and a manual run of `deploy/weekly-report.sh` produces a report (section 17).
 
 ## 11. Updating the site (`deploy/deploy.sh`)
 
-Normal workflow: commit on `main` on your laptop, then run the script from the repository.
+Normal workflow: commit on `main` on your main system, then run the script from the repository.
 
 ```bash
 deploy/deploy.sh            # deploy what is already pushed
@@ -304,6 +306,7 @@ Options via environment variables: `OSW_HOST` (default `osw`), `OSW_BRANCH` (`ma
 
 Things the script does not do:
 - It does not install nginx or systemd file changes. When `deploy/osw.nginx.conf` changes: `sudo cp /srv/osw/deploy/osw.nginx.conf /etc/nginx/sites-available/osw && sudo nginx -t && sudo systemctl reload nginx`. When `deploy/osw.service` changes: `sudo cp /srv/osw/deploy/osw.service /etc/systemd/system/osw.service && sudo systemctl daemon-reload && sudo systemctl restart osw`.
+- It does not install the weekly report units. When `deploy/osw-report.service` or `deploy/osw-report.timer` change: `sudo cp /srv/osw/deploy/osw-report.{service,timer} /etc/systemd/system/ && sudo systemctl daemon-reload`. Changes to `deploy/weekly-report.sh` take effect on the next deploy automatically, because systemd runs the script straight from `/srv/osw/deploy/`.
 - It discards manual edits on the server (`git reset --hard` on rollback, fast-forward-only merge otherwise). Never edit files directly on the droplet.
 - It does not change `.env`. Edit that on the server and restart with `sudo systemctl restart osw`.
 - It does not rebuild Sass. Commit the compiled `app/static/css/app.css`.
@@ -322,15 +325,24 @@ sudo systemctl restart osw
 ## 12. Backups (do not skip)
 
 The database and uploads exist only on the server. Nightly database backup via cron (`crontab -e` as `deploy`; `%` must be escaped). The second command prunes both nightly and pre-deploy backups so the disk does not fill up and old database copies do not pile up:
-
 ```
 0 3 * * * sqlite3 /srv/osw/app.db ".backup '/srv/osw/backups/app-$(date +\%F).db'"
 30 3 * * * find /srv/osw/backups \( -name 'app-*.db' -o -name 'pre-deploy-*.db' \) -mtime +14 -delete
 ```
 
+After installing the cron lines, create the first backup by hand and confirm it exists:
+
+```bash
+sqlite3 /srv/osw/app.db ".backup '/srv/osw/backups/app-$(date +%F).db'"
+ls -la /srv/osw/backups
+crontab -l
+```
+
+The weekly report (section 17) looks for files named `app-*.db`. If none exists, or the newest is more than 2 days old, the report shows `Latest: none found` or a large backup age and sets the status to ATTENTION. `pre-deploy-*.db` files do not count.
+
 Backups contain password hashes. Keep `/srv/osw/backups` mode 700 (`chmod 700 /srv/osw/backups`) and never copy them anywhere public.
 
-Pull copies to your laptop (run from the laptop, weekly or from a cron job):
+Pull copies to your main system (run from the main system, weekly or from a cron job):
 
 ```bash
 mkdir -p ~/osw-backups
@@ -363,6 +375,7 @@ db.session.commit()
 | Cloudflare 522 / curl hangs | Origin unreachable or droplet gone | Is the droplet running? Is the DNS record's IP correct? |
 | Cloudflare 525 / 526 | TLS problem on origin | Origin certificate paths in nginx; certificate hostnames; SSL mode |
 | 502 Bad Gateway | Gunicorn down | `journalctl -u osw -n 100 --no-pager` |
+| 500 on `/` and "Request finalizing failed" in the log | Exception in a request hook, session or template | The last line of the traceback: `journalctl -u osw --since "10 min ago" --no-pager`; review `app/middlewares/hooks.py` |
 | Login does not stick | Not using HTTPS (cookies are `Secure`) | Browse via `https://`; check `X-Forwarded-Proto` |
 | Everyone gets 429 | Limiter sees one proxy IP | `ProxyFix` missing or `CF-Connecting-IP` not forwarded |
 | App crashes at start with SECRET_KEY error | `.env` missing key | Check `/srv/osw/.env` |
@@ -373,14 +386,21 @@ db.session.commit()
 | `deploy.sh`: health check failed, rolled back | New code crashes on start | `ssh osw 'journalctl -u osw -n 100 --no-pager'`, fix, redeploy |
 | `deploy.sh`: public site not 200 | Cloudflare or origin problem | Rows above; the app itself passed its local health check |
 | Sitemap or robots.txt returns 404 | Routes not deployed | Confirm the code is on the server and the service restarted |
+| Report shows `Latest: none found`, `backup age: -1d` | Nightly backup cron not installed or failing | `crontab -l` as `deploy`; `ls -la /srv/osw/backups`; section 12 |
+| Report section empty (nginx errors, traffic) | `deploy` cannot read the logs | `groups` must include `adm`; log out and in after `usermod` |
+| No weekly report on the main system | Server or main system timer did not run | `systemctl list-timers osw-report.timer` on the server; `systemctl --user list-timers` on the main system |
+| main system service fails with `203/EXEC` | The fetch script is not at the path in `ExecStart` | `ls -l ~/.local/bin/osw-fetch-report`; symlink or fix `ExecStart`; `chmod +x` |
+| Fetch works but no desktop notification | `notify-send` cannot reach dunst | Is dunst running? Keep `Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=%t/bus` in the user unit |
+| Fetched report is old after a manual rerun | main system skips dates it already has | Delete `~/osw-reports/osw-report-<date>.txt`, run the service again |
 
-Logs: `/srv/osw/logs/app.log`, `/srv/osw/logs/error.log`, `journalctl -u osw`, `/var/log/nginx/error.log`.
+Logs: `/srv/osw/logs/app.log`, `/srv/osw/logs/error.log`, `journalctl -u osw`, `/var/log/nginx/error.log`, `journalctl -u osw-report` (report script progress).
 
 ## 15. Recurring reminders
 
 - Namecheap domain renewal: May 2027.
 - DigitalOcean payment method valid and billing alert set (a lapsed payment is what took the site down before).
-- Monthly: `sudo apt update && sudo apt upgrade`, verify a recent backup exists, and pull a copy to your laptop.
+- Weekly: read the Monday report. A missing notification is itself a warning sign.
+- Monthly: `sudo apt update && sudo apt upgrade`, verify a recent backup exists, and pull a copy to your main system.
 - Occasionally: re-run the Cloudflare IP firewall loop (section 9.6).
 
 ## 16. SEO: robots.txt, sitemap and Google Search Console
@@ -390,8 +410,8 @@ The app serves both files itself: `/robots.txt` and `/sitemap.xml` (routes in `a
 Verify after each deploy that touches them:
 
 ```bash
-curl -s https://opensourcewizard.com/robots.txt
-curl -s https://opensourcewizard.com/sitemap.xml | head -n 20
+curl -s [https://opensourcewizard.com/robots.txt](https://opensourcewizard.com/robots.txt)
+curl -s [https://opensourcewizard.com/sitemap.xml](https://opensourcewizard.com/sitemap.xml) | head -n 20
 ```
 
 Search Console setup (after a rebuild, or if the property shows as unverified):
@@ -402,3 +422,196 @@ Search Console setup (after a rebuild, or if the property shows as unverified):
 5. URL Inspection > run a live test and Request Indexing for the homepage and key posts.
 
 After downtime, recovery is automatic once pages return 200, but the crawl rate ramps up gradually. Keep the slugs of existing posts unchanged, and keep the site stable. Googlebot gets slowed by 5xx and 429 responses, so watch Crawl Stats and `sudo grep " 429 " /var/log/nginx/access.log`. The rate limiter's defaults (3/second, 75/hour, 200/day per IP) apply to every route; exempt `sitemap()` and `robots()` with `@limiter.exempt`.
+
+## 17. Weekly report
+
+Every Monday at 06:00 the server writes a health report to `/srv/osw/reports/`. At 08:00 the main system fetches it over a restricted SSH key and shows a dunst notification. The main system pulls because it is often offline and behind NAT, and `Persistent=true` makes a missed run happen when the main system next starts.
+```
+Server timer (Mon 06:00) -> weekly-report.sh -> /srv/osw/reports/latest.txt
+main system timer (Mon 08:00) -> ssh osw-report (one command only) -> ~/osw-reports/ -> notify-send -> dunst
+```
+
+text
+
+
+
+How the report behaves:
+- Each run writes `osw-report-<today>.txt` and points `latest.txt` at it. A second run on the same day overwrites the first on the server.
+- The window is rolling: the last 7 calendar dates of the nginx log and the last 168 hours of the journal. It is not Monday to Sunday.
+- The "App log errors" section is not date-filtered. It shows the last 50 matching lines of `/srv/osw/logs/*.log`.
+- Reports older than 60 days are deleted. Progress messages from the script go to `journalctl -u osw-report`.
+
+### 17.1 Server setup
+
+1. Let `deploy` read nginx logs and the journal. Log out and in again afterwards:
+
+```bash
+sudo usermod -aG adm deploy
+```
+
+2. Make sure these three files exist in the repo under `deploy/` (commit them and deploy):
+
+`deploy/weekly-report.sh` (executable: `chmod +x deploy/weekly-report.sh` before committing)
+
+`deploy/osw-report.service`:
+
+```ini
+[Unit]
+Description=OSW weekly report
+
+[Service]
+Type=oneshot
+User=deploy
+ExecStart=/srv/osw/deploy/weekly-report.sh
+```
+
+`deploy/osw-report.timer`:
+
+```ini
+[Unit]
+Description=Run OSW weekly report
+
+[Timer]
+OnCalendar=Mon 06:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+3. Install the units and start the timer on the server:
+
+```bash
+sudo cp /srv/osw/deploy/osw-report.service /srv/osw/deploy/osw-report.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now osw-report.timer
+systemctl list-timers osw-report.timer
+```
+
+4. Run it once by hand and read the result:
+
+```bash
+/srv/osw/deploy/weekly-report.sh
+cat /srv/osw/reports/latest.txt
+```
+
+The script prints `OK` and `WARN` progress lines. The first line of the report after the date is the summary.
+
+### 17.2 main system setup
+
+1. Create a key that can only print the latest report. Do not reuse the deploy key.
+
+```bash
+ssh-keygen -t ed25519 -N "" -C "osw-report-fetch" -f ~/.ssh/osw-report
+echo "restrict,command=\"cat /srv/osw/reports/latest.txt\" $(cat ~/.ssh/osw-report.pub)" \
+  | ssh osw 'cat >> ~/.ssh/authorized_keys'
+```
+
+`restrict` disables forwarding and terminals, and `command=` forces that single command whatever the client asks for. The key has no passphrase, which is acceptable only because it can read nothing but the report. Never print secrets in the report.
+
+2. Add to `~/.ssh/config`:
+```
+Host osw-report
+HostName SERVER_IP
+User deploy
+IdentityFile ~/.ssh/osw-report
+IdentitiesOnly yes
+```
+
+Test it: `ssh osw-report | head -n 3` must print the report header, not a shell.
+
+3. Create `~/.local/bin/osw-fetch-report` and make it executable (`chmod +x`). If you keep the script somewhere else, symlink it to this path, because the service looks for exactly this file:
+
+```bash
+#!/usr/bin/env bash
+set -uo pipefail
+
+DIR="$HOME/osw-reports"
+mkdir -p "$DIR"
+TMP=$(mktemp)
+trap 'rm -f "$TMP"' EXIT
+
+ok=0
+for i in 1 2 3 4 5; do
+  if ssh -o BatchMode=yes -o ConnectTimeout=15 osw-report > "$TMP" 2>/dev/null && [ -s "$TMP" ]; then
+    ok=1; break
+  fi
+  sleep 30
+done
+
+if [ "$ok" -ne 1 ]; then
+  notify-send -u critical -a osw-report "OSW report failed" "Could not fetch the weekly report from the server"
+  exit 1
+fi
+
+DATE=$(sed -n 's/^Report date: //p' "$TMP" | head -n1)
+DATE=${DATE:-$(date +%F)}
+DEST="$DIR/osw-report-$DATE.txt"
+
+[ -e "$DEST" ] && exit 0
+
+mv "$TMP" "$DEST"
+ln -sfn "$DEST" "$DIR/latest.txt"
+
+SUMMARY=$(sed -n 's/^Summary: //p' "$DEST" | head -n1)
+URG=normal
+case "$SUMMARY" in ATTENTION*) URG=critical ;; esac
+notify-send -u "$URG" -a osw-report "OSW weekly report ready" "$SUMMARY"
+```
+
+4. Create the user units in `~/.config/systemd/user/`.
+
+`osw-report.service`:
+
+```ini
+[Unit]
+Description=Fetch OSW weekly report
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/osw-fetch-report
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=%t/bus
+```
+
+`osw-report.timer`:
+
+```ini
+[Unit]
+Description=Fetch OSW report weekly
+
+[Timer]
+OnCalendar=Mon 08:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+5. Enable and test:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable --now osw-report.timer
+systemctl --user start osw-report.service
+journalctl --user -u osw-report -n 20 --no-pager
+```
+
+A dunst notification must appear. To test again on the same day, delete `~/osw-reports/osw-report-<date>.txt` first, because the script skips dates it already has. Optional alias: `alias osw-report='less ~/osw-reports/latest.txt'`.
+
+### 17.3 Reading the report
+
+The summary line starts with `ATTENTION` if any of these is true: an inactive service (`osw` or `nginx`), any 5xx response, any app error, disk usage of 85% or more, or no database backup found or one older than 2 days. Otherwise it says `OK`.
+
+| Item | What it means | Act when |
+|---|---|---|
+| `5xx` and Top 5xx URLs | Server errors returned to visitors | Above 0: read the traceback with `journalctl -u osw --since "1 day ago"` |
+| `app errors` | Counts matching log lines, not events; one failed request produces about six | Any value above 0 |
+| `404` and Top 404 URLs | Mostly bots probing for `/.env`, `/.git/config` and similar; all 404 means nothing is exposed | Real pages of yours appear in the list |
+| `429` | Requests blocked by the rate limiter | Googlebot or real visitors are affected |
+| `Invalid-user attempts` (SSH) | Password-guessing bots; harmless with key-only SSH | A sudden jump, or successful logins you do not recognise |
+| `Pending apt upgrades` | Packages waiting for an upgrade | Run `sudo apt update && sudo apt upgrade` |
+| `REBOOT REQUIRED` | A kernel or library update needs a restart | Reboot at a quiet time |
+| `backup age` | Days since the newest `app-*.db`; `-1d` means none found | `-1d` or more than 2 days: section 12 |
+| `disk` | Root filesystem usage | 85% or more |
+
+The weekly report is a summary, not an alarm. For outages that cannot wait a week, use an external uptime monitor.
