@@ -57,7 +57,7 @@ tar "${TAR_ARGS[@]}" || die "tar failed"
 log "Verifying archive"
 gzip -t "$WORK/out.tar.gz" || die "gzip test failed"
 ENTRIES=$(tar -tzf "$WORK/out.tar.gz" | wc -l) || die "tar listing failed"
-tar -tzf "$WORK/out.tar.gz" | grep -qx 'app.db' || die "Archive has no database"
+tar -tzf "$WORK/out.tar.gz" app.db >/dev/null 2>&1 || die "Archive has no database"
 ok "Archive verified ($ENTRIES entries)"
 
 mv "$WORK/out.tar.gz" "$FINAL" || die "Could not move archive to $FINAL"
