@@ -1,0 +1,7 @@
+[Unit]
+Description=OSW database and uploads backup
+
+[Service]
+Type=oneshot
+User=deploy
+ExecStart=/srv/osw/deploy/backup.sh
