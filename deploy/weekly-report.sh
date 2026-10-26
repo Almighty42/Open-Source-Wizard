@@ -22,6 +22,7 @@ mkdir -p "$OUT_DIR" && chmod 700 "$OUT_DIR" \
 
 log "Collecting nginx access log entries"
 DATES=$(for i in $(seq 0 $((DAYS-1))); do date -d "-$i day" +%d/%b/%Y; done | paste -sd'|')
+RECENT_DATES=$(for i in 0 1; do date -d "-$i day" +%d/%b/%Y; done | paste -sd'|')
 zcat -f /var/log/nginx/access.log* 2>/dev/null | grep -E "\[($DATES):" > "$ACCESS"
 ok "Access log entries found: $(wc -l < "$ACCESS")"
 
@@ -30,11 +31,14 @@ TOTAL=$(wc -l < "$ACCESS")
 S5=$(awk '$9 ~ /^5/' "$ACCESS" | wc -l)
 S429=$(awk '$9 == 429' "$ACCESS" | wc -l)
 S404=$(awk '$9 == 404' "$ACCESS" | wc -l)
-ok "Requests: $TOTAL | 5xx: $S5 | 429: $S429 | 404: $S404"
+S5_RECENT=$(grep -E "\[($RECENT_DATES):" "$ACCESS" | awk '$9 ~ /^5/' | wc -l)
+ok "Requests: $TOTAL | 5xx: $S5 (last 2 days: $S5_RECENT) | 429: $S429 | 404: $S404"
 
 log "Reading app errors from journal"
-APP_ERRORS=$(journalctl -u osw --since "$DAYS days ago" -q --no-pager | grep -cE "ERROR|CRITICAL|Traceback")
-ok "App errors found: $APP_ERRORS"
+APP_ERRORS=$(journalctl -u osw --since "$DAYS days ago" -q --no-pager | grep -c "Exception on")
+APP_ERRORS_RECENT=$(journalctl -u osw --since "2 days ago" -q --no-pager | grep -c "Exception on")
+LAST_ERROR=$(journalctl -u osw --since "$DAYS days ago" -q --no-pager | grep "Exception on" | tail -n1 | cut -c1-15)
+ok "App errors: $APP_ERRORS (last 2 days: $APP_ERRORS_RECENT) | last error: ${LAST_ERROR:-none}"
 
 log "Counting SSH probes"
 SSH_PROBES=$(journalctl -u ssh --since "$DAYS days ago" -q --no-pager | grep -c "Invalid user")
@@ -69,16 +73,16 @@ fi
 log "Evaluating overall status"
 STATUS=OK
 [ -n "$BAD" ] && STATUS=ATTENTION
-[ "$S5" -gt 0 ] && STATUS=ATTENTION
-[ "$APP_ERRORS" -gt 0 ] && STATUS=ATTENTION
-[ "$DISK" -ge 85 ] && STATUS=ATTENTION
+[ "$S5_RECENT" -gt 0 ] && STATUS=ATTENTION
+[ "$APP_ERRORS_RECENT" -gt 0 ] && STATUS=ATTENTION
+[ "${DISK:-0}" -ge 85 ] && STATUS=ATTENTION
 { [ "$BACKUP_AGE" -lt 0 ] || [ "$BACKUP_AGE" -gt 2 ]; } && STATUS=ATTENTION
 if [ "$STATUS" = OK ]; then ok "Overall status: OK"; else warn "Overall status: ATTENTION"; fi
 
 log "Writing report"
 {
 echo "Report date: $TODAY"
-echo "Summary: $STATUS | 5xx: $S5 | 429: $S429 | app errors: $APP_ERRORS | disk: ${DISK}% | backup age: ${BACKUP_AGE}d"
+echo "Summary: $STATUS | 5xx (7d/2d): $S5/$S5_RECENT | 429: $S429 | app errors (7d/2d): $APP_ERRORS/$APP_ERRORS_RECENT | disk: ${DISK}% | backup age: ${BACKUP_AGE}d"
 echo
 log "Writing section: System"
 echo "== System =="
@@ -87,11 +91,19 @@ free -h | sed -n '1,2p'
 df -h / | tail -n1
 echo "Inactive services:${BAD:- none}"
 echo "Pending apt upgrades: $UPGRADES"
+echo "Last app error: ${LAST_ERROR:-none}"
 [ -f /var/run/reboot-required ] && echo "REBOOT REQUIRED"
 echo
 log "Writing section: Traffic"
 echo "== Traffic (last $DAYS days) =="
 echo "Requests: $TOTAL | 404: $S404 | 429: $S429 | 5xx: $S5"
+echo "-- Per day --"
+for i in $(seq $((DAYS-1)) -1 0); do
+  d=$(date -d "-$i day" +%d/%b/%Y)
+  printf '%s  requests: %s  5xx: %s\n' "$d" \
+    "$(grep -c "\[$d:" "$ACCESS")" \
+    "$(grep "\[$d:" "$ACCESS" | awk '$9 ~ /^5/' | wc -l)"
+done
 echo "-- Top 5xx URLs --"
 awk '$9 ~ /^5/ {print $9, $7}' "$ACCESS" | sort | uniq -c | sort -rn | head -n 10
 echo "-- Top 404 URLs --"
@@ -107,15 +119,16 @@ echo "Invalid-user attempts: $SSH_PROBES"
 echo
 log "Writing section: App errors (journal)"
 echo "== App errors (journal, last $DAYS days) =="
-journalctl -u osw --since "$DAYS days ago" -q --no-pager | grep -E "ERROR|CRITICAL|Traceback" | tail -n 50
-echo
-log "Writing section: App log errors"
-echo "== App log errors (may include older entries) =="
-cat "$APP"/logs/*.log 2>/dev/null | grep -E "ERROR|CRITICAL" | tail -n 50
+echo "-- Exception types --"
+journalctl -u osw --since "$DAYS days ago" -q --no-pager \
+  | grep -E "gunicorn\[[0-9]+\]: [A-Za-z_.]+(Error|Exception)(:|$)" \
+  | sed -E 's/^.*gunicorn\[[0-9]+\]: //' | sort | uniq -c | sort -rn | head -n 10
+echo "-- Latest errors --"
+journalctl -u osw --since "$DAYS days ago" -q --no-pager | grep -E "ERROR|CRITICAL" | tail -n 15
 echo
 log "Writing section: nginx errors"
 echo "== nginx errors =="
-tail -n 30 /var/log/nginx/error.log
+tail -n 30 /var/log/nginx/error.log 2>/dev/null || echo "(error.log not readable)"
 } > "$TMP"
 
 if mv "$TMP" "$OUT"; then
