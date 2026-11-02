@@ -52,7 +52,7 @@
                     </div>
                     <div class="post__category">
                         <p class="post__category-text">{{ primary_category.name | upper }}</p>
-                        <p class="post__category-text">{{ article.read_time }} MIN READ</p>
+<p class="post__category-text post__read-time">{{ article.read_time }} MIN READ</p>
                     </div>
                 </div>
                 <div class="post__title">
@@ -63,13 +63,20 @@
                     <p class="post__excerpt-text">{{ article.excerpt }}</p>
                 </div>
             </section>
-            <div class="post__sidebar-section">
-                {% if article_headings %}{{ sidebar_comp.sidebar(article_headings) }}{% endif %}
-                {% if is_auth %}
-                    {{ button_comp.button(icon="assets/icons/edit.svg", text="Edit", link="admin.edit_article", slug=article.slug) }}
-                    {{ delete_button_comp.delete_button(link="admin.delete_article", slug=article.slug, delete_form=delete_form) }}
-                {% endif %}
+<div class="post__sidebar-section">
+    {% if article_headings %}
+        <details class="post__toc" id="post-toc">
+            <summary class="post__toc-summary">On this page</summary>
+            <div class="post__toc-panel">
+                {{ sidebar_comp.sidebar(article_headings) }}
             </div>
+        </details>
+    {% endif %}
+    {% if is_auth %}
+        {{ button_comp.button(icon="assets/icons/edit.svg", text="Edit", link="admin.edit_article", slug=article.slug) }}
+        {{ delete_button_comp.delete_button(link="admin.delete_article", slug=article.slug, delete_form=delete_form) }}
+    {% endif %}
+</div>
         </div>
         <section class="post-body">
             {{ rendered_body | safe }}
@@ -103,7 +110,7 @@
             {% endif %}
             <div class="post__tags">
                 {% for tag in tags %}
-                    <a href="{{ url_for('article.articles', tag=tag.slug) }}">[ {{ tag.name | upper }} ]</a>
+                    <a class="post__tags__text" href="{{ url_for('article.articles', tag=tag.slug) }}">[ {{ tag.name | upper }} ]</a>
                 {% endfor %}
             </div>
         </section>

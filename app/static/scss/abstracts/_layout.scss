@@ -1,0 +1,23 @@
+@use "breakpoints" as bp;
+
+$page-width: (
+  base: 90%,
+  md: 75%,
+  lg: 67%,
+  xl: 800px) !default;
+
+@mixin page-width {
+  margin-inline: auto;
+
+  @each $key, $value in $page-width {
+    @if $key ==base {
+      width: $value;
+    }
+
+    @else {
+      @include bp.mq($key) {
+        width: $value;
+      }
+    }
+  }
+}

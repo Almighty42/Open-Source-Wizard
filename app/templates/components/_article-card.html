@@ -27,7 +27,7 @@
 			<ul role="list" class="article-card__tags">
 				{% for tag in article.tags %}
 				<li>
-					<a href="{{ url_for('article.articles', tag=tag.slug) }}">[ {{ tag.name|upper }} ]</a>
+					<a class="article-card__tags__text" href="{{ url_for('article.articles', tag=tag.slug) }}">[ {{ tag.name|upper }} ]</a>
 				</li>
 				{% endfor %}
 			</ul>

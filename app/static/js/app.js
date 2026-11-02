@@ -2,6 +2,11 @@ import { initRemoteSelect, updateLabel, syncHiddenInputs } from './tomselect.js'
 import { closeLightbox } from './lightbox.js'
 import { update_theme } from './theme.js'
 import { fetchArticles, syncProjectDateState, syncPublishedDateState } from './form.js'
+import { initHeaderMenu } from './header_menu.js'
+import { initPostToc } from './post_toc.js'
+
+initHeaderMenu()
+initPostToc()
 
 const root = document.documentElement;
 

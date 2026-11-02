@@ -32,7 +32,7 @@
                 <ul role="list" class="project-card__tags">
                     {% for tag in project.tags %}
                         <li>
-                            <a href="{{ url_for('project.projects', tag=tag.slug) }}">[ {{ tag.name|upper }} ]</a>
+                            <a class="project-card__tags__text" href="{{ url_for('project.projects', tag=tag.slug) }}">[ {{ tag.name|upper }} ]</a>
                         </li>
                     {% endfor %}
                     <li>

@@ -20,47 +20,52 @@
   @include abstracts.base-border("top");
   @include abstracts.base-border("left");
   @include abstracts.base-border("right");
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-1) var(--space-3);
   width: fit-content;
+  font-size: var(--text-xs);
+
+  @include abstracts.mq(header) {
+    padding: var(--space-2) var(--space-4);
+    font-size: inherit;
+  }
 }
-
-.code-lang-icon {}
-
-.code-lang-text {}
 
 .code-copy-btn {
   @include abstracts.base-border("top");
   @include abstracts.base-border("left");
   @include abstracts.flex(var(--space-2));
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-1) var(--space-3);
   width: fit-content;
+  font-size: var(--text-xs);
   cursor: pointer;
   user-select: none;
 
+  @include abstracts.mq(header) {
+    padding: var(--space-2) var(--space-4);
+    font-size: inherit;
+  }
+
   >p {
     font-family: var(--font-display);
-
   }
 
   >.code-copy-icon {
     @include abstracts.flex(0px, row, flex-start, center);
   }
-
 }
 
 .code-content {
   width: 100%;
   height: fit-content;
   @include abstracts.base-border();
-  padding: var(--space-4);
+  padding: var(--space-2) var(--space-4);
   background: var(--color-code-background);
   overflow: hidden;
-
-  // html[data-theme="light"] & {
-  //   background: #f8f8f2;
-  // }
-
   display: block !important;
+
+  @include abstracts.mq(header) {
+    padding: var(--space-4);
+  }
 
   .highlight {
     display: block;
@@ -70,7 +75,13 @@
     display: block;
     width: 100%;
     overflow-x: auto;
+    overscroll-behavior-x: contain; // side-scrolling code doesn't drag the page
     white-space: pre;
+    font-size: var(--text-xs); // fits more per line on a phone
+
+    @include abstracts.mq(header) {
+      font-size: inherit;
+    }
   }
 
   code {

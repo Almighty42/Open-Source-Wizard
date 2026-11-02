@@ -20,6 +20,11 @@ CORE_TAGS = [
         {"name": "Debugging",        "slug": "debugging",         "description": "Debugging strategies for embedded and software."},
         {"name": "Linux",            "slug": "linux",             "description": "Linux system administration and tooling."},
         {"name": "AI",               "slug": "ai",                "description": "AI-assisted development and edge AI."},
+        {"name": "Example 1",               "slug": "1",                "description": "AI-assisted development and edge AI."},
+        {"name": "Example 2",               "slug": "2",                "description": "AI-assisted development and edge AI."},
+        {"name": "Example 3",               "slug": "3",                "description": "AI-assisted development and edge AI."},
+        {"name": "Example 4",               "slug": "4",                "description": "AI-assisted development and edge AI."},
+        {"name": "Example 5",               "slug": "5",                "description": "AI-assisted development and edge AI."},
         ]
 
 class TagSeeder(BaseSeeder):

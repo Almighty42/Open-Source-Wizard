@@ -1,84 +1,90 @@
 @use "../../abstracts";
 
 .post-body {
+  --flow: var(--space-5); // normal gap between neighbours
+  --flow-block: var(--space-8); // code, figures, tables, quotes
+
   width: 100%;
   height: fit-content;
-  @include abstracts.flex(var(--space-15), column);
-  margin: 0px;
+  margin: 0;
 
-  // --- Heading sizes ---
-  .block-h1>h1 {
+  // 1. Default rhythm: every element gets space above, never below
+  &,
+  .block-h2,
+  .block-h3,
+  .block-h4 {
+    >*+* {
+      margin-top: var(--flow);
+    }
+  }
+
+  // 2. A heading sits close to what it introduces
+  .block-h2>h2+*,
+  .block-h3>h3+*,
+  .block-h4>h4+* {
+    margin-top: var(--space-3);
+  }
+
+  // 3. Blocks get more air above and below
+  &,
+  .block-h2,
+  .block-h3,
+  .block-h4 {
+
+    >*+ :is(.code-block, figure, table, blockquote),
+    > :is(.code-block, figure, table, blockquote)+* {
+      margin-top: var(--flow-block);
+    }
+  }
+
+  // 4. Sections: bigger gap the higher the level
+  *+.block-h2 {
+    margin-top: var(--space-16);
+  }
+
+  *+.block-h3 {
+    margin-top: var(--space-12);
+  }
+
+  *+.block-h4 {
+    margin-top: var(--space-8);
+  }
+
+  // 5. Lists
+  li+li {
+    margin-top: var(--space-2);
+  }
+
+  li> :is(ul, ol) {
+    margin-top: var(--space-2);
+  }
+
+  // --- Heading sizes (unchanged) ---
+  .block-h2>h2 {
     font-size: var(--text-xl);
     font-weight: var(--font-weight-semibold);
   }
 
-  .block-h2>h2 {
+  .block-h3>h3 {
     font-size: var(--text-lg);
     font-weight: var(--font-weight-medium);
   }
 
-  .block-h3>h3 {
+  .block-h4>h4 {
     font-size: var(--text-base);
     font-weight: var(--font-weight-medium);
   }
 
-  // --- Block spacing ---
-  .block-h1+.block-h1 {
-    margin-top: var(--space-20);
-  }
-
-  .block-h2+.block-h2 {
-    margin-top: var(--space-10);
-  }
-
-  .block-h3+.block-h3 {
-    margin-top: var(--space-6);
-  }
-
-  .block-h1>.block-h2 {
-    margin-top: var(--space-16);
-  }
-
-  .block-h2>.block-h3 {
-    margin-top: var(--space-8);
-  }
-
-  .block-h1,
-  .block-h2,
-  .block-h3 {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-
-    >*+* {
-      margin-top: var(--space-8);
-    }
-
-    >h1+*,
-    >h2+*,
-    >h3+* {
-      margin-top: var(--space-6);
-    }
-
-    >*+.code-block,
-    >.code-block+*,
-    >*+figure,
-    >figure+* {
-      margin-top: var(--space-10);
-    }
-  }
-
-  // --- Figures ---
+  // --- Figures (unchanged) ---
   figure.inline-image img,
   figure.diagram img {
     cursor: zoom-in;
   }
 
-  // --- Tables ---
+  // --- Tables (margin removed, spacing comes from rule 3) ---
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: var(--space-8) 0;
     font-size: var(--text-sm);
   }
 
@@ -121,7 +127,7 @@
     }
   }
 
-  // --- Inline code ---
+  // --- Inline code (unchanged) ---
   p code,
   li code,
   td code,

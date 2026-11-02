@@ -47,14 +47,15 @@
   // Metadata, tiny labels
   --text-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.875rem);
   // Nav links, small UI text
-  --text-sm: clamp(0.875rem, 0.84rem + 0.2vw, 1rem);
+  --text-sm: clamp(0.850rem, 0.84rem + 0.2vw, 1rem);
   // Paragraphs, normal text
-  --text-base: clamp(1rem, 0.97rem + 0.25vw, 1.125rem);
+  --text-base: clamp(0.9rem, 0.95rem + 0.25vw, 1.1rem);
   // Section headings
   --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
   // Page titles, hero titles
   --text-xl: clamp(1.5rem, 1.2rem + 1vw, 2rem);
-  --text-2xl: clamp(2rem, 1.5rem + 2vw, 3rem);
+  // --text-2xl: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+  --text-2xl: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
   --text-3xl: clamp(2.3rem, 1.8rem + 3vw, 4rem);
 
   --content-narrow: 640px;

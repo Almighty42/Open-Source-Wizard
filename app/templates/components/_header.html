@@ -9,7 +9,12 @@
                 'Open Source Wizard Logo') }}
         <p class="header__logo-text foreground-1">[ Open Source Wizard ]</p>
     </div>
-    <ul role="list" class="header__links">
+    <button class="header__menu-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="header-menu"
+            aria-label="Toggle menu">[ ≡ ]</button>
+    <ul id="header-menu" role="list" class="header__links">
         <li>{{ link_comp.link('main.index', 'header__link-anchor', '/') }}</li>
         <li>{{ link_comp.link(['article.articles', 'article.article'], 'header__link-anchor', '/Articles') }}</li>
         <li>{{ link_comp.link(['project.projects', 'project.project'], 'header__link-anchor', '/Projects') }}</li>

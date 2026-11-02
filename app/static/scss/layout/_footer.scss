@@ -1,23 +1,34 @@
 @use "../abstracts";
 
 .footer {
-  height: fit-content;
-  padding: var(--space-4);
-  @include abstracts.flex-between();
+  // Small screens: stacked and centered
+  @include abstracts.flex(var(--space-4), column, center, center);
+  padding: var(--space-2) var(--space-4);
+  text-align: center;
   border-top: solid var(--border-width-thin) var(--color-border-2);
 
   &__links {
-    @include abstracts.flex(var(--space-6), row, flex-start, center);
+    // row gap / column gap, so wrapped links get breathing room
+    @include abstracts.flex(var(--space-2) var(--space-6), row, center, center, wrap);
   }
 
   &__link-anchor {
+    display: inline-block;
+    padding-block: var(--space-2); // bigger tap target on touch screens
     font-size: var(--text-xs);
     text-decoration: none;
-    white-space: nowrap;
-    color: var(--color-text-secondary);
+    color: var(--color-text-tertiary);
   }
 
   &__trademark {
     font-size: var(--text-xs);
+  }
+
+  // 650px and up: one row
+  @include abstracts.mq(header) {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+    padding-inline: var(--space-4);
   }
 }

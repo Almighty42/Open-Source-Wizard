@@ -3,15 +3,16 @@
 {% block og_title %}{{ project.title }} — Open Source Wizard{% endblock %}
 {% block og_description %}{{ project.excerpt }}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_image %}{% if cover %}/{{ cover.path }}{% endif %}{% endblock %}
+{% block og_image %}{% if cover %}https://opensourcewizard.com/{{ cover.path }}{% endif %}{% endblock %}
 
 {% block extra_head %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "{{ project.title | tojson }}",
-  "description": "{{ project.excerpt | tojson }}",
+  "headline": {{ project.title | tojson }},
+  "description": {{ project.excerpt | tojson }},
+  {% if project.published_at %}"datePublished": "{{ project.published_at.isoformat() }}",{% endif %}
   "author": {
     "@type": "Person",
     "name": "Almighty42",
@@ -39,7 +40,7 @@
         {% else %}
             <img class="post__cover"
                  src="{{ url_for('static', filename='assets/icons/components/placeholder.png') }}"
-                 alt="{{ cover.alt_text or '' }}"
+                 alt=""
                  onload="this.classList.add('--loaded')"
                  onerror="this.style.display='none'" />
         {% endif %}
@@ -57,44 +58,60 @@
                     </div>
                     <div class="post__category">
                         <p class="post__category-text">{{ primary_category.name | upper }}</p>
-                        <p class="post__category-text">[ {{ project.project_state.value | upper }} ]</p>
+<p class="post__category-text post__project-state">[ {{ project.project_state.value | upper }} ]</p>
                     </div>
                 </div>
-                {% if project.started_at or project.platform %}
-                    <div class="post__extra">
-                        {% if project.started_at %}<p class="post__extra-text" >[ START ] - {{ project.started_at | date }}</p>{% endif %}
-                        {% if project.completed_at %}
-                            <p class="post__extra-text" >[ END ] - {{ project.completed_at | date }}</p>
-                        {% else %}
-                            <p class="post__extra-text" >[ END ] - UNSPECIFIED</p>
-                        {% endif %}
-                        {% if project.platform %}<p class="post__extra-text" >[ PLATFORM ] - {{ project.platform | upper }}</p>{% endif %}
-                    </div>
-                {% endif %}
+{% if project.started_at or project.platform %}
+    <dl class="post__extra">
+        {% if project.started_at %}
+            <div class="post__extra-item">
+                <dt class="post__extra-label">[ START ]</dt>
+                <dd class="post__extra-value">{{ project.started_at | date }}</dd>
+            </div>
+        {% endif %}
+        <div class="post__extra-item">
+            <dt class="post__extra-label">[ END ]</dt>
+            <dd class="post__extra-value">
+                {% if project.completed_at %}{{ project.completed_at | date }}{% else %}UNSPECIFIED{% endif %}
+            </dd>
+        </div>
+        {% if project.platform %}
+            <div class="post__extra-item">
+                <dt class="post__extra-label">[ PLATFORM ]</dt>
+                <dd class="post__extra-value">{{ project.platform | upper }}</dd>
+            </div>
+        {% endif %}
+    </dl>
+{% endif %}
                 <div class="post__title">
                     {% if project.is_featured %}{{ inline_svg("assets/icons/featured.svg") }}{% endif %}
-                    <h1 class="post__title-text" >{{ project.title }}</h1>
+                    <h1 class="post__title-text">{{ project.title }}</h1>
                 </div>
                 <div class="post__excerpt">
-                    <p class="post__excerpt-text" >{{ project.excerpt }}</p>
+                    <p class="post__excerpt-text">{{ project.excerpt }}</p>
                 </div>
             </section>
             <div class="post__sidebar-section">
                 {% if project_headings %}
-                {{ sidebar_comp.sidebar(project_headings) }}
+                    <details class="post__toc" id="post-toc">
+                        <summary class="post__toc-summary">On this page</summary>
+                        <div class="post__toc-panel">
+                            {{ sidebar_comp.sidebar(project_headings) }}
+                        </div>
+                    </details>
                 {% endif %}
                 {% if is_auth %}
-                {{ button_comp.button(icon="assets/icons/edit.svg", text="Edit", link="admin.edit_project", slug=project.slug) }}
-                {{ delete_button_comp.delete_button(link="admin.delete_project", slug=project.slug, delete_form=delete_form) }}
+                    {{ button_comp.button(icon="assets/icons/edit.svg", text="Edit", link="admin.edit_project", slug=project.slug) }}
+                    {{ delete_button_comp.delete_button(link="admin.delete_project", slug=project.slug, delete_form=delete_form) }}
                 {% endif %}
                 {% if project.repo_url %}
-                    <a class="anchor-button" href="{{ project.repo_url }}">
+                    <a class="anchor-button" href="{{ project.repo_url }}" rel="noopener noreferrer">
                         {{ inline_svg("assets/icons/about-me-icons/github.svg") }}
                         Github
                     </a>
                 {% endif %}
                 {% if project.demo_url %}
-                    <a class="anchor-button" href="{{ project.demo_url }}">
+                    <a class="anchor-button" href="{{ project.demo_url }}" rel="noopener noreferrer">
                         {{ inline_svg("assets/web.svg") }}
                         Demo
                     </a>
@@ -104,7 +121,7 @@
         <section class="post-body">
             {{ rendered_body | safe }}
         </section>
-        <a  class="post__top-link" id="top-link" href="#">
+        <a class="post__top-link" id="top-link" href="#">
             {{ image_comp.image('icons/to_the_top.svg',
                         'icons/to_the_top_dark.svg',
                         '',
@@ -133,7 +150,7 @@
             {% endif %}
             <div class="post__tags">
                 {% for tag in tags %}
-                    <a href="{{ url_for('project.projects', tag=tag.slug) }}">[ {{ tag.name | upper }} ]</a>
+                    <a class="post__tags__text" href="{{ url_for('project.projects', tag=tag.slug) }}">[ {{ tag.name | upper }} ]</a>
                 {% endfor %}
             </div>
         </section>

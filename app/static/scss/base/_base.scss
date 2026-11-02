@@ -28,7 +28,7 @@ h6 {
 }
 
 body {
-  padding: 0px 15vw;
+  @include abstracts.page-width;
   min-height: 100vh;
   font-size: var(--text-base);
   font-family: var(--font-body);
@@ -39,7 +39,10 @@ body {
 
 h1,
 h2,
-h3 {
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
   line-height: var(--line-height-tight);
   text-wrap: balance;

@@ -10,7 +10,7 @@ ARTICLES = [
         "published_at": "2026-05-01T12:41:00+02:00",
         "seo_title": "AI in Embedded Development — Practical Guide",
         "seo_description": "A practical guide to using AI tools like Copilot and Claude in embedded C firmware development. Where it helps, where it doesn't, and a real workflow example.",
-        "tags": ["AI", "Embedded", "ESP32", "C", "Debugging"],
+        "tags": ["AI", "Embedded", "ESP32", "C", "Debugging", "Example 1", "Example 2", "Example 3", "Example 4"],
         "category": "Embedded Systems",
         "cover": "static/uploads/articles/ai-in-embedded-development/images/ai-embedded-cover.jpg",
         "inline_assets": [
@@ -242,7 +242,7 @@ Next version I'd use a proper PCIe-to-SATA HAT instead.
 """,
     },
     {
-        "title": "What I Learned Debugging an E-Ink Refresh Bug",
+        "title": "What I Learned Debugging an E-Ink Refresh Bug Example Example Example",
         "slug": "eink-refresh-bug",
         "excerpt": "Three hours chasing a ghosting artifact on a Waveshare 4.2-inch display. The culprit was a missing deep sleep call before power-off.",
         "read_time": 5,

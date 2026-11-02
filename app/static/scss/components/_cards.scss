@@ -3,43 +3,80 @@
 .article-card {
   @include abstracts.base-border();
   @include abstracts.flex();
+  flex-direction: column; // mobile: date on top, body below
+
+  @include abstracts.mq(header) {
+    flex-direction: row; // desktop: date left, body right
+  }
 
   &__date {
     height: fit-content;
     font-family: var(--font-display);
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     font-weight: var(--font-weight-medium);
     white-space: nowrap;
-    padding: var(--space-6);
+    padding: var(--space-3) var(--space-4);
     @include abstracts.base-border("bottom");
+
+    @include abstracts.mq(header) {
+      padding: var(--space-4) var(--space-4);
+    }
   }
 
   &__body {
+    flex: 1;
+    min-width: 0;
     @include abstracts.flex(var(--space-4), column);
-    @include abstracts.dashed-border("left");
+
+    @include abstracts.mq(header) {
+      @include abstracts.dashed-border("left");
+    }
   }
 
   &__header {
     @include abstracts.flex-between();
     @include abstracts.base-border("bottom");
-    padding: var(--space-6);
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+
+    @include abstracts.mq(header) {
+      padding: var(--space-4) var(--space-6);
+    }
   }
 
   &__category,
   &__read-time {
     font-family: var(--font-display);
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     font-weight: var(--font-weight-medium);
     letter-spacing: var(--letter-spacing-wider);
   }
 
+  &__read-time {
+    display: none; // mobile: hidden, takes no space
+
+    @include abstracts.mq(header) {
+      display: block;
+    }
+  }
+
   &__title {
-    padding: var(--space-2) 0 0 var(--space-8);
+    padding: var(--space-2) var(--space-4) 0;
+    overflow-wrap: anywhere;
+
+    @include abstracts.mq(header) {
+      padding: var(--space-2) 0 0 var(--space-8);
+    }
   }
 
   &__content-section {
-    padding: 0 var(--space-8) var(--space-8) var(--space-8);
-    @include abstracts.flex(var(--space-4), column);
+    padding: 0 var(--space-4) var(--space-4) var(--space-4);
+    @include abstracts.flex(var(--space-2), column);
+
+    @include abstracts.mq(header) {
+      padding: 0 var(--space-8) var(--space-4) var(--space-8);
+    }
   }
 
   &__content-excerpt {
@@ -54,37 +91,55 @@
     height: 2px;
     background-color: var(--color-text-primary);
     border: none;
+    margin: var(--space-4) 0 var(--space-2) 0;
   }
 
   &__tags {
-    @include abstracts.flex(var(--space-2));
+    @include abstracts.flex(var(--space-2), row, flex-start, stretch, wrap);
+
+    &__text {
+      font-size: var(--text-sm);
+      white-space: nowrap;
+    }
   }
 }
 
 .project-card {
   height: fit-content;
-  padding: var(--space-8);
-  @include abstracts.flex(var(--space-8));
+  padding: var(--space-4);
+  @include abstracts.flex(var(--space-4), column);
   @include abstracts.base-border();
 
+  @include abstracts.mq(header) {
+    padding: var(--space-8);
+    @include abstracts.flex(var(--space-8));
+  }
+
   &__cover {
+    display: none; // mobile: hidden, takes no space
     width: 25%;
-    @include abstracts.flex();
-    @include abstracts.base-border();
     flex-shrink: 0;
     aspect-ratio: 4 / 3;
     object-fit: cover;
     object-position: center;
-    align-self: flex-start;
+    @include abstracts.base-border();
+
+    @include abstracts.mq(header) {
+      @include abstracts.flex();
+      align-self: flex-start;
+    }
   }
 
   &__body {
     width: 100%;
+    min-width: 0;
     @include abstracts.flex(var(--space-4), column);
   }
 
   &__category-body {
     @include abstracts.flex-between();
+    flex-wrap: wrap;
+    gap: var(--space-2);
   }
 
   &__status {
@@ -107,6 +162,11 @@
   }
 
   &__tags {
-    @include abstracts.flex(var(--space-2));
+    @include abstracts.flex(var(--space-2), row, flex-start, stretch, wrap);
+
+    &__text {
+      font-size: var(--text-sm);
+      white-space: nowrap;
+    }
   }
 }

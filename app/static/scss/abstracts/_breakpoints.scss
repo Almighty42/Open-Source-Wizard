@@ -1,0 +1,18 @@
+@use "sass:map";
+
+$breakpoints: (
+  sm: 480px,
+  nav: 680px,
+  md: 820px,
+  lg: 1024px,
+  xl: 1280px) !default;
+
+@mixin mq($key) {
+  @if not map.has-key($breakpoints, $key) {
+    @error "Unknown breakpoint `#{$key}`. Available: #{map.keys($breakpoints)}";
+  }
+
+  @media (min-width: map.get($breakpoints, $key)) {
+    @content;
+  }
+}
