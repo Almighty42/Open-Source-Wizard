@@ -41,8 +41,6 @@
         <link rel="preload"
               as="image"
               href="{{ url_for('static', filename='assets/icons/logo_dark.svg') }}">
-        <link rel="stylesheet"
-              href="{{ url_for('static', filename='css/app.css') }}" />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap"
@@ -54,6 +52,6 @@
     </head>
     <body>
         {% block content %}{% endblock %}
-        <script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='js/app.js') }}?v={{ config.CSS_VERSION }}"></script>
     </body>
 </html>
